@@ -12,5 +12,15 @@ namespace Onion.MotionKit {
         private List<MotionSequence> _sequences;
 
         public TweenSettings<float> settings;
+
+
+        [SerializeReference]
+        public List<MotionTrack> tracks = new()
+        {
+            new MotionTrack<Color>(),
+            new MotionTrack<float>(),
+            new MotionTrack<Vector2>(),
+            new MotionTrack<Vector3>(),
+        };
     }
 }
