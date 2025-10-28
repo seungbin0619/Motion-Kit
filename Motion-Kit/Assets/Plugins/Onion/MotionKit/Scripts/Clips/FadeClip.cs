@@ -2,14 +2,14 @@ using PrimeTween;
 using UnityEngine;
 
 namespace Onion.MotionKit {
-    public class FadeClip : MotionClip<float> {
-        protected override Tween CreateTween(Component target, TweenSettings<float> settings) {
+    public class FadeClip : MotionClipWithValue<float> {
+        protected override Tween CreateTween(Component target, TweenSettings<float> _settings) {
             return target switch {
-                CanvasGroup canvasGroup => Tween.Alpha(canvasGroup, settings),
-                SpriteRenderer spriteRenderer => Tween.Alpha(spriteRenderer, settings),
-                UnityEngine.UI.Graphic uiGraphic => Tween.Alpha(uiGraphic, settings),
-                UnityEngine.UI.Shadow uiShadow => Tween.Alpha(uiShadow, settings),
-                
+                CanvasGroup canvasGroup => Tween.Alpha(canvasGroup, _settings),
+                SpriteRenderer spriteRenderer => Tween.Alpha(spriteRenderer, _settings),
+                UnityEngine.UI.Graphic uiGraphic => Tween.Alpha(uiGraphic, _settings),
+                UnityEngine.UI.Shadow uiShadow => Tween.Alpha(uiShadow, _settings),
+
                 _ => default
             };
         }

@@ -13,5 +13,6 @@ MonoBehaviour:
   m_Name: FadeIn
   m_EditorClassIdentifier: 
   _values:
+    startFromCurrent: 1
     startValue: 0
     endValue: 1

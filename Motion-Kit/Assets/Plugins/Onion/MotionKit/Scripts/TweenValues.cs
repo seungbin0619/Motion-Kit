@@ -1,4 +1,5 @@
 using System;
+using PrimeTween;
 
 namespace Onion.MotionKit {
     [Serializable]
@@ -19,6 +20,14 @@ namespace Onion.MotionKit {
 
             startValue = default;
             this.endValue = endValue;
+        }
+
+        public readonly TweenSettings<T> ToSettings(TweenSettings settings) {
+            if (startFromCurrent) {
+                return new TweenSettings<T>(endValue, settings);
+            } else {
+                return new TweenSettings<T>(startValue, endValue, settings);
+            }
         }
     }
 }
