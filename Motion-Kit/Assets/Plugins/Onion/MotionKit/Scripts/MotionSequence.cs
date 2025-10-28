@@ -6,6 +6,6 @@ namespace Onion.MotionKit {
     public class MotionSequence : ScriptableObject {
         public List<MotionTrack> tracks;
 
-
+        
     }
 }

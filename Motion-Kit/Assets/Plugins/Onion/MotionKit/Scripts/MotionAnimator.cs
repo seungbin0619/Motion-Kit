@@ -11,6 +11,6 @@ namespace Onion.MotionKit {
         [SerializeField]
         private List<MotionSequence> _sequences;
 
-        
+        public TweenSettings<float> settings;
     }
 }
