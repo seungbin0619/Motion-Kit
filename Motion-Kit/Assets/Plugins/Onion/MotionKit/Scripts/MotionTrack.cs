@@ -1,4 +1,5 @@
 using System;
+using PrimeTween;
 using UnityEngine;
 
 namespace Onion.MotionKit {
@@ -10,6 +11,6 @@ namespace Onion.MotionKit {
 
     [Serializable]
     public class MotionTrack<T> : MotionTrack where T : struct {
-        public T value = default;
+        
     }
 }
