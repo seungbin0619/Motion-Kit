@@ -472,42 +472,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _bindings: []
   _sequences: []
-  settings:
-    startFromCurrent: 0
-    startValue: 0
-    endValue: 0
-    settings:
-      duration: 1
-      ease: 0
-      customEase:
-        serializedVersion: 2
-        m_Curve: []
-        m_PreInfinity: 2
-        m_PostInfinity: 2
-        m_RotationOrder: 4
-      cycles: 1
-      cycleMode: 0
-      startDelay: 0
-      endDelay: 0
-      useUnscaledTime: 0
-      _useFixedUpdate: 0
-      _updateType: 0
-  tracks:
-  - rid: 5331092716912115995
-  - rid: 5331092716912115996
-  references:
-    version: 2
-    RefIds:
-    - rid: 5331092716912115995
-      type: {class: 'MotionTrack`1[[UnityEngine.Vector2, UnityEngine.CoreModule]]', ns: Onion.MotionKit, asm: Assembly-CSharp-firstpass}
-      data:
-        _bindingIndex: 0
-        value: {x: 0, y: 0}
-    - rid: 5331092716912115996
-      type: {class: 'MotionTrack`1[[UnityEngine.Vector3, UnityEngine.CoreModule]]', ns: Onion.MotionKit, asm: Assembly-CSharp-firstpass}
-      data:
-        _bindingIndex: 0
-        value: {x: 0, y: 0, z: 0}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
