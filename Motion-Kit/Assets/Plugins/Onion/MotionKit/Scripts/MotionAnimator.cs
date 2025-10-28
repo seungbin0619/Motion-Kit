@@ -6,11 +6,9 @@ namespace Onion.MotionKit {
     [AddComponentMenu("Onion/MotionKit/Motion Animator")]
     public class MotionAnimator : MonoBehaviour {
         [SerializeField]
-        private List<Component> _bindings;
+        private List<Object> _bindings;
 
         [SerializeField]
         private List<MotionSequence> _sequences;
-
-        public TweenSettings<float> settings;
     }
 }
