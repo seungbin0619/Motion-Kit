@@ -14,9 +14,11 @@ namespace Onion.MotionKit {
         internal TweenValues<T> _values;
 
         protected abstract Tween CreateTween(Component target, TweenSettings<T> settings);
-        
+
+#if UNITY_EDITOR
         public bool IsValidFor(Component target) {
             return CreateTween(target, default).isAlive;
         }
+#endif
     }
 }
