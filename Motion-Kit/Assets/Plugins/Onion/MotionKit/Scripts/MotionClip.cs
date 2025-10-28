@@ -14,6 +14,9 @@ namespace Onion.MotionKit {
         internal TweenValues<T> _values;
 
         protected abstract Tween CreateTween(Component target, TweenSettings<T> settings);
-        public abstract bool IsValidFor(Component target);
+        
+        public bool IsValidFor(Component target) {
+            return CreateTween(target, default).isAlive;
+        }
     }
 }

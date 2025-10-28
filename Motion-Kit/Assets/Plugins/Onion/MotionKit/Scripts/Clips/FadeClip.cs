@@ -13,13 +13,5 @@ namespace Onion.MotionKit {
                 _ => default
             };
         }
-
-        public override bool IsValidFor(Component target) {
-            return target 
-                is CanvasGroup 
-                or SpriteRenderer 
-                or UnityEngine.UI.Graphic 
-                or UnityEngine.UI.Shadow;
-        }
     }
 }
