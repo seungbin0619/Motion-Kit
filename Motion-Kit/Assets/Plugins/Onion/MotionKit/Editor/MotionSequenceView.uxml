@@ -1,6 +1,5 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements">
     <Style src="MotionSequenceStyle.uss"/>
     <ui:VisualElement class="root-container" name="root-container">
-
     </ui:VisualElement>
 </ui:UXML>

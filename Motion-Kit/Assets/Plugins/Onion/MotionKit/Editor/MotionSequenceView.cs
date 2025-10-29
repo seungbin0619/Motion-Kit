@@ -45,10 +45,10 @@ namespace Onion.MotionKit.Editor {
             var view = new ListView();
             view.AddToClassList("track-list-view");
             
-            view.makeItem = () => new MotionTrackView(_trackTemplate);
-            view.bindItem = (element, i) => {
+            view.makeItem = () => new MotionTrackView(_trackTemplate, parent: this);
+            view.bindItem = (element, index) => {
                 var track = element as MotionTrackView;
-                var trackProperty = _sequenceProperty.FindPropertyRelative("tracks").GetArrayElementAtIndex(i);
+                var trackProperty = _sequenceProperty.FindPropertyRelative("tracks").GetArrayElementAtIndex(index);
 
                 track.SetTrack(trackProperty);
             };

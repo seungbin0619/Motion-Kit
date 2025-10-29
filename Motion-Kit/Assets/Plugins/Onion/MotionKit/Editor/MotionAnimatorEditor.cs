@@ -18,7 +18,7 @@ namespace Onion.MotionKit.Editor {
         private VisualTreeAsset _trackTemplate;
 
         private MotionAnimator _animator;
-        private DropdownField _dropdown;
+        private PopupField<string> _popup;
         
         private MotionSequenceView _sequenceView;
         private SerializedProperty _serializedSequenceProperty;
@@ -40,13 +40,13 @@ namespace Onion.MotionKit.Editor {
         }
 
         private VisualElement CreateDropdown() {
-            _dropdown = new() { label = "Sequence" };
-            _dropdown.RegisterCallback<FocusInEvent>(evt => RefreshDropdown());
-            _dropdown.RegisterValueChangedCallback(OnSequenceChanged);
+            _popup = new() { label = "Sequence" };
+            _popup.RegisterCallback<FocusInEvent>(evt => RefreshDropdown());
+            _popup.RegisterValueChangedCallback(OnSequenceChanged);
 
             RefreshDropdown();
 
-            return _dropdown;
+            return _popup;
         }
 
         private void OnSequenceChanged(ChangeEvent<string> evt) {
@@ -68,17 +68,17 @@ namespace Onion.MotionKit.Editor {
                 RefreshDropdown();
             }
 
-            var index = _dropdown.choices.IndexOf(name);
+            var index = _popup.choices.IndexOf(name);
             SelectSequence(index);
         }
 
         private void RefreshDropdown() {
-            _dropdown.choices.Clear();
+            _popup.choices.Clear();
 
             foreach (var sequence in _animator.sequences) {
-                _dropdown.choices.Add(sequence.name);
+                _popup.choices.Add(sequence.name);
             }
-            _dropdown.choices.Add(NewSequence);
+            _popup.choices.Add(NewSequence);
         }
 
         private void SelectSequence(int index) {
@@ -87,7 +87,7 @@ namespace Onion.MotionKit.Editor {
                 return;
             }
 
-            _dropdown.SetValueWithoutNotify(_dropdown.choices[index]);
+            _popup.SetValueWithoutNotify(_popup.choices[index]);
             _sequenceView.SetSequence(_serializedSequenceProperty.GetArrayElementAtIndex(index));
         }
     }
