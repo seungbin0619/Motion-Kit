@@ -55,6 +55,8 @@ namespace Onion.MotionKit.Editor {
 
             // options
             view.showBoundCollectionSize = false;
+            view.reorderable = true;
+            view.selectionType = SelectionType.Multiple;
             view.virtualizationMethod = CollectionVirtualizationMethod.DynamicHeight;
 
             return view;
