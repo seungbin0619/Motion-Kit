@@ -1,0 +1,6 @@
+.track-container {
+    height: 22px;
+    margin: 2px 0;
+
+    background-color: #488aff;
+}

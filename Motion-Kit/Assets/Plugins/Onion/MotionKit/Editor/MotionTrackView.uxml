@@ -1,0 +1,6 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements">
+    <Style src="MotionTrackStyle.uss"/>
+    <ui:VisualElement class="track-container" name="track-container">
+        
+    </ui:VisualElement>
+</ui:UXML>

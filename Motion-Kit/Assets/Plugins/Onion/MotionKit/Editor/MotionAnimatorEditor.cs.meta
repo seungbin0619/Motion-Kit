@@ -6,7 +6,7 @@ MonoImporter:
   defaultReferences:
   - _template: {fileID: 9197481963319205126, guid: a5c348dcb3c217647ae1a19b55033820, type: 3}
   - _sequenceTemplate: {fileID: 9197481963319205126, guid: 323b89d23d34b5142b0b23e7e0a99970, type: 3}
-  - _trackTemplate: {instanceID: 0}
+  - _trackTemplate: {fileID: 9197481963319205126, guid: ccc20cd162def964ca8664501ab193d9, type: 3}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

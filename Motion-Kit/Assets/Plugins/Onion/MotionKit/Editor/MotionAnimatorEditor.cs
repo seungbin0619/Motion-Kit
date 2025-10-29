@@ -32,7 +32,7 @@ namespace Onion.MotionKit.Editor {
             _serializedSequenceProperty = serializedObject.FindProperty("sequences");
 
             root.Add(CreateDropdown());
-            root.Add(_sequenceView = new(_sequenceTemplate));
+            root.Add(_sequenceView = new(_sequenceTemplate, _trackTemplate));
 
             SelectSequence(0);
 
@@ -40,23 +40,13 @@ namespace Onion.MotionKit.Editor {
         }
 
         private VisualElement CreateDropdown() {
-            var column = new VisualElement();
-            column.AddToClassList("sequence-container");
-
-            var label = new Label("Sequence");
-            label.AddToClassList("sequence-label");
-
-            _dropdown = new();
-            _dropdown.AddToClassList("sequence-dropdown");
+            _dropdown = new() { label = "Sequence" };
             _dropdown.RegisterCallback<FocusInEvent>(evt => RefreshDropdown());
             _dropdown.RegisterValueChangedCallback(OnSequenceChanged);
 
             RefreshDropdown();
 
-            column.Add(label);
-            column.Add(_dropdown);
-
-            return column;
+            return _dropdown;
         }
 
         private void OnSequenceChanged(ChangeEvent<string> evt) {

@@ -8,6 +8,10 @@ namespace Onion.MotionKit {
         public string name;
 
         [SerializeReference]
-        public List<MotionTrack> tracks = new();
+        public List<MotionTrack> tracks = new() {
+            new MotionTrack<float>(),
+            new MotionTrack<Vector3>(),
+            new MotionTrack<Color>()
+        };
     }
 }

@@ -472,12 +472,97 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   sequences:
   - name: Sequence 0
-    tracks: []
-  - name: test
-    tracks: []
+    tracks:
+    - rid: -2
+    - rid: -2
+  - name: Sequence 1
+    tracks:
+    - rid: 5331092744540258366
+    - rid: 5331092744540258367
+    - rid: 5331092744540258368
   references:
     version: 2
-    RefIds: []
+    RefIds:
+    - rid: -2
+      type: {class: , ns: , asm: }
+    - rid: 5331092744540258366
+      type: {class: 'MotionTrack`1[[System.Single, mscorlib]]', ns: Onion.MotionKit, asm: Assembly-CSharp-firstpass}
+      data:
+        bindingIndex: 0
+        target: {fileID: 0}
+        settings:
+          duration: 0
+          ease: 0
+          customEase:
+            serializedVersion: 2
+            m_Curve: []
+            m_PreInfinity: 2
+            m_PostInfinity: 2
+            m_RotationOrder: 4
+          cycles: 0
+          cycleMode: 0
+          startDelay: 0
+          endDelay: 0
+          useUnscaledTime: 0
+          _useFixedUpdate: 0
+          _updateType: 0
+        useValueOverride: 0
+        value:
+          startFromCurrent: 0
+          startValue: 0
+          endValue: 0
+    - rid: 5331092744540258367
+      type: {class: 'MotionTrack`1[[UnityEngine.Vector3, UnityEngine.CoreModule]]', ns: Onion.MotionKit, asm: Assembly-CSharp-firstpass}
+      data:
+        bindingIndex: 0
+        target: {fileID: 0}
+        settings:
+          duration: 0
+          ease: 0
+          customEase:
+            serializedVersion: 2
+            m_Curve: []
+            m_PreInfinity: 2
+            m_PostInfinity: 2
+            m_RotationOrder: 4
+          cycles: 0
+          cycleMode: 0
+          startDelay: 0
+          endDelay: 0
+          useUnscaledTime: 0
+          _useFixedUpdate: 0
+          _updateType: 0
+        useValueOverride: 0
+        value:
+          startFromCurrent: 0
+          startValue: {x: 0, y: 0, z: 0}
+          endValue: {x: 0, y: 0, z: 0}
+    - rid: 5331092744540258368
+      type: {class: 'MotionTrack`1[[UnityEngine.Color, UnityEngine.CoreModule]]', ns: Onion.MotionKit, asm: Assembly-CSharp-firstpass}
+      data:
+        bindingIndex: 0
+        target: {fileID: 0}
+        settings:
+          duration: 0
+          ease: 0
+          customEase:
+            serializedVersion: 2
+            m_Curve: []
+            m_PreInfinity: 2
+            m_PostInfinity: 2
+            m_RotationOrder: 4
+          cycles: 0
+          cycleMode: 0
+          startDelay: 0
+          endDelay: 0
+          useUnscaledTime: 0
+          _useFixedUpdate: 0
+          _updateType: 0
+        useValueOverride: 0
+        value:
+          startFromCurrent: 0
+          startValue: {r: 0, g: 0, b: 0, a: 0}
+          endValue: {r: 0, g: 0, b: 0, a: 0}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
