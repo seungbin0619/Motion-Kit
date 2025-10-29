@@ -1,9 +1,12 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
 namespace Onion.MotionKit {
-    [CreateAssetMenu(menuName = "Motion Kit/Sequence")]
-    public class MotionSequence : ScriptableObject {
+    [Serializable]
+    public class MotionSequence {
+        public string name;
+
         [SerializeReference]
         public List<MotionTrack> tracks = new();
     }
