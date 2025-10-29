@@ -1,7 +1,17 @@
-.container {
-    margin-top: 8px;
+.root-container {
+    margin-top: 2px;
+    margin-bottom: 4px;
+
+    flex-direction: column;
+}
+
+.track-container {
+    margin-top: 4px;
     flex-direction: column;
     background-color: #2D2D2D;
+
+    border-color: #1E1E1E;
+    border-width: 1px;
     border-radius: 4px;
 
     min-height: 200px;

@@ -19,14 +19,17 @@ namespace Onion.MotionKit.Editor {
 
         private MotionAnimator _animator;
         private DropdownField _dropdown;
-        private MotionSequenceView _sequenceView;
         
+        private MotionSequenceView _sequenceView;
+        private SerializedProperty _serializedSequenceProperty;
+
         public override VisualElement CreateInspectorGUI() {
             VisualElement root = _template != null 
                 ? _template.CloneTree() 
                 : new(); 
 
             _animator = (MotionAnimator)target;
+            _serializedSequenceProperty = serializedObject.FindProperty("sequences");
 
             root.Add(CreateDropdown());
             root.Add(_sequenceView = new(_sequenceTemplate));
@@ -69,6 +72,8 @@ namespace Onion.MotionKit.Editor {
                 var sequence = new MotionSequence() { name = name };
                 _animator.sequences.Add(sequence);
 
+                serializedObject.Update();
+
                 EditorUtility.SetDirty(_animator);
                 RefreshDropdown();
             }
@@ -93,10 +98,7 @@ namespace Onion.MotionKit.Editor {
             }
 
             _dropdown.SetValueWithoutNotify(_dropdown.choices[index]);
-            var sequence = _animator.sequences[index];
-            
-            _sequenceView.style.display = DisplayStyle.Flex;
-
+            _sequenceView.SetSequence(_serializedSequenceProperty.GetArrayElementAtIndex(index));
         }
     }
 }

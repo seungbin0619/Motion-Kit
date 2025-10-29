@@ -473,6 +473,8 @@ MonoBehaviour:
   sequences:
   - name: Sequence 0
     tracks: []
+  - name: test
+    tracks: []
   references:
     version: 2
     RefIds: []

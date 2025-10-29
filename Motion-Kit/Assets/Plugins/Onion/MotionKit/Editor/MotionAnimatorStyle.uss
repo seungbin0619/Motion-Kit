@@ -5,7 +5,7 @@
 
 .sequence-label {
     padding-left: 4px;
-    width: 120px;
+    min-width: 122px;
 }
 
 .sequence-dropdown {
