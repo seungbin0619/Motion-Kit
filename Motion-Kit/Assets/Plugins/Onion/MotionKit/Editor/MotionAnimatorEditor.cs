@@ -11,8 +11,15 @@ namespace Onion.MotionKit.Editor {
         [SerializeField]
         private VisualTreeAsset _template;
 
+        [SerializeField]
+        private VisualTreeAsset _sequenceTemplate;
+
+        [SerializeField]
+        private VisualTreeAsset _trackTemplate;
+
         private MotionAnimator _animator;
         private DropdownField _dropdown;
+        private MotionSequenceView _sequenceView;
         
         public override VisualElement CreateInspectorGUI() {
             VisualElement root = _template != null 
@@ -22,6 +29,8 @@ namespace Onion.MotionKit.Editor {
             _animator = (MotionAnimator)target;
 
             root.Add(CreateDropdown());
+            root.Add(_sequenceView = new(_sequenceTemplate));
+
             SelectSequence(0);
 
             return root;
@@ -79,13 +88,15 @@ namespace Onion.MotionKit.Editor {
 
         private void SelectSequence(int index) {
             if (index < 0 || index >= _animator.sequences.Count) {
+                _sequenceView.style.display = DisplayStyle.None;
                 return;
             }
 
             _dropdown.SetValueWithoutNotify(_dropdown.choices[index]);
             var sequence = _animator.sequences[index];
             
-            // draw sequence view
+            _sequenceView.style.display = DisplayStyle.Flex;
+
         }
     }
 }

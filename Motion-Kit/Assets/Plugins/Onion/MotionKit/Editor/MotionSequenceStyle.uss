@@ -1,0 +1,8 @@
+.container {
+    margin-top: 8px;
+    flex-direction: column;
+    background-color: #2D2D2D;
+    border-radius: 4px;
+
+    min-height: 200px;
+}

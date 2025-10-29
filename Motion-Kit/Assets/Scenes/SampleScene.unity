@@ -470,7 +470,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 565ffe700589e094d97c6e574f19ba06, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sequences: []
+  sequences:
+  - name: Sequence 0
+    tracks: []
   references:
     version: 2
     RefIds: []
