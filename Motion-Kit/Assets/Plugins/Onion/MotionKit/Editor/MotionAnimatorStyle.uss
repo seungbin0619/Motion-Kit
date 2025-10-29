@@ -1,0 +1,14 @@
+.sequence-container {
+    flex-direction: row;
+    align-items: center;
+}
+
+.sequence-label {
+    padding-left: 4px;
+    width: 120px;
+}
+
+.sequence-dropdown {
+    height: 18px;
+    flex-grow: 1;
+}

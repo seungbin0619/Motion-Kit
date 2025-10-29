@@ -1,4 +1,5 @@
 using UnityEditor;
+using UnityEditor.UIElements;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -14,17 +15,36 @@ namespace Onion.MotionKit.Editor {
         private DropdownField _dropdown;
         
         public override VisualElement CreateInspectorGUI() {
-            VisualElement root = new();
+            VisualElement root = _template != null 
+                ? _template.CloneTree() 
+                : new(); 
+
             _animator = (MotionAnimator)target;
 
+            root.Add(CreateDropdown());
+            SelectSequence(0);
+
+            return root;
+        }
+
+        private VisualElement CreateDropdown() {
+            var column = new VisualElement();
+            column.AddToClassList("sequence-container");
+
+            var label = new Label("Sequence");
+            label.AddToClassList("sequence-label");
+
             _dropdown = new();
+            _dropdown.AddToClassList("sequence-dropdown");
+            _dropdown.RegisterCallback<FocusInEvent>(evt => RefreshDropdown());
             _dropdown.RegisterValueChangedCallback(OnSequenceChanged);
 
             RefreshDropdown();
 
-            root.Add(_dropdown);
+            column.Add(label);
+            column.Add(_dropdown);
 
-            return root;
+            return column;
         }
 
         private void OnSequenceChanged(ChangeEvent<string> evt) {
@@ -45,9 +65,7 @@ namespace Onion.MotionKit.Editor {
             }
 
             var index = _dropdown.choices.IndexOf(name);
-            _dropdown.SetValueWithoutNotify(_dropdown.choices[index]);
-
-            Debug.Log($"Selected sequence: {name}");
+            SelectSequence(index);
         }
 
         private void RefreshDropdown() {
@@ -57,6 +75,17 @@ namespace Onion.MotionKit.Editor {
                 _dropdown.choices.Add(sequence.name);
             }
             _dropdown.choices.Add(NewSequence);
+        }
+
+        private void SelectSequence(int index) {
+            if (index < 0 || index >= _animator.sequences.Count) {
+                return;
+            }
+
+            _dropdown.SetValueWithoutNotify(_dropdown.choices[index]);
+            var sequence = _animator.sequences[index];
+            
+            // draw sequence view
         }
     }
 }
