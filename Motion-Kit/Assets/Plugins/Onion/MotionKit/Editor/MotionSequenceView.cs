@@ -117,6 +117,12 @@ namespace Onion.MotionKit.Editor {
             view.reorderable = true;
             view.selectionType = SelectionType.Multiple;
             view.virtualizationMethod = CollectionVirtualizationMethod.DynamicHeight;
+            
+            view.RegisterCallback<AttachToPanelEvent>(evt => {
+                var scroll = (evt.target as ListView).Q<ScrollView>();
+                
+                scroll.mouseWheelScrollSize = 20f;
+            });
 
             return view;
         }
