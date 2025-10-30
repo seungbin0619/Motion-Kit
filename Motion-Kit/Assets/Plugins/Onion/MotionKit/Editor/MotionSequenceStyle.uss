@@ -36,7 +36,7 @@
     width: 2px;
     height: 100%; 
 
-    background-color: #1E1E1E;
+    background-color: rgba(32, 32, 32, 1);
     cursor: split-resize-left-right;
 
     transition: background-color 0.1s;
@@ -45,4 +45,29 @@
 .track-target-separator.selected {
     background-color: #448aff;
     transition: background-color 0.1s;
+}
+
+.time-ruler-container {
+    height: 16px;
+    width: 100%;
+    background-color: #3C3C3C;
+    margin-bottom: 2px;
+}
+
+.time-ruler-tick {
+    position: absolute;
+    background-color: #6E6E6E;
+    
+    width: 1px;
+    height: 60%;
+
+    bottom: 0;
+}
+
+.time-ruler-label {
+    position: absolute;
+    color: #A0A0A0;
+    font-size: 8px;
+    top: 20%;
+    margin-left: 2px;
 }

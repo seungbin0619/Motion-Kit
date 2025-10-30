@@ -474,8 +474,8 @@ MonoBehaviour:
   - name: Sequence 0
     tracks:
     - rid: 5331092758619488256
-    - rid: 5331092758619488257
     - rid: 5331092758619488258
+    - rid: 5331092758619488257
   references:
     version: 2
     RefIds:

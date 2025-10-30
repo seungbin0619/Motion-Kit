@@ -11,6 +11,7 @@ namespace Onion.MotionKit.Editor {
         private SerializedProperty _sequenceProperty;
 
         private readonly VisualElement _rootContainer;
+        private readonly MotionSequenceTimeRuler _timeRulerContainer;
         private readonly VisualElement _trackListContainer;
         private readonly ListView _trackListView;
 
@@ -24,13 +25,25 @@ namespace Onion.MotionKit.Editor {
         private readonly PropertyField _nameField;
 
         private float _leftWidth = 120f;
+        private float _pixelPerSecond = 60f;
+
+        public readonly float minMarginLeft = 12f;
+
         public float leftWidth {
             get => _leftWidth;
-            set {
+            private set {
                 _leftWidth = Mathf.Clamp(value, 60f, 200f);
-                _separator.style.left = _leftWidth;
 
-                NotifyChildrenOfWidthChange();
+                NotifyGeometryChange();
+            }
+        }
+
+        public float pixelPerSecond {
+            get => _pixelPerSecond;
+            set {
+                _pixelPerSecond = Mathf.Max(20f, value);
+
+                NotifyGeometryChange();
             }
         }
 
@@ -46,6 +59,7 @@ namespace Onion.MotionKit.Editor {
 
             _trackListContainer = new();
             _trackListContainer.AddToClassList("track-list-container");
+            _trackListContainer.Add(_timeRulerContainer = new(this));
             _trackListContainer.Add(_trackListView = CreateTrackListView());
             _trackListContainer.Add(_separator = CreateSeparator());
 
@@ -70,6 +84,7 @@ namespace Onion.MotionKit.Editor {
         private ListView CreateTrackListView() {
             var view = new ListView();
             view.AddToClassList("track-list-view");
+            view.RegisterCallback<GeometryChangedEvent>(evt => NotifyGeometryChange());
             
             view.makeItem = () => new MotionTrackView(_trackTemplate, parent: this);
             view.bindItem = (element, index) => {
@@ -131,9 +146,12 @@ namespace Onion.MotionKit.Editor {
             }
         }
 
-        private void NotifyChildrenOfWidthChange() {
+        private void NotifyGeometryChange() {
              if (_trackListView == null) return;
-             
+
+             _separator.style.left = _leftWidth;
+             _timeRulerContainer.Repaint();
+
             _trackListView.Query<MotionTrackView>().Visible().ForEach(trackView => {
                  trackView.Repaint();
             });
