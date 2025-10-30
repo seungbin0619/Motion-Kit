@@ -103,6 +103,8 @@ namespace Onion.MotionKit.Editor {
 
         private void OnSeparatorPointerDown(PointerDownEvent evt) {
             if (evt.button == 0) {
+                _separator.AddToClassList("selected");
+
                 _isDraggingSeparator = true;
                 _separatorStartX = evt.position.x;
                 _separatorStartLeftWidth = leftWidth;
@@ -121,6 +123,8 @@ namespace Onion.MotionKit.Editor {
 
         private void OnSeparatorPointerUp(PointerUpEvent evt) {
             if (_isDraggingSeparator && _separator.HasPointerCapture(evt.pointerId)) {
+                _separator.RemoveFromClassList("selected");
+                
                 _isDraggingSeparator = false;
                 _separator.ReleasePointer(evt.pointerId);
                 evt.StopPropagation();

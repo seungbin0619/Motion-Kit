@@ -47,7 +47,7 @@ namespace Onion.MotionKit.Editor {
             var container = new VisualElement();
             container.AddToClassList("track-timeline-container");
 
-            return container;
+            return container; 
         }
 
         public void SetTrack(SerializedProperty trackProperty) {

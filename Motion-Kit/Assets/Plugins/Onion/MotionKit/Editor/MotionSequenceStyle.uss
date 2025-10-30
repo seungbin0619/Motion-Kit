@@ -23,12 +23,26 @@
     flex-grow: 1;
 }
 
+.vertical-separator {
+    height: 1px;
+    width: 100%;
+    background-color: #4C4C4C;
+    margin: 8px 0;
+}
+
 .track-target-separator {
     position: absolute;
     margin-left: 2px;
     width: 2px;
-    height: 100%;
+    height: 100%; 
 
     background-color: #1E1E1E;
-    cursor: col-resize;
+    cursor: split-resize-left-right;
+
+    transition: background-color 0.1s;
+}
+
+.track-target-separator.selected {
+    background-color: #448aff;
+    transition: background-color 0.1s;
 }
