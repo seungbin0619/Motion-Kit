@@ -52,16 +52,23 @@
     width: 100%;
     background-color: #3C3C3C;
     margin-bottom: 2px;
+
+    overflow: hidden;
 }
 
 .time-ruler-tick {
     position: absolute;
-    background-color: #6E6E6E;
+    background-color: rgba(110, 110, 110, 0.8);
     
     width: 1px;
     height: 60%;
 
     bottom: 0;
+}
+
+.time-ruler-tick.half-tick {
+    background-color: rgba(110, 110, 110, 0.5);
+    height: 40%;
 }
 
 .time-ruler-label {

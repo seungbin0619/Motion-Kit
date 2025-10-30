@@ -25,23 +25,39 @@ namespace Onion.MotionKit.Editor {
         private readonly PropertyField _nameField;
 
         private float _leftWidth = 120f;
-        private float _pixelPerSecond = 60f;
+        private float _pixelsPerSecond = 60f;
+        private float _startTime = 0f;
 
         public readonly float minMarginLeft = 12f;
 
         public float leftWidth {
             get => _leftWidth;
             private set {
-                _leftWidth = Mathf.Clamp(value, 60f, 200f);
+                var clampedValue = Mathf.Clamp(value, 60f, 200f);
+                if (Mathf.Approximately(_leftWidth, clampedValue)) return;
+                _leftWidth = clampedValue;
 
                 NotifyGeometryChange();
             }
         }
 
-        public float pixelPerSecond {
-            get => _pixelPerSecond;
+        public float pixelsPerSecond {
+            get => _pixelsPerSecond;
             set {
-                _pixelPerSecond = Mathf.Max(20f, value);
+                var clampedValue = Mathf.Clamp(value, 32f, 120f);
+                if (Mathf.Approximately(_pixelsPerSecond, clampedValue)) return;
+                _pixelsPerSecond = clampedValue;
+
+                NotifyGeometryChange();
+            }
+        }
+
+        public float startTime {
+            get => _startTime;
+            set {
+                var clampedValue = Mathf.Max(0f, value);
+                if (Mathf.Approximately(_startTime, clampedValue)) return;
+                _startTime = clampedValue;
 
                 NotifyGeometryChange();
             }
@@ -62,6 +78,7 @@ namespace Onion.MotionKit.Editor {
             _trackListContainer.Add(_timeRulerContainer = new(this));
             _trackListContainer.Add(_trackListView = CreateTrackListView());
             _trackListContainer.Add(_separator = CreateSeparator());
+            _trackListContainer.RegisterCallback<WheelEvent>(OnWheelZoom, TrickleDown.TrickleDown);
 
             _rootContainer.Add(_trackListContainer);
 
@@ -84,6 +101,7 @@ namespace Onion.MotionKit.Editor {
         private ListView CreateTrackListView() {
             var view = new ListView();
             view.AddToClassList("track-list-view");
+
             view.RegisterCallback<GeometryChangedEvent>(evt => NotifyGeometryChange());
             
             view.makeItem = () => new MotionTrackView(_trackTemplate, parent: this);
@@ -101,6 +119,29 @@ namespace Onion.MotionKit.Editor {
             view.virtualizationMethod = CollectionVirtualizationMethod.DynamicHeight;
 
             return view;
+        }
+
+        private void OnWheelZoom(WheelEvent evt) {
+            if ((evt.ctrlKey || evt.commandKey) && !evt.shiftKey) { 
+                float zoomDelta = -evt.delta.y;
+                float zoomFactor = 1.1f;
+
+                if (zoomDelta > 0) pixelsPerSecond *= zoomFactor;
+                else if (zoomDelta < 0) pixelsPerSecond /= zoomFactor;
+                else return;
+
+                evt.StopPropagation();
+            }
+
+            if (evt.shiftKey) {
+                float scrollDelta = evt.delta.x;
+                float scrollFactor = 1.0f / (pixelsPerSecond / 60.0f) * 3f;
+
+                float timeDelta = scrollDelta / pixelsPerSecond * scrollFactor;
+                startTime += timeDelta;
+
+                evt.StopPropagation();
+            }
         }
 
         private VisualElement CreateSeparator() {

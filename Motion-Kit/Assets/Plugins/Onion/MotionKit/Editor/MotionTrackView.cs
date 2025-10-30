@@ -57,7 +57,11 @@ namespace Onion.MotionKit.Editor {
             _trackProperty = trackProperty;
             
             if (_trackProperty == null) return;
-            _trackTargetField.BindProperty(_trackProperty.FindPropertyRelative("target"));
+            var trackTargetProp = _trackProperty.FindPropertyRelative("target");
+            if (trackTargetProp != null) {
+                _trackTargetField.BindProperty(trackTargetProp);
+            }
+            
             _trackTag.style.backgroundColor = Color.red;
         }
         
