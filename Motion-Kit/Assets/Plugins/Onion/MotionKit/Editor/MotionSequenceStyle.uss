@@ -5,9 +5,8 @@
     flex-direction: column;
 }
 
-.track-list-view {
+.track-list-container {
     margin-top: 4px;
-    flex-direction: column;
     background-color: #2D2D2D;
 
     border-color: #1E1E1E;
@@ -18,4 +17,18 @@
     max-height: 300px;
     
     overflow: hidden;
+}
+
+.track-list-view {
+    flex-grow: 1;
+}
+
+.track-target-separator {
+    position: absolute;
+    margin-left: 2px;
+    width: 2px;
+    height: 100%;
+
+    background-color: #1E1E1E;
+    cursor: col-resize;
 }

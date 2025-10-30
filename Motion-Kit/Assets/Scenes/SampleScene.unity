@@ -474,8 +474,8 @@ MonoBehaviour:
   - name: Sequence 0
     tracks:
     - rid: 5331092748953714756
-    - rid: 5331092748953714757
     - rid: 5331092748953714758
+    - rid: 5331092748953714757
   - name: Sequence 1
     tracks:
     - rid: 5331092748953714759

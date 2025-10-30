@@ -4,22 +4,33 @@
     justify-content: center;
     background-color: #3C3C3C;
     border-radius: 4px;
+    overflow: hidden;
 
-    min-height: 36px;
+    min-height: 24px;
 }
 
 .track-target-container {
-    width: 140px;
+    min-width: 60px;
+    width: 120px;
     height: 100%;
 
     border-radius: 4px 0 0 4px;
     justify-content: center;
     background-color: #4C4C4C;
+    overflow: hidden;
+}
+
+.track-tag {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 4px;
+    height: 100%;
 }
 
 .track-target-field {
-    width: 120px;
-    margin-left: 4px;
+    margin-left: 8px;
+    margin-right: 8px;
 }
 
 .track-timeline-container {

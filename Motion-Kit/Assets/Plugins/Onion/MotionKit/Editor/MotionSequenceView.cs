@@ -1,15 +1,38 @@
 using UnityEditor;
 using UnityEditor.UIElements;
+using UnityEngine;
 using UnityEngine.UIElements;
 
 namespace Onion.MotionKit.Editor {
+    #pragma warning disable IDE1006
+
     public class MotionSequenceView : VisualElement {
         private readonly VisualTreeAsset _trackTemplate;
         private SerializedProperty _sequenceProperty;
 
         private readonly VisualElement _rootContainer;
+        private readonly VisualElement _trackListContainer;
         private readonly ListView _trackListView;
+
+
+        private readonly VisualElement _separator;
+        private bool _isDraggingSeparator = false;
+        private float _separatorStartX;
+        private float _separatorStartLeftWidth;
+
+
         private readonly PropertyField _nameField;
+
+        private float _leftWidth = 120f;
+        public float leftWidth {
+            get => _leftWidth;
+            set {
+                _leftWidth = Mathf.Clamp(value, 60f, 200f);
+                _separator.style.left = _leftWidth;
+
+                NotifyChildrenOfWidthChange();
+            }
+        }
 
         public MotionSequenceView(VisualTreeAsset template, VisualTreeAsset trackTemplate) {
             if (template == null) return;
@@ -19,11 +42,14 @@ namespace Onion.MotionKit.Editor {
 
             _rootContainer = this.Q<VisualElement>("root-container");
             
-            _nameField = new() { label = "Name" };
-            _trackListView = CreateTrackListView();
+            _rootContainer.Add(_nameField = new() { label = "Name" });
 
-            _rootContainer.Add(_nameField);
-            _rootContainer.Add(_trackListView);
+            _trackListContainer = new();
+            _trackListContainer.AddToClassList("track-list-container");
+            _trackListContainer.Add(_trackListView = CreateTrackListView());
+            _trackListContainer.Add(_separator = CreateSeparator());
+
+            _rootContainer.Add(_trackListContainer);
 
             SetSequence(null);
         }
@@ -60,6 +86,53 @@ namespace Onion.MotionKit.Editor {
             view.virtualizationMethod = CollectionVirtualizationMethod.DynamicHeight;
 
             return view;
+        }
+
+        private VisualElement CreateSeparator() {
+            var separator = new VisualElement();
+
+            separator.AddToClassList("track-target-separator");
+            separator.style.left = leftWidth;
+
+            separator.RegisterCallback<PointerDownEvent>(OnSeparatorPointerDown);
+            separator.RegisterCallback<PointerMoveEvent>(OnSeparatorPointerMove);
+            separator.RegisterCallback<PointerUpEvent>(OnSeparatorPointerUp);
+
+            return separator;
+        }
+
+        private void OnSeparatorPointerDown(PointerDownEvent evt) {
+            if (evt.button == 0) {
+                _isDraggingSeparator = true;
+                _separatorStartX = evt.position.x;
+                _separatorStartLeftWidth = leftWidth;
+                _separator.CapturePointer(evt.pointerId); 
+                evt.StopPropagation();
+            }
+        }
+
+        private void OnSeparatorPointerMove(PointerMoveEvent evt) {
+            if (_isDraggingSeparator && _separator.HasPointerCapture(evt.pointerId)) {
+                float deltaX = evt.position.x - _separatorStartX;
+                leftWidth = _separatorStartLeftWidth + deltaX;
+                evt.StopPropagation();
+            }
+        }
+
+        private void OnSeparatorPointerUp(PointerUpEvent evt) {
+            if (_isDraggingSeparator && _separator.HasPointerCapture(evt.pointerId)) {
+                _isDraggingSeparator = false;
+                _separator.ReleasePointer(evt.pointerId);
+                evt.StopPropagation();
+            }
+        }
+
+        private void NotifyChildrenOfWidthChange() {
+             if (_trackListView == null) return;
+             
+            _trackListView.Query<MotionTrackView>().Visible().ForEach(trackView => {
+                 trackView.Repaint();
+            });
         }
 
         public void SetSequence(SerializedProperty sequenceProperty) {
