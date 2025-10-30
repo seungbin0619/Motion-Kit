@@ -4,8 +4,12 @@ using UnityEngine;
 using UnityEngine.UIElements;
 
 namespace Onion.MotionKit.Editor {
+    #pragma warning disable IDE1006
+    
     public class MotionTrackView : VisualElement {
         private SerializedProperty _trackProperty;
+        public SerializedProperty trackProperty => _trackProperty;
+
         private readonly VisualElement _container;
         private readonly MotionSequenceView _parent;
 

@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Onion.MotionKit {
     public class FadeClip : MotionClipWithValue<float> {
-        protected override Tween CreateTween(Component target, TweenSettings<float> _settings) {
+        protected override Tween Create(Component target, TweenSettings<float> _settings) {
             return target switch {
                 CanvasGroup canvasGroup => Tween.Alpha(canvasGroup, _settings),
                 SpriteRenderer spriteRenderer => Tween.Alpha(spriteRenderer, _settings),

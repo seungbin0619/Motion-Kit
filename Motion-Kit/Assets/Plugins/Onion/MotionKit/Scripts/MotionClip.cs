@@ -4,11 +4,11 @@ using UnityEngine;
 
 namespace Onion.MotionKit {
     public abstract class MotionClip : ScriptableObject {
-        protected abstract Tween CreateTween(Component target, TweenSettings settings);
+        public abstract Tween Create(Component target, TweenSettings settings);
 
 #if UNITY_EDITOR
         public bool IsValidFor(Component target) {
-            return CreateTween(target, default).isAlive;
+            return Create(target, default).isAlive;
         }
 #endif
     }

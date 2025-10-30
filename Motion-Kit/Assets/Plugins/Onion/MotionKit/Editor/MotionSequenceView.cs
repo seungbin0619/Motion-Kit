@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEditor;
 using UnityEditor.UIElements;
 using UnityEngine;
@@ -14,13 +15,12 @@ namespace Onion.MotionKit.Editor {
         private readonly MotionSequenceTimeRuler _timeRulerContainer;
         private readonly VisualElement _trackListContainer;
         private readonly ListView _trackListView;
-
+        private readonly HashSet<SerializedProperty> _selectedTrackProperties = new();
 
         private readonly VisualElement _separator;
         private bool _isDraggingSeparator = false;
         private float _separatorStartX;
         private float _separatorStartLeftWidth;
-
 
         private readonly PropertyField _nameField;
 
@@ -97,6 +97,7 @@ namespace Onion.MotionKit.Editor {
             _sequenceProperty.serializedObject.Update();
 
         }
+        
 
         private ListView CreateTrackListView() {
             var view = new ListView();
@@ -112,6 +113,8 @@ namespace Onion.MotionKit.Editor {
                 track.SetTrack(trackProperty);
             };
 
+            view.selectionChanged += OnTrackSelectionChanged;
+
             // options
             view.showBoundCollectionSize = false;
             view.reorderable = true;
@@ -125,6 +128,18 @@ namespace Onion.MotionKit.Editor {
             });
 
             return view;
+        }
+
+        private void OnTrackSelectionChanged(IEnumerable<object> selectedItems) {
+            _selectedTrackProperties.Clear();
+
+            foreach (var item in selectedItems) {
+                if (item is SerializedProperty prop) {
+                    _selectedTrackProperties.Add(prop);
+                }
+            }
+
+
         }
 
         private void OnWheelZoom(WheelEvent evt) {

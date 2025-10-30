@@ -473,9 +473,9 @@ MonoBehaviour:
   sequences:
   - name: Sequence 0
     tracks:
+    - rid: 5331092758619488258
     - rid: 5331092758619488256
     - rid: -2
-    - rid: 5331092758619488258
     - rid: -2
     - rid: -2
     - rid: -2
@@ -500,7 +500,7 @@ MonoBehaviour:
       type: {class: 'MotionTrack`1[[System.Single, mscorlib]]', ns: Onion.MotionKit, asm: Assembly-CSharp-firstpass}
       data:
         bindingIndex: 0
-        target: {fileID: 0}
+        target: {fileID: 2052945230}
         settings:
           duration: 0
           ease: 0
