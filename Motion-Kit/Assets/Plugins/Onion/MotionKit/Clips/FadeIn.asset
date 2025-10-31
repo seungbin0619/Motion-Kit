@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4084baeaf0c14604c95cfcf32d53ae86, type: 3}
   m_Name: FadeIn
   m_EditorClassIdentifier: 
+  <category>k__BackingField: 1
   _values:
     startFromCurrent: 1
     startValue: 0

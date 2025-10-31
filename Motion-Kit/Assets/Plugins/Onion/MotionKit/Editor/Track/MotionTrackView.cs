@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEditor;
 using UnityEditor.UIElements;
 using UnityEngine;
@@ -7,6 +8,16 @@ namespace Onion.MotionKit.Editor {
     #pragma warning disable IDE1006
     
     public class MotionTrackView : VisualElement {
+        private static readonly IDictionary<MotionClipCategory, Color> _colorMap = new Dictionary<MotionClipCategory, Color> {
+            { MotionClipCategory.None, new(0.6f, 0.6f, 0.6f) },
+            { MotionClipCategory.Appear, new(0.4f, 0.8f, 0.4f) },
+            { MotionClipCategory.Hide, new(0.8f, 0.4f, 0.4f) },
+            { MotionClipCategory.Move, new(0.4f, 0.4f, 0.8f) },
+            { MotionClipCategory.Rotate, new(0.8f, 0.8f, 0.4f) },
+            { MotionClipCategory.Scale, new(0.4f, 0.8f, 0.8f) },
+            { MotionClipCategory.Custom, new(0.8f, 0.4f, 0.8f) },
+        };
+
         private SerializedProperty _trackProperty;
         public SerializedProperty trackProperty => _trackProperty;
 
@@ -66,7 +77,13 @@ namespace Onion.MotionKit.Editor {
                 _trackTargetField.BindProperty(trackTargetProp);
             }
             
-            _trackTag.style.backgroundColor = Color.red;
+            var color = _colorMap[MotionClipCategory.None];
+            var clipProp = _trackProperty.FindPropertyRelative("clip");
+            if (clipProp != null && clipProp.objectReferenceValue is MotionClip clip) {
+                _colorMap.TryGetValue(clip.category, out color);
+            }
+
+            _trackTag.style.backgroundColor = color;
         }
         
         public void Repaint() {

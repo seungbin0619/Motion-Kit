@@ -483,7 +483,7 @@ MonoBehaviour:
       type: {class: 'MotionTrack`1[[System.Single, mscorlib]]', ns: Onion.MotionKit, asm: Assembly-CSharp-firstpass}
       data:
         target: {fileID: 2052945230}
-        clip: {fileID: 0}
+        clip: {fileID: 11400000, guid: 6f8492e89b134cc4ab0fc59b2bb99af2, type: 2}
         settings:
           duration: 0
           ease: 0
@@ -509,7 +509,7 @@ MonoBehaviour:
       type: {class: 'MotionTrack`1[[UnityEngine.Vector3, UnityEngine.CoreModule]]', ns: Onion.MotionKit, asm: Assembly-CSharp-firstpass}
       data:
         target: {fileID: 0}
-        clip: {fileID: 0}
+        clip: {fileID: 11400000, guid: 1ec5e675d2708be4faee7f9950deea23, type: 2}
         settings:
           duration: 1
           ease: 0
