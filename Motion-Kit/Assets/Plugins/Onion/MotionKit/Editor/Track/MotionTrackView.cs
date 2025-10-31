@@ -51,7 +51,7 @@ namespace Onion.MotionKit.Editor {
 
             _trackTargetField = new PropertyField(null, label: "");
             _trackTargetField.AddToClassList("track-target-field");
-            // _trackTargetField.dataSourceType = 
+            _trackTargetField.RegisterValueChangeCallback(OnTargetChanged);
 
             container.Add(_trackTag);
             container.Add(_trackTargetField);
@@ -64,6 +64,21 @@ namespace Onion.MotionKit.Editor {
             container.AddToClassList("track-timeline-container");
 
             return container; 
+        }
+
+        private void OnTargetChanged(SerializedPropertyChangeEvent evt) {
+            if (evt.changedProperty.objectReferenceValue is not Component component) return;
+            if (_trackProperty.managedReferenceValue is not MotionTrack track) return;
+            if (track.clip.IsValidFor(component)) return;
+
+            track.target = null;
+            foreach (var c in component.GetComponents<Component>()) {
+                if (track.clip.IsValidFor(c)) {
+                    track.target = c;
+
+                    break;
+                }
+            }
         }
 
         public void SetTrack(SerializedProperty trackProperty) {
