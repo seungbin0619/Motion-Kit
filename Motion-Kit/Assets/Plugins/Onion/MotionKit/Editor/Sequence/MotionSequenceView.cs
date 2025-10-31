@@ -91,11 +91,13 @@ namespace Onion.MotionKit.Editor {
             _addTrackButton = new(OnAddButtonClicked);
             _addTrackButton.AddToClassList("track-button");
             _addTrackButton.text = "+";
+            _addTrackButton.tooltip = "Add Track...";
             _addTrackButton.focusable = false;
 
             _removeTrackButton = new(OnRemoveButtonClicked);
             _removeTrackButton.AddToClassList("track-button");
             _removeTrackButton.text = "-";
+            _removeTrackButton.tooltip = "Remove Selected Track(s)";
             _removeTrackButton.SetEnabled(false);
             _removeTrackButton.focusable = false;
 
