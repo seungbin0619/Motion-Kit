@@ -1,7 +1,7 @@
 .track-container {
     margin: 2px 2px;
-    flex-direction: column;
-    justify-content: center;
+    flex-direction: row;
+    justify-content: flex-start;
     background-color: rgba(60, 60, 60, 0.6);
     border-radius: 4px;
     overflow: hidden;
@@ -34,6 +34,8 @@
 }
 
 .track-timeline-container {
-    flex-grow: 1;
     overflow: hidden;
+    margin-left: 2px;
+    flex-grow: 1;
+    height: 100%;
 }

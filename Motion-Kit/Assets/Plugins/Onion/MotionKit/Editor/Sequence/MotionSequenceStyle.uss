@@ -80,6 +80,7 @@
 }
 
 .track-inspector-container {
+    display: none;
     margin-top: 4px;
     background-color: #2D2D2D;
 
@@ -108,4 +109,8 @@
     margin: 0;
     width: 16px;
     margin-right: 2px;
+}
+
+.unity-list-view__empty-label {
+    display: none !important;
 }

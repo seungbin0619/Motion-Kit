@@ -51,6 +51,7 @@ namespace Onion.MotionKit.Editor {
 
             _trackTargetField = new PropertyField(null, label: "");
             _trackTargetField.AddToClassList("track-target-field");
+            // _trackTargetField.dataSourceType = 
 
             container.Add(_trackTag);
             container.Add(_trackTargetField);

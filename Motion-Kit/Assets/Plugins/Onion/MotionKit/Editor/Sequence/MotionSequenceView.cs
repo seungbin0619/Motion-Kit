@@ -215,7 +215,6 @@ namespace Onion.MotionKit.Editor {
 
             view.RegisterCallback<GeometryChangedEvent>(evt => NotifyGeometryChange());
             view.RegisterCallback<KeyDownEvent>(OnKeyDown);
-            // view.RegisterCallback<FocusOutEvent>(evt => (evt.target as ListView)?.ClearSelection());
             
             view.makeItem = () => new MotionTrackView(_trackTemplate, parent: this);
             view.bindItem = (element, index) => {
@@ -229,6 +228,8 @@ namespace Onion.MotionKit.Editor {
 
             // options
             view.showBoundCollectionSize = false;
+            view.allowAdd = false;
+            view.allowRemove = false;
             view.reorderable = true;
             view.selectionType = SelectionType.Multiple;
             view.virtualizationMethod = CollectionVirtualizationMethod.DynamicHeight;
