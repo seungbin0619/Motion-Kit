@@ -30,6 +30,8 @@ namespace Onion.MotionKit.Editor {
         
         private VisualElement _trackTimelineContainer;
         private VisualElement _realTrackTimeline;
+        private Label _realTrackLabel;
+        private VisualElement _realTrackTag;
 
         public MotionTrackView(VisualTreeAsset template, MotionSequenceView parent = null) {
             if (template == null) return;
@@ -66,6 +68,14 @@ namespace Onion.MotionKit.Editor {
 
             _realTrackTimeline = new VisualElement();
             _realTrackTimeline.AddToClassList("track-timeline-content");
+
+            _realTrackLabel = new Label();
+            _realTrackLabel.AddToClassList("track-timeline-label");
+            _realTrackTag = new VisualElement();
+            _realTrackTag.AddToClassList("track-timeline-tag");
+
+            _realTrackTimeline.Add(_realTrackLabel);
+            _realTrackTimeline.Add(_realTrackTag);
             container.Add(_realTrackTimeline);
 
             return container; 
@@ -102,10 +112,11 @@ namespace Onion.MotionKit.Editor {
             var clipProp = _trackProperty.FindPropertyRelative("clip");
             if (clipProp != null && clipProp.objectReferenceValue is MotionClip clip) {
                 _colorMap.TryGetValue(clip.category, out color);
+                _realTrackLabel.text = clip.name;
             }
 
             _trackTag.style.backgroundColor = color;
-            _realTrackTimeline.style.backgroundColor = color;
+            _realTrackTag.style.backgroundColor = color;
 
             Repaint();
         }
@@ -115,7 +126,22 @@ namespace Onion.MotionKit.Editor {
             if (_trackProperty == null) return;
 
             var track = _trackProperty.managedReferenceValue as MotionTrack;
+
             _realTrackTimeline.style.width = _parent.pixelsPerSecond * track.settings.duration;
+            // _realTrackTimeline.style.left = 
+
+            float left = _parent.minMarginLeft + (_parent.pixelsPerSecond * track.settings.startDelay);
+            left -= _parent.startTime * _parent.pixelsPerSecond;
+
+            float right = left + _parent.pixelsPerSecond * (track.settings.duration + track.settings.endDelay);
+
+            if (right < 0 || left > _parent.totalWidth) {
+                _trackTimelineContainer.style.display = DisplayStyle.None;
+            }
+            else {
+                _trackTimelineContainer.style.display = DisplayStyle.Flex;
+                _realTrackTimeline.style.left = left;
+            }
         }
     }
 }

@@ -40,6 +40,8 @@ namespace Onion.MotionKit.Editor {
 
         public readonly float minMarginLeft = 12f;
 
+        public float totalWidth => _trackListContainer.contentRect.width - leftWidth - 2f;
+
         public float leftWidth {
             get => _leftWidth;
             private set {
@@ -84,18 +86,26 @@ namespace Onion.MotionKit.Editor {
 
             _trackListContainer = new();
             _trackListContainer.AddToClassList("track-list-container");
+            _trackListContainer.RegisterCallback<ClickEvent>(evt => {
+                if (evt.target is not VisualElement ve) return;
+                if (ve.GetFirstAncestorOfType<MotionTrackView>() != null) return;
+
+                _trackListView.ClearSelection();
+            });
             
             var buttonContainer = new VisualElement();
             buttonContainer.AddToClassList("track-button-container");
             
             _addTrackButton = new(OnAddButtonClicked);
             _addTrackButton.AddToClassList("track-button");
+            _addTrackButton.AddToClassList("add");
             _addTrackButton.text = "+";
             _addTrackButton.tooltip = "Add Track...";
             _addTrackButton.focusable = false;
 
             _removeTrackButton = new(OnRemoveButtonClicked);
             _removeTrackButton.AddToClassList("track-button");
+            _removeTrackButton.AddToClassList("remove");
             _removeTrackButton.text = "-";
             _removeTrackButton.tooltip = "Remove Selected Track(s)";
             _removeTrackButton.SetEnabled(false);

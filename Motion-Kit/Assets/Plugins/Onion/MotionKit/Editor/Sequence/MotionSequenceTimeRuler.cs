@@ -16,14 +16,13 @@ namespace Onion.MotionKit.Editor {
             if (_parent == null) return;
 
             style.marginLeft = _parent.leftWidth + 2;
-            var totalWidth = _parent.contentContainer.layout.width - _parent.leftWidth - 2;
 
             float second = Mathf.Ceil(_parent.startTime * 2.0f) * 0.5f - 1;
             float position = _parent.minMarginLeft + 
                 second * _parent.pixelsPerSecond - 
                 _parent.startTime * _parent.pixelsPerSecond;
 
-            while (position < totalWidth) {
+            while (position < _parent.totalWidth) {
                 if (second % 1.0f == 0) {
                     var tick = new VisualElement();
                     tick.AddToClassList("time-ruler-tick");

@@ -111,6 +111,14 @@
     margin-right: 2px;
 }
 
+.track-button.add {
+    cursor: arrow-plus
+}
+
+.track-button.remove {
+    cursor: arrow-minus
+}
+
 .unity-list-view__empty-label {
     display: none !important;
 }
