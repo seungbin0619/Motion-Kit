@@ -153,13 +153,6 @@ namespace Onion.MotionKit.Editor {
             menu.DropDown(new Rect(menuPosition, Vector2.zero));
         }
 
-        private void OnRemoveButtonClicked() {
-            if (_sequenceProperty == null) return;
-            if (_selectedTrackProperties.Count == 0) return;
-
-            // remove selected tracks
-        }
-
         private void OnClipSelected(object obj) {
             if (_sequenceProperty == null) return;
             if (obj is not MotionClip clip) return;
@@ -167,11 +160,31 @@ namespace Onion.MotionKit.Editor {
             // add new track
         }
 
+        private void OnRemoveButtonClicked() {
+            if (_sequenceProperty == null) return;
+            if (_selectedTrackProperties.Count == 0) return;
+
+            var tracksProperty = _sequenceProperty.FindPropertyRelative("tracks");
+            var selectedIndices = _trackListView.selectedIndices.ToList();
+
+            selectedIndices.Sort();
+            selectedIndices.Reverse();
+
+            foreach (var index in selectedIndices) {
+                tracksProperty.DeleteArrayElementAtIndex(index);
+            }
+
+            _sequenceProperty.serializedObject.ApplyModifiedProperties();
+            _trackListView.ClearSelection();
+        }
+
         private ListView CreateTrackListView() {
             var view = new ListView();
             view.AddToClassList("track-list-view");
 
             view.RegisterCallback<GeometryChangedEvent>(evt => NotifyGeometryChange());
+            view.RegisterCallback<KeyDownEvent>(OnKeyDown);
+            // view.RegisterCallback<FocusOutEvent>(evt => (evt.target as ListView)?.ClearSelection());
             
             view.makeItem = () => new MotionTrackView(_trackTemplate, parent: this);
             view.bindItem = (element, index) => {
@@ -196,6 +209,15 @@ namespace Onion.MotionKit.Editor {
             });
 
             return view;
+        }
+
+        private void OnKeyDown(KeyDownEvent evt) {
+            bool isDeletePressed = evt.keyCode == KeyCode.Delete;
+            if (isDeletePressed) {
+                
+                OnRemoveButtonClicked();
+                evt.StopPropagation();
+            }
         }
 
         private void OnTrackSelectionChanged(IEnumerable<object> selectedItems) {
