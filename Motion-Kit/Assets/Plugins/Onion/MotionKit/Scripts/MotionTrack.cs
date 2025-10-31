@@ -10,6 +10,10 @@ namespace Onion.MotionKit {
         public MotionClip clip;
         public TweenSettings settings;
 
+        public MotionTrack() {
+            settings.duration = 1f;
+        }
+
         public virtual Tween Create() {
             return clip.Create(target, settings);
         }

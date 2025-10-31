@@ -39,3 +39,9 @@
     flex-grow: 1;
     height: 100%;
 }
+
+.track-timeline-content {
+    height: 100%;
+    opacity: 0.8;
+    border-radius: 2px;
+}

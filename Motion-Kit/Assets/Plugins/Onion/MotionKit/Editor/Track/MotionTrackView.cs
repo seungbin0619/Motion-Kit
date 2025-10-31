@@ -27,8 +27,9 @@ namespace Onion.MotionKit.Editor {
         private VisualElement _trackTargetContainer;
         private VisualElement _trackTag;
         private PropertyField _trackTargetField;
-
+        
         private VisualElement _trackTimelineContainer;
+        private VisualElement _realTrackTimeline;
 
         public MotionTrackView(VisualTreeAsset template, MotionSequenceView parent = null) {
             if (template == null) return;
@@ -62,6 +63,10 @@ namespace Onion.MotionKit.Editor {
         private VisualElement CreateTrackTimelineContainer() {
             var container = new VisualElement();
             container.AddToClassList("track-timeline-container");
+
+            _realTrackTimeline = new VisualElement();
+            _realTrackTimeline.AddToClassList("track-timeline-content");
+            container.Add(_realTrackTimeline);
 
             return container; 
         }
@@ -100,10 +105,17 @@ namespace Onion.MotionKit.Editor {
             }
 
             _trackTag.style.backgroundColor = color;
+            _realTrackTimeline.style.backgroundColor = color;
+
+            Repaint();
         }
         
         public void Repaint() {
             _trackTargetContainer.style.width = _parent.leftWidth;
+            if (_trackProperty == null) return;
+
+            var track = _trackProperty.managedReferenceValue as MotionTrack;
+            _realTrackTimeline.style.width = _parent.pixelsPerSecond * track.settings.duration;
         }
     }
 }
