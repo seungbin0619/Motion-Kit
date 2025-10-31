@@ -23,7 +23,17 @@ namespace Onion.MotionKit {
 
 #if UNITY_EDITOR
         public bool IsValidFor(Component target) {
-            return Create(target, default).isAlive;
+            SetEnabled(false);
+            var result = Create(target, default).isAlive;
+            SetEnabled(true);
+
+            return result;
+        }
+
+        // ignore PrimeTween warnings in editor validation
+        private static void SetEnabled(bool enabled) {
+            PrimeTweenConfig.warnZeroDuration = enabled;
+            PrimeTweenConfig.warnEndValueEqualsCurrent = enabled;
         }
 #endif
     }

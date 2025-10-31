@@ -736,7 +736,7 @@ MonoBehaviour:
     - rid: 5331092786677809214
       type: {class: 'MotionTrack`1[[System.Single, mscorlib]]', ns: Onion.MotionKit, asm: Assembly-CSharp-firstpass}
       data:
-        target: {fileID: 0}
+        target: {fileID: 790710001}
         clip: {fileID: 11400000, guid: 6f8492e89b134cc4ab0fc59b2bb99af2, type: 2}
         settings:
           duration: 0
