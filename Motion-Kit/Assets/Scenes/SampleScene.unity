@@ -741,7 +741,7 @@ MonoBehaviour:
         target: {fileID: 790710001}
         clip: {fileID: 11400000, guid: 6f8492e89b134cc4ab0fc59b2bb99af2, type: 2}
         settings:
-          duration: 1
+          duration: 3
           ease: 0
           customEase:
             serializedVersion: 2
@@ -767,7 +767,7 @@ MonoBehaviour:
         target: {fileID: 790710001}
         clip: {fileID: 11400000, guid: 1ec5e675d2708be4faee7f9950deea23, type: 2}
         settings:
-          duration: 1
+          duration: 3
           ease: 0
           customEase:
             serializedVersion: 2
@@ -777,7 +777,7 @@ MonoBehaviour:
             m_RotationOrder: 4
           cycles: 1
           cycleMode: 0
-          startDelay: 1
+          startDelay: 3
           endDelay: 0
           useUnscaledTime: 0
           _useFixedUpdate: 0
