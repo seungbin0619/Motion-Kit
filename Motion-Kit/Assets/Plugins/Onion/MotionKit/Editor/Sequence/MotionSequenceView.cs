@@ -1,6 +1,8 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using PrimeTween;
 using UnityEditor;
 using UnityEditor.UIElements;
 using UnityEngine;
@@ -12,6 +14,7 @@ namespace Onion.MotionKit.Editor {
     public class MotionSequenceView : VisualElement {
         private readonly VisualTreeAsset _trackTemplate;
         private SerializedProperty _sequenceProperty;
+        private SerializedProperty _tracksProperty;
 
         private readonly VisualElement _rootContainer;
         private readonly MotionSequenceTimeRuler _timeRulerContainer;
@@ -158,20 +161,46 @@ namespace Onion.MotionKit.Editor {
             if (obj is not MotionClip clip) return;
 
             // add new track
+            Undo.RecordObject(_sequenceProperty.serializedObject.targetObject, "Add Motion Track");
+
+            int index = _tracksProperty.arraySize;
+
+            _tracksProperty.InsertArrayElementAtIndex(index);
+            var trackProp = _tracksProperty.GetArrayElementAtIndex(index);
+
+            Type clipType = clip.GetType(); // clip의 타입 기반으로 MotionTrack 생성
+            while (clipType != null && clipType != typeof(object)) {
+                if (clipType.IsGenericType && clipType.GetGenericTypeDefinition() == typeof(MotionClipWithValue<>)) {
+                    Type genericT = clipType.GetGenericArguments()[0];
+                    
+                    trackProp.managedReferenceValue = Activator
+                        .CreateInstance(typeof(MotionTrack<>)
+                        .MakeGenericType(genericT));
+
+                    break;
+                }
+
+                clipType = clipType.BaseType;
+            }
+
+            trackProp.FindPropertyRelative("clip").objectReferenceValue = clip;
+
+            _sequenceProperty.serializedObject.ApplyModifiedProperties();
         }
 
         private void OnRemoveButtonClicked() {
             if (_sequenceProperty == null) return;
             if (_selectedTrackProperties.Count == 0) return;
 
-            var tracksProperty = _sequenceProperty.FindPropertyRelative("tracks");
             var selectedIndices = _trackListView.selectedIndices.ToList();
 
             selectedIndices.Sort();
             selectedIndices.Reverse();
 
+            Undo.RecordObject(_sequenceProperty.serializedObject.targetObject, "Remove Motion Tracks");
+
             foreach (var index in selectedIndices) {
-                tracksProperty.DeleteArrayElementAtIndex(index);
+                _tracksProperty.DeleteArrayElementAtIndex(index);
             }
 
             _sequenceProperty.serializedObject.ApplyModifiedProperties();
@@ -189,7 +218,7 @@ namespace Onion.MotionKit.Editor {
             view.makeItem = () => new MotionTrackView(_trackTemplate, parent: this);
             view.bindItem = (element, index) => {
                 var track = element as MotionTrackView;
-                var trackProperty = _sequenceProperty.FindPropertyRelative("tracks").GetArrayElementAtIndex(index);
+                var trackProperty = _tracksProperty.GetArrayElementAtIndex(index);
 
                 track.SetTrack(trackProperty);
             };
@@ -336,8 +365,8 @@ namespace Onion.MotionKit.Editor {
             if (_sequenceProperty != null) {
                 _nameField.BindProperty(_sequenceProperty.FindPropertyRelative("name"));
 
-                var tracksProperty = _sequenceProperty.FindPropertyRelative("tracks");
-                _trackListView.BindProperty(tracksProperty);
+                _tracksProperty = _sequenceProperty.FindPropertyRelative("tracks");
+                _trackListView.BindProperty(_tracksProperty);
             }
             
             Repaint();
