@@ -14,6 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   <category>k__BackingField: 2
   _values:
-    startFromCurrent: 1
+    startFromCurrent: 0
     startValue: 1
     endValue: 0

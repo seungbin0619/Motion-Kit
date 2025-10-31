@@ -68,9 +68,9 @@ namespace Onion.MotionKit.Editor {
 
             _realTrackTimeline = new VisualElement();
             _realTrackTimeline.AddToClassList("track-timeline-content");
-            _realTrackTimeline.RegisterCallback<PointerDownEvent>(OnPointerDown);
-            _realTrackTimeline.RegisterCallback<PointerMoveEvent>(OnPointerMove);
-            _realTrackTimeline.RegisterCallback<PointerUpEvent>(OnPointerUp);
+            // _realTrackTimeline.RegisterCallback<PointerDownEvent>(OnPointerDown);
+            // _realTrackTimeline.RegisterCallback<PointerMoveEvent>(OnPointerMove);
+            // _realTrackTimeline.RegisterCallback<PointerUpEvent>(OnPointerUp);
 
             _realTrackLabel = new Label();
             _realTrackLabel.AddToClassList("track-timeline-label");
@@ -85,17 +85,17 @@ namespace Onion.MotionKit.Editor {
             return container; 
         }
 
-        private void OnPointerDown(PointerDownEvent evt) {
-            evt.StopPropagation();
-        }
+        // private void OnPointerDown(PointerDownEvent evt) {
+        //     evt.StopPropagation();
+        // }
 
-        private void OnPointerMove(PointerMoveEvent evt) {
-            evt.StopPropagation();
-        }
+        // private void OnPointerMove(PointerMoveEvent evt) {
+        //     evt.StopPropagation();
+        // }
 
-        private void OnPointerUp(PointerUpEvent evt) {
-            evt.StopPropagation();
-        }
+        // private void OnPointerUp(PointerUpEvent evt) {
+        //     evt.StopPropagation();
+        // }
 
         private void OnTargetChanged(SerializedPropertyChangeEvent evt) {
             if (evt.changedProperty.objectReferenceValue is not Component component) return;

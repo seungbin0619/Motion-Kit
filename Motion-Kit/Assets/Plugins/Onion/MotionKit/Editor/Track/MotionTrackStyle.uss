@@ -56,7 +56,6 @@
 
 .track-timeline-container {
     overflow: hidden;
-    margin-left: 2px;
     flex-grow: 1;
     height: 100%;
 }

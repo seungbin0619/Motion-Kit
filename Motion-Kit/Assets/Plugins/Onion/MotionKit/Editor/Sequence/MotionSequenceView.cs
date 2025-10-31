@@ -33,6 +33,7 @@ namespace Onion.MotionKit.Editor {
         private float _separatorStartLeftWidth;
 
         private readonly PropertyField _nameField;
+        private readonly PropertyField _playOnAwakeField;
 
         private float _leftWidth = 120f;
         private float _pixelsPerSecond = 60f;
@@ -83,6 +84,7 @@ namespace Onion.MotionKit.Editor {
 
             _rootContainer = this.Q<VisualElement>("root-container");
             _rootContainer.Add(_nameField = new() { label = "Name" });
+            _rootContainer.Add(_playOnAwakeField = new() { label = "Play On Awake" });
 
             _trackListContainer = new();
             _trackListContainer.AddToClassList("track-list-container");
@@ -377,11 +379,13 @@ namespace Onion.MotionKit.Editor {
             if (_sequenceProperty == sequenceProperty) return;
 
             _nameField.Unbind();
+            _playOnAwakeField.Unbind();
             _trackListView.Unbind();
             _sequenceProperty = sequenceProperty;
             
             if (_sequenceProperty != null) {
                 _nameField.BindProperty(_sequenceProperty.FindPropertyRelative("name"));
+                _playOnAwakeField.BindProperty(_sequenceProperty.FindPropertyRelative("playOnAwake"));
 
                 _tracksProperty = _sequenceProperty.FindPropertyRelative("tracks");
                 _trackListView.BindProperty(_tracksProperty);
