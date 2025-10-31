@@ -2,6 +2,7 @@ using PrimeTween;
 using UnityEngine;
 
 namespace Onion.MotionKit {
+    [MotionClipMenu("Fade")]
     public class FadeClip : MotionClipWithValue<float> {
         protected override Tween Create(Component target, TweenSettings<float> _settings) {
             return target switch {

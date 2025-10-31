@@ -1,4 +1,6 @@
 using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 using UnityEditor;
 using UnityEditor.UIElements;
 using UnityEngine;
@@ -15,7 +17,12 @@ namespace Onion.MotionKit.Editor {
         private readonly MotionSequenceTimeRuler _timeRulerContainer;
         private readonly VisualElement _trackListContainer;
         private readonly ListView _trackListView;
+
+        private readonly Button _addTrackButton;
+        private readonly Button _removeTrackButton;
+
         private readonly HashSet<SerializedProperty> _selectedTrackProperties = new();
+        private readonly VisualElement _trackInspectorContainer;
 
         private readonly VisualElement _separator;
         private bool _isDraggingSeparator = false;
@@ -70,17 +77,39 @@ namespace Onion.MotionKit.Editor {
             _trackTemplate = trackTemplate;
 
             _rootContainer = this.Q<VisualElement>("root-container");
-            
             _rootContainer.Add(_nameField = new() { label = "Name" });
 
             _trackListContainer = new();
             _trackListContainer.AddToClassList("track-list-container");
+            
+            var buttonContainer = new VisualElement();
+            buttonContainer.AddToClassList("track-button-container");
+            
+            _addTrackButton = new(OnAddButtonClicked);
+            _addTrackButton.AddToClassList("track-button");
+            _addTrackButton.text = "+";
+            _addTrackButton.focusable = false;
+
+            _removeTrackButton = new(OnRemoveButtonClicked);
+            _removeTrackButton.AddToClassList("track-button");
+            _removeTrackButton.text = "-";
+            _removeTrackButton.SetEnabled(false);
+            _removeTrackButton.focusable = false;
+
+            buttonContainer.Add(_addTrackButton);
+            buttonContainer.Add(_removeTrackButton);
+
+            _trackListContainer.Add(buttonContainer);
             _trackListContainer.Add(_timeRulerContainer = new(this));
             _trackListContainer.Add(_trackListView = CreateTrackListView());
             _trackListContainer.Add(_separator = CreateSeparator());
             _trackListContainer.RegisterCallback<WheelEvent>(OnWheelZoom, TrickleDown.TrickleDown);
 
             _rootContainer.Add(_trackListContainer);
+
+            _trackInspectorContainer = new();
+            _trackInspectorContainer.AddToClassList("track-inspector-container");
+            _rootContainer.Add(_trackInspectorContainer);
 
             SetSequence(null);
         }
@@ -95,9 +124,48 @@ namespace Onion.MotionKit.Editor {
 
             style.display = DisplayStyle.Flex;
             _sequenceProperty.serializedObject.Update();
-
         }
-        
+
+        private void OnAddButtonClicked() {
+            if (_sequenceProperty == null) return;
+
+            var menu = new GenericMenu();
+            string[] guids = AssetDatabase.FindAssets($"t:{typeof(MotionClip).Name}");
+
+            foreach (var guid in guids) {
+                string path = AssetDatabase.GUIDToAssetPath(guid);
+                var clip = AssetDatabase.LoadAssetAtPath<MotionClip>(path);
+                if (clip == null) continue;
+
+                var clipType = clip.GetType();
+                var menuAttribute = clipType.GetCustomAttribute<MotionClipMenu>();
+                
+                string menuPath = menuAttribute != null 
+                    ? $"{menuAttribute.path}/{clip.name}" 
+                    : $"Other/{clip.name}";
+
+                menu.AddItem(new(menuPath), false, OnClipSelected, clip);
+            }
+
+            var buttonRect = _addTrackButton.worldBound;
+            var menuPosition = new Vector2(buttonRect.xMin, buttonRect.yMax);
+
+            menu.DropDown(new Rect(menuPosition, Vector2.zero));
+        }
+
+        private void OnRemoveButtonClicked() {
+            if (_sequenceProperty == null) return;
+            if (_selectedTrackProperties.Count == 0) return;
+
+            // remove selected tracks
+        }
+
+        private void OnClipSelected(object obj) {
+            if (_sequenceProperty == null) return;
+            if (obj is not MotionClip clip) return;
+
+            // add new track
+        }
 
         private ListView CreateTrackListView() {
             var view = new ListView();
@@ -139,7 +207,24 @@ namespace Onion.MotionKit.Editor {
                 }
             }
 
+            _removeTrackButton.SetEnabled(_selectedTrackProperties.Count > 0);
+            RepaintTrackInspector();
+        }
 
+        private void RepaintTrackInspector() {
+            _trackInspectorContainer.Clear();
+            _trackInspectorContainer.style.display = DisplayStyle.None;
+
+            if (_selectedTrackProperties.Count == 1) {
+                _trackInspectorContainer.style.display = DisplayStyle.Flex;
+                
+                var singleTrackProp = _selectedTrackProperties.First();                
+                var trackPropertyField = new PropertyField();
+                trackPropertyField.BindProperty(singleTrackProp);
+                _trackInspectorContainer.Add(trackPropertyField);
+
+                return;
+            }
         }
 
         private void OnWheelZoom(WheelEvent evt) {

@@ -51,7 +51,7 @@
     height: 16px;
     width: 100%;
     background-color: #3C3C3C;
-    margin-bottom: 2px;
+    margin-bottom: 4px;
 
     overflow: hidden;
 }
@@ -77,4 +77,35 @@
     font-size: 8px;
     top: 20%;
     margin-left: 2px;
+}
+
+.track-inspector-container {
+    margin-top: 4px;
+    background-color: #2D2D2D;
+
+    border-color: #1E1E1E;
+    border-width: 1px;
+    border-radius: 4px;
+
+    min-height: 100px;
+
+    overflow: hidden;
+}
+
+.track-button-container {
+    position: absolute;
+    left: 0px;
+    top: 0px;
+
+    flex-direction: row;
+
+    height: 16px;
+    width: auto;
+    margin: 2px;
+}
+
+.track-button {
+    margin: 0;
+    width: 16px;
+    margin-right: 2px;
 }

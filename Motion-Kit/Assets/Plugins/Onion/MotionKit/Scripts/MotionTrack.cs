@@ -6,7 +6,6 @@ using UnityEngine;
 namespace Onion.MotionKit {
     [Serializable]
     public class MotionTrack {
-        public int bindingIndex;
         public Component target;
         public MotionClip clip;
         public TweenSettings settings;
