@@ -506,7 +506,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 0}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -730,7 +730,7 @@ MonoBehaviour:
   - name: Sequence 0
     tracks:
     - rid: 5331092788815593472
-    - rid: 5331092788815593473
+    - rid: 5331092788815593536
   references:
     version: 2
     RefIds:
@@ -760,11 +760,11 @@ MonoBehaviour:
           startFromCurrent: 0
           startValue: 0
           endValue: 0
-    - rid: 5331092788815593473
+    - rid: 5331092788815593536
       type: {class: 'MotionTrack`1[[System.Single, mscorlib]]', ns: Onion.MotionKit, asm: Assembly-CSharp-firstpass}
       data:
-        target: {fileID: 0}
-        clip: {fileID: 11400000, guid: 6f8492e89b134cc4ab0fc59b2bb99af2, type: 2}
+        target: {fileID: 790710001}
+        clip: {fileID: 11400000, guid: 1ec5e675d2708be4faee7f9950deea23, type: 2}
         settings:
           duration: 1
           ease: 0
@@ -774,9 +774,9 @@ MonoBehaviour:
             m_PreInfinity: 2
             m_PostInfinity: 2
             m_RotationOrder: 4
-          cycles: 0
+          cycles: 1
           cycleMode: 0
-          startDelay: 0
+          startDelay: 1
           endDelay: 0
           useUnscaledTime: 0
           _useFixedUpdate: 0

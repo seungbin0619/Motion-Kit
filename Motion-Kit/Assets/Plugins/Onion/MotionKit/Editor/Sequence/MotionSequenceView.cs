@@ -282,9 +282,14 @@ namespace Onion.MotionKit.Editor {
             if (_selectedTrackProperties.Count == 1) {
                 _trackInspectorContainer.style.display = DisplayStyle.Flex;
                 
-                var singleTrackProp = _selectedTrackProperties.First();                
+                var singleTrackProp = _selectedTrackProperties.First();    
+                            
                 var trackPropertyField = new PropertyField();
                 trackPropertyField.BindProperty(singleTrackProp);
+                trackPropertyField.RegisterCallback<SerializedPropertyChangeEvent>(evt => {
+                    NotifyGeometryChange();
+                });
+                
                 _trackInspectorContainer.Add(trackPropertyField);
 
                 return;

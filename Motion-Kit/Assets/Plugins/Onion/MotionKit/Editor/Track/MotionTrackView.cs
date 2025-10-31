@@ -68,6 +68,9 @@ namespace Onion.MotionKit.Editor {
 
             _realTrackTimeline = new VisualElement();
             _realTrackTimeline.AddToClassList("track-timeline-content");
+            _realTrackTimeline.RegisterCallback<PointerDownEvent>(OnPointerDown);
+            _realTrackTimeline.RegisterCallback<PointerMoveEvent>(OnPointerMove);
+            _realTrackTimeline.RegisterCallback<PointerUpEvent>(OnPointerUp);
 
             _realTrackLabel = new Label();
             _realTrackLabel.AddToClassList("track-timeline-label");
@@ -76,9 +79,22 @@ namespace Onion.MotionKit.Editor {
 
             _realTrackTimeline.Add(_realTrackLabel);
             _realTrackTimeline.Add(_realTrackTag);
+
             container.Add(_realTrackTimeline);
 
             return container; 
+        }
+
+        private void OnPointerDown(PointerDownEvent evt) {
+            evt.StopPropagation();
+        }
+
+        private void OnPointerMove(PointerMoveEvent evt) {
+            evt.StopPropagation();
+        }
+
+        private void OnPointerUp(PointerUpEvent evt) {
+            evt.StopPropagation();
         }
 
         private void OnTargetChanged(SerializedPropertyChangeEvent evt) {
