@@ -24,10 +24,12 @@ namespace Onion.MotionKit {
 #if UNITY_EDITOR
         public bool IsValidFor(Component target) {
             SetEnabled(false);
-            var result = Create(target, default).isAlive;
+            var tween = Create(target, default);
+            var valid = tween.isAlive;
+            tween.Stop();
             SetEnabled(true);
 
-            return result;
+            return valid;
         }
 
         // ignore PrimeTween warnings in editor validation
