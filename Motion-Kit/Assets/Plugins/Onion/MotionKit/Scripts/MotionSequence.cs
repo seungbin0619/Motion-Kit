@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using PrimeTween;
 using UnityEngine;
 
 namespace Onion.MotionKit {
@@ -10,10 +11,16 @@ namespace Onion.MotionKit {
 
         [SerializeReference]
         public List<MotionTrack> tracks = new();
+        private Sequence _sequence;
 
         public void Play() {
+            if (_sequence.isAlive) {
+                _sequence.Complete();    
+            }
+
+            _sequence = Sequence.Create();
             foreach (var track in tracks) {
-                track.Create();
+                _sequence.Group(track.Create());
             }
         }
     }
