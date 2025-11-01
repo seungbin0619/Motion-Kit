@@ -24,7 +24,7 @@ namespace Onion.MotionKit.Editor {
         private readonly VisualElement _container;
         private readonly MotionSequenceView _parent;
 
-        private VisualElement _trackTargetContainer;
+        private readonly VisualElement _trackTargetContainer;
         private VisualElement _trackTag;
         private PropertyField _trackTargetField;
         
@@ -32,6 +32,13 @@ namespace Onion.MotionKit.Editor {
         private VisualElement _realTrackTimeline;
         private Label _realTrackLabel;
         private VisualElement _realTrackTag;
+
+        private bool _isResizing = false;
+        private Vector2 _dragStartPosition;
+        private float _originalStartDelay;
+        private float _originalDuration;
+        private SerializedProperty _resizingDurationProp;
+        private SerializedProperty _resizingStartDelayProp;
 
         public MotionTrackView(VisualTreeAsset template, MotionSequenceView parent = null) {
             if (template == null) return;
@@ -65,12 +72,11 @@ namespace Onion.MotionKit.Editor {
         private VisualElement CreateTrackTimelineContainer() {
             var container = new VisualElement();
             container.AddToClassList("track-timeline-container");
+            container.RegisterCallback<PointerMoveEvent>(OnPointerMove);
+            container.RegisterCallback<PointerUpEvent>(OnPointerUp);
 
             _realTrackTimeline = new VisualElement();
             _realTrackTimeline.AddToClassList("track-timeline-content");
-            // _realTrackTimeline.RegisterCallback<PointerDownEvent>(OnPointerDown);
-            // _realTrackTimeline.RegisterCallback<PointerMoveEvent>(OnPointerMove);
-            // _realTrackTimeline.RegisterCallback<PointerUpEvent>(OnPointerUp);
 
             _realTrackLabel = new Label();
             _realTrackLabel.AddToClassList("track-timeline-label");
@@ -80,22 +86,94 @@ namespace Onion.MotionKit.Editor {
             _realTrackTimeline.Add(_realTrackLabel);
             _realTrackTimeline.Add(_realTrackTag);
 
+            var leftResizeHandle = new VisualElement { 
+                name = "left-resize-handle", 
+                style = { left = 0 }
+            };
+            leftResizeHandle.AddToClassList("track-timeline-resize-handle");
+            leftResizeHandle.RegisterCallback<PointerDownEvent>(OnPointerDown);
+
+            var rightResizeHandle = new VisualElement { 
+                name = "right-resize-handle", 
+                style = { right = 0 } 
+            };
+            rightResizeHandle.AddToClassList("track-timeline-resize-handle");
+            rightResizeHandle.RegisterCallback<PointerDownEvent>(OnPointerDown);
+
+            _realTrackTimeline.Add(leftResizeHandle);
+            _realTrackTimeline.Add(rightResizeHandle);
+
             container.Add(_realTrackTimeline);
 
             return container; 
         }
 
-        // private void OnPointerDown(PointerDownEvent evt) {
-        //     evt.StopPropagation();
-        // }
+        private void OnPointerDown(PointerDownEvent evt) {
+            if (evt.target is not VisualElement element) return;
+            if (_trackProperty == null) return;
 
-        // private void OnPointerMove(PointerMoveEvent evt) {
-        //     evt.StopPropagation();
-        // }
+            _resizingStartDelayProp = _trackProperty.FindPropertyRelative("settings.startDelay");
+            _resizingDurationProp = _trackProperty.FindPropertyRelative("settings.duration");
 
-        // private void OnPointerUp(PointerUpEvent evt) {
-        //     evt.StopPropagation();
-        // }
+            if (_resizingDurationProp == null) return;
+            if (_resizingStartDelayProp == null) return;
+
+            _isResizing = true;
+            _dragStartPosition = evt.position;
+            _originalStartDelay = _resizingStartDelayProp.floatValue;
+            _originalDuration = _resizingDurationProp.floatValue;
+
+            if (element.name == "left-resize-handle") {
+                /* do nothing */
+            } else if (element.name == "right-resize-handle") {
+                _resizingStartDelayProp = null;
+            } else {
+                _isResizing = false;
+                return;
+            }
+
+            _trackTimelineContainer.CapturePointer(evt.pointerId);
+            
+            evt.StopPropagation();
+        }
+
+        private void OnPointerMove(PointerMoveEvent evt) {
+            if (!_isResizing || _resizingDurationProp == null) return;
+
+            float delta = evt.position.x - _dragStartPosition.x;
+            float deltaTime = delta / _parent.pixelsPerSecond;
+            float result = 0;
+
+            if (_resizingStartDelayProp == null) {
+                result = Mathf.Max(0f, _originalDuration + deltaTime);
+                if (result > 0f) result = Mathf.Round(result / 0.05f) * 0.05f;
+                _resizingDurationProp.floatValue = result;
+
+            } else {
+                deltaTime = Mathf.Clamp(deltaTime, -_originalStartDelay, _originalDuration);
+                result = Mathf.Max(0f, _originalStartDelay + deltaTime);
+
+                if (result > 0f) result = Mathf.Round(result / 0.05f) * 0.05f;
+
+                _resizingStartDelayProp.floatValue = result;
+                _resizingDurationProp.floatValue = Mathf.Max(0f, _originalDuration - (result - _originalStartDelay));
+            }
+
+            _trackProperty.serializedObject.ApplyModifiedProperties();
+            Repaint();
+
+            evt.StopPropagation();
+        }
+
+        private void OnPointerUp(PointerUpEvent evt) {
+            if (!_isResizing) return;
+
+            _isResizing = false;
+            _resizingDurationProp = null;
+            _trackTimelineContainer.ReleasePointer(evt.pointerId);
+            
+            evt.StopPropagation();
+        }
 
         private void OnTargetChanged(SerializedPropertyChangeEvent evt) {
             if (evt.changedProperty.objectReferenceValue is not Component component) return;

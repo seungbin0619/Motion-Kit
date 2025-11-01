@@ -456,6 +456,60 @@ MonoBehaviour:
   m_LightCookieSize: {x: 1, y: 1}
   m_LightCookieOffset: {x: 0, y: 0}
   m_SoftShadowQuality: 1
+--- !u!1 &463140294
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 463140296}
+  - component: {fileID: 463140295}
+  m_Layer: 0
+  m_Name: GameObject
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &463140295
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 463140294}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 565ffe700589e094d97c6e574f19ba06, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sequences:
+  - name: Sequence 0
+    playOnAwake: 0
+    tracks: []
+  - name: Sequence 1
+    playOnAwake: 0
+    tracks: []
+  references:
+    version: 2
+    RefIds: []
+--- !u!4 &463140296
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 463140294}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 9.232895, y: 2.2041044, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &790709999
 GameObject:
   m_ObjectHideFlags: 0
@@ -740,8 +794,9 @@ MonoBehaviour:
       data:
         target: {fileID: 790710001}
         clip: {fileID: 11400000, guid: 6f8492e89b134cc4ab0fc59b2bb99af2, type: 2}
+        trackMode: 0
         settings:
-          duration: 3
+          duration: 1
           ease: 0
           customEase:
             serializedVersion: 2
@@ -766,8 +821,9 @@ MonoBehaviour:
       data:
         target: {fileID: 790710001}
         clip: {fileID: 11400000, guid: 1ec5e675d2708be4faee7f9950deea23, type: 2}
+        trackMode: 0
         settings:
-          duration: 3
+          duration: 1
           ease: 0
           customEase:
             serializedVersion: 2
@@ -777,7 +833,7 @@ MonoBehaviour:
             m_RotationOrder: 4
           cycles: 1
           cycleMode: 0
-          startDelay: 3
+          startDelay: 1
           endDelay: 0
           useUnscaledTime: 0
           _useFixedUpdate: 0
@@ -797,3 +853,4 @@ SceneRoots:
   - {fileID: 2052945230}
   - {fileID: 1564578669}
   - {fileID: 347999692}
+  - {fileID: 463140296}

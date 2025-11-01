@@ -4,10 +4,16 @@ using Sirenix.OdinInspector;
 using UnityEngine;
 
 namespace Onion.MotionKit {
+    public enum TrackMode {
+        Group,
+        Chain,
+    }
+
     [Serializable]
     public class MotionTrack {
         public Component target;
         public MotionClip clip;
+        public TrackMode trackMode;
         public TweenSettings settings;
 
         public MotionTrack() {
