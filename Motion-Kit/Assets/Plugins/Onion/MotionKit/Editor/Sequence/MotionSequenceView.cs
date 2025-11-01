@@ -25,6 +25,7 @@ namespace Onion.MotionKit.Editor {
         private readonly Button _removeTrackButton;
 
         private readonly HashSet<SerializedProperty> _selectedTrackProperties = new();
+        private readonly Dictionary<SerializedProperty, MotionTrackView> _trackViewMap = new();
         private readonly VisualElement _trackInspectorContainer;
 
         private readonly VisualElement _separator;
@@ -234,6 +235,7 @@ namespace Onion.MotionKit.Editor {
                 var trackProperty = _tracksProperty.GetArrayElementAtIndex(index);
 
                 track.SetTrack(trackProperty);
+                _trackViewMap[trackProperty] = track;
             };
 
             view.selectionChanged += OnTrackSelectionChanged;

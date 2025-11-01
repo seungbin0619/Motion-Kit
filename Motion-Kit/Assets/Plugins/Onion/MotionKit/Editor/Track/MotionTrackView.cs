@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEditor;
+using UnityEditor.Rendering;
 using UnityEditor.UIElements;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -48,8 +49,19 @@ namespace Onion.MotionKit.Editor {
             _container.Add(_trackTargetContainer = CreateTrackTargetContainer());
             _container.Add(_trackTimelineContainer = CreateTrackTimelineContainer());
 
+            Undo.undoRedoPerformed += OnUndoRedo;
+
             _parent = parent;
             Repaint();
+        }
+
+        private void OnUndoRedo() {
+            if (_trackProperty == null) return;
+            if (_trackProperty.serializedObject == null) return;
+
+            try {
+                Repaint();
+            } catch {}
         }
 
         private VisualElement CreateTrackTargetContainer() {
@@ -142,16 +154,15 @@ namespace Onion.MotionKit.Editor {
 
             float delta = evt.position.x - _dragStartPosition.x;
             float deltaTime = delta / _parent.pixelsPerSecond;
-            float result = 0;
 
             if (_resizingStartDelayProp == null) {
-                result = Mathf.Max(0f, _originalDuration + deltaTime);
+                var result = Mathf.Max(0f, _originalDuration + deltaTime);
                 if (result > 0f) result = Mathf.Round(result / 0.05f) * 0.05f;
                 _resizingDurationProp.floatValue = result;
 
             } else {
                 deltaTime = Mathf.Clamp(deltaTime, -_originalStartDelay, _originalDuration);
-                result = Mathf.Max(0f, _originalStartDelay + deltaTime);
+                var result = Mathf.Max(0f, _originalStartDelay + deltaTime);
 
                 if (result > 0f) result = Mathf.Round(result / 0.05f) * 0.05f;
 
@@ -216,10 +227,11 @@ namespace Onion.MotionKit.Editor {
         }
         
         public void Repaint() {
+            if (this == null) return;
+            
             _trackTargetContainer.style.width = _parent.leftWidth;
             if (_trackProperty == null) return;
-
-            var track = _trackProperty.managedReferenceValue as MotionTrack;
+            if (_trackProperty.managedReferenceValue is not MotionTrack track) return;
 
             _realTrackTimeline.style.width = _parent.pixelsPerSecond * track.settings.duration;
             // _realTrackTimeline.style.left = 
