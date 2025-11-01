@@ -234,7 +234,7 @@ namespace Onion.MotionKit.Editor {
                 var track = element as MotionTrackView;
                 var trackProperty = _tracksProperty.GetArrayElementAtIndex(index);
 
-                track.SetTrack(trackProperty);
+                track.SetTrack(trackProperty, index);
                 _trackViewMap[trackProperty] = track;
             };
 
@@ -264,6 +264,14 @@ namespace Onion.MotionKit.Editor {
                 OnRemoveButtonClicked();
                 evt.StopPropagation();
             }
+        }
+
+        public void AddTrackToSelection(int index, bool additive = true) {
+            if (!additive) {
+                _trackListView.ClearSelection();
+            }
+            
+            _trackListView.AddToSelection(index);
         }
 
         private void OnTrackSelectionChanged(IEnumerable<object> selectedItems) {

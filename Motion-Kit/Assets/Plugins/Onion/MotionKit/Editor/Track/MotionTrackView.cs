@@ -35,6 +35,7 @@ namespace Onion.MotionKit.Editor {
         private VisualElement _realTrackTag;
 
         private bool _isResizing = false;
+        private int _index;
         private Vector2 _dragStartPosition;
         private float _originalStartDelay;
         private float _originalDuration;
@@ -43,6 +44,7 @@ namespace Onion.MotionKit.Editor {
 
         public MotionTrackView(VisualTreeAsset template, MotionSequenceView parent = null) {
             if (template == null) return;
+
             Add(template.CloneTree()); 
             
             _container = this.Q<VisualElement>("track-container");
@@ -52,6 +54,7 @@ namespace Onion.MotionKit.Editor {
             Undo.undoRedoPerformed += OnUndoRedo;
 
             _parent = parent;
+
             Repaint();
         }
 
@@ -145,6 +148,7 @@ namespace Onion.MotionKit.Editor {
             }
 
             _trackTimelineContainer.CapturePointer(evt.pointerId);
+            _parent.AddTrackToSelection(_index, false);
             
             evt.StopPropagation();
         }
@@ -159,7 +163,6 @@ namespace Onion.MotionKit.Editor {
                 var result = Mathf.Max(0f, _originalDuration + deltaTime);
                 if (result > 0f) result = Mathf.Round(result / 0.05f) * 0.05f;
                 _resizingDurationProp.floatValue = result;
-
             } else {
                 deltaTime = Mathf.Clamp(deltaTime, -_originalStartDelay, _originalDuration);
                 var result = Mathf.Max(0f, _originalStartDelay + deltaTime);
@@ -201,12 +204,13 @@ namespace Onion.MotionKit.Editor {
             }
         }
 
-        public void SetTrack(SerializedProperty trackProperty) {
+        public void SetTrack(SerializedProperty trackProperty, int index) {
             if (_trackProperty == trackProperty) return;
 
             _trackTargetField.Unbind();
             _trackProperty = trackProperty;
-            
+            _index = index;
+
             if (_trackProperty == null) return;
             var trackTargetProp = _trackProperty.FindPropertyRelative("target");
             if (trackTargetProp != null) {
