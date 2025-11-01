@@ -65,6 +65,7 @@
     opacity: 0.8;
     background-color: #4D4D4D;
     border-radius: 2px;
+    border-color: #FFFFFF;
     align-items: center;
     justify-content: center;
 
@@ -94,4 +95,9 @@
     height: 100%;
 
     cursor: split-resize-left-right;
+}
+
+.unity-collection-view__item--selected .track-timeline-content {
+    border-width: 1px;
+    transition: border-width 0.1s;
 }
