@@ -21,12 +21,12 @@ namespace Onion.MotionKit.Editor {
             root.Add(new PropertyField(property.FindPropertyRelative(nameof(MotionTrack.settings))));
 
             var type = property.managedReferenceValue.GetType();
-            if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(MotionTrack<>)) {
+            if ((type.IsGenericType && type.GetGenericTypeDefinition() == typeof(MotionTrack<>)) || type == typeof(MotionShakeTrack)) {
                 root.Add(new PropertyField(property.FindPropertyRelative("useValueOverride")));
                 root.Add(new PropertyField(property.FindPropertyRelative("value")));
-
-            } else if (false /* type == typeof(ShakeMotionTrack) */) { // if type is ShakeMotionTrack
-                // add after implementing ShakeMotionTrack
+            } else {
+                // for custom motion tracks
+                // implement after needed
             }
 
             return root;

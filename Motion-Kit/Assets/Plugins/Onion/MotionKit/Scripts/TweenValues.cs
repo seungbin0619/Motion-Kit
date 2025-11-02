@@ -1,13 +1,10 @@
 using System;
 using PrimeTween;
-using Sirenix.OdinInspector;
 
 namespace Onion.MotionKit {
     [Serializable]
     public struct TweenValues<T> where T : struct {
         public bool startFromCurrent;
-
-        [HideIf(nameof(startFromCurrent))]
         public T startValue;
         public T endValue;
         public TweenValues(T startValue, T endValue) {

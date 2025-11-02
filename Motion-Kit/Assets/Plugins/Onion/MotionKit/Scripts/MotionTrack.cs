@@ -1,14 +1,8 @@
 using System;
 using PrimeTween;
-using Sirenix.OdinInspector;
 using UnityEngine;
 
 namespace Onion.MotionKit {
-    public enum TrackMode {
-        Group,
-        Chain,
-    }
-
     [Serializable]
     public class MotionTrack {
         public Component target;
@@ -28,8 +22,6 @@ namespace Onion.MotionKit {
     [Serializable]
     public class MotionTrack<T> : MotionTrack where T : struct {
         public bool useValueOverride;
-
-        [ShowIf(nameof(useValueOverride))]
         public TweenValues<T> value;
 
         public override Tween Create() {
