@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: FadeOut
   m_EditorClassIdentifier: 
   <category>k__BackingField: 2
-  _values:
+  value:
     startFromCurrent: 0
     startValue: 1
     endValue: 0
