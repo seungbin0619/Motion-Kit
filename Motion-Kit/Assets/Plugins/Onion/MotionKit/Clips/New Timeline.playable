@@ -244,7 +244,7 @@ MonoBehaviour:
   m_Children: []
   m_Clips:
   - m_Version: 1
-    m_Start: 1
+    m_Start: 1.0000000000000002
     m_ClipIn: 0
     m_Asset: {fileID: -4884805742918934227}
     m_Duration: 3.7500000000000036
@@ -507,7 +507,7 @@ MonoBehaviour:
   m_Children: []
   m_Clips:
   - m_Version: 1
-    m_Start: 8.500000000000007
+    m_Start: 8.5
     m_ClipIn: 0
     m_Asset: {fileID: -1414347645957469584}
     m_Duration: 3.7500000000000036
@@ -705,7 +705,7 @@ MonoBehaviour:
   m_Children: []
   m_Clips:
   - m_Version: 1
-    m_Start: 4.7500000000000036
+    m_Start: 4.750000000000004
     m_ClipIn: 0
     m_Asset: {fileID: -5194244223431667470}
     m_Duration: 3.7500000000000036

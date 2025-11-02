@@ -30,12 +30,14 @@ namespace Onion.MotionKit.Editor {
         private PropertyField _trackTargetField;
         
         private VisualElement _trackTimelineContainer;
-        private VisualElement _realTrackTimeline;
+        private MotionTrackTimelineView _realTrackTimeline;
         private Label _realTrackLabel;
         private VisualElement _realTrackTag;
 
         private bool _isResizing = false;
         private int _index;
+        public int index => _index;
+        
         private Vector2 _dragStartPosition;
         private float _originalStartDelay;
         private float _originalDuration;
@@ -61,10 +63,13 @@ namespace Onion.MotionKit.Editor {
         private void OnUndoRedo() {
             if (_trackProperty == null) return;
             if (_trackProperty.serializedObject == null) return;
+            if (visible == false) return;
 
-            try {
-                Repaint();
-            } catch {}
+            schedule.Execute(() => {
+                try {
+                    Repaint(); 
+                } catch { /* do nothing */ }
+            }).ExecuteLater(0);
         }
 
         private VisualElement CreateTrackTargetContainer() {
@@ -90,12 +95,15 @@ namespace Onion.MotionKit.Editor {
             container.RegisterCallback<PointerMoveEvent>(OnPointerMove);
             container.RegisterCallback<PointerUpEvent>(OnPointerUp);
 
-            _realTrackTimeline = new VisualElement();
+            _realTrackTimeline = new MotionTrackTimelineView();
             _realTrackTimeline.AddToClassList("track-timeline-content");
 
             _realTrackLabel = new Label();
+            _realTrackLabel.pickingMode = PickingMode.Ignore;
             _realTrackLabel.AddToClassList("track-timeline-label");
+            
             _realTrackTag = new VisualElement();
+            _realTrackTag.pickingMode = PickingMode.Ignore;
             _realTrackTag.AddToClassList("track-timeline-tag");
 
             _realTrackTimeline.Add(_realTrackLabel);
@@ -237,15 +245,18 @@ namespace Onion.MotionKit.Editor {
             
             _trackTargetContainer.style.width = _parent.leftWidth;
             if (_trackProperty == null) return;
-            if (_trackProperty.managedReferenceValue is not MotionTrack track) return;
+            if (_trackProperty.managedReferenceValue is not MotionTrack) return;
 
-            _realTrackTimeline.style.width = _parent.pixelsPerSecond * track.settings.duration;
-            // _realTrackTimeline.style.left = 
+            var durationProp = _trackProperty.FindPropertyRelative("settings.duration");
+            var startDelayProp = _trackProperty.FindPropertyRelative("settings.startDelay");
+            var endDelayProp = _trackProperty.FindPropertyRelative("settings.endDelay");
 
-            float left = _parent.minMarginLeft + (_parent.pixelsPerSecond * track.settings.startDelay);
+            _realTrackTimeline.style.width = _parent.pixelsPerSecond * durationProp.floatValue;
+
+            float left = _parent.minMarginLeft + (_parent.pixelsPerSecond * startDelayProp.floatValue);
             left -= _parent.startTime * _parent.pixelsPerSecond;
 
-            float right = left + _parent.pixelsPerSecond * (track.settings.duration + track.settings.endDelay);
+            float right = left + _parent.pixelsPerSecond * (durationProp.floatValue + endDelayProp.floatValue);
 
             if (right < 0 || left > _parent.totalWidth) {
                 _trackTimelineContainer.style.display = DisplayStyle.None;
@@ -256,4 +267,6 @@ namespace Onion.MotionKit.Editor {
             }
         }
     }
+
+    public class MotionTrackTimelineView : VisualElement{ }
 }

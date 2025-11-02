@@ -51,7 +51,7 @@ namespace Onion.MotionKit.Editor {
                 if (Mathf.Approximately(_leftWidth, clampedValue)) return;
                 _leftWidth = clampedValue;
 
-                NotifyGeometryChange();
+                NotifyChange();
             }
         }
 
@@ -62,7 +62,7 @@ namespace Onion.MotionKit.Editor {
                 if (Mathf.Approximately(_pixelsPerSecond, clampedValue)) return;
                 _pixelsPerSecond = clampedValue;
 
-                NotifyGeometryChange();
+                NotifyChange();
             }
         }
 
@@ -73,7 +73,7 @@ namespace Onion.MotionKit.Editor {
                 if (Mathf.Approximately(_startTime, clampedValue)) return;
                 _startTime = clampedValue;
 
-                NotifyGeometryChange();
+                NotifyChange();
             }
         }
 
@@ -95,7 +95,11 @@ namespace Onion.MotionKit.Editor {
 
                 _trackListView.ClearSelection();
             });
-            
+
+            _trackListContainer.RegisterCallback<PointerDownEvent>(OnListPointerDown, TrickleDown.TrickleDown);
+            _trackListContainer.RegisterCallback<PointerMoveEvent>(OnListPointerMove, TrickleDown.TrickleDown);
+            _trackListContainer.RegisterCallback<PointerUpEvent>(OnListPointerUp, TrickleDown.TrickleDown);
+
             var buttonContainer = new VisualElement();
             buttonContainer.AddToClassList("track-button-container");
             
@@ -226,7 +230,8 @@ namespace Onion.MotionKit.Editor {
             var view = new ListView();
             view.AddToClassList("track-list-view");
 
-            view.RegisterCallback<GeometryChangedEvent>(evt => NotifyGeometryChange());
+            view.RegisterCallback<GeometryChangedEvent>(evt => NotifyChange());
+            // view.RegisterCallback<FocusOutEvent>(evt => _trackListView.ClearSelection());
             view.RegisterCallback<KeyDownEvent>(OnKeyDown);
             
             view.makeItem = () => new MotionTrackView(_trackTemplate, parent: this);
@@ -255,6 +260,80 @@ namespace Onion.MotionKit.Editor {
             });
 
             return view;
+        }
+
+        private bool _isTrackDraggingDirty = false;
+        private bool _isTrackDragging = false;
+        private Vector3 _trackDragStartPosition;
+        private readonly Dictionary<SerializedProperty, float> _initialTrackDelays = new();
+        private float _initialMinStartDelay = 0f;
+
+        private void OnListPointerDown(PointerDownEvent evt) {
+            if (evt.button != 0) return;
+            if (evt.target is not VisualElement element) return;
+            if (element is not MotionTrackTimelineView) return;
+            if (evt.ctrlKey || evt.shiftKey) return;
+
+            var trackView = element.GetFirstAncestorOfType<MotionTrackView>();
+            if (trackView == null) return;
+
+            if (!_trackListView.selectedIndices.Contains(trackView.index)) {
+                AddTrackToSelection(trackView.index, additive: false);
+            }
+
+            _isTrackDragging = true;
+            _isTrackDraggingDirty = false;
+            _trackDragStartPosition = evt.position;
+
+            _initialTrackDelays.Clear();
+            _initialMinStartDelay = float.MaxValue;
+
+            foreach (var trackProp in _selectedTrackProperties) {
+                var delayProp = trackProp.FindPropertyRelative("settings.startDelay");
+
+                _initialTrackDelays[trackProp] = delayProp.floatValue;
+                _initialMinStartDelay = Mathf.Min(_initialMinStartDelay, delayProp.floatValue);
+            }
+
+            evt.StopPropagation();
+        }
+
+        private void OnListPointerMove(PointerMoveEvent evt) {
+            if (!_isTrackDragging) return;
+            float deltaX = evt.position.x - _trackDragStartPosition.x;
+
+            if (!_isTrackDraggingDirty) {
+                if (Mathf.Abs(deltaX) < 2f) {
+                    return;
+                }
+
+                _isTrackDraggingDirty = true;
+                Undo.RecordObject(_sequenceProperty.serializedObject.targetObject, "Move Motion Track(s)");
+            }
+
+            float deltaTime = deltaX / pixelsPerSecond;
+            deltaTime = Mathf.Max(-_initialMinStartDelay, deltaTime);
+
+            foreach (var trackProp in _selectedTrackProperties) {
+                var delayProp = trackProp.FindPropertyRelative("settings.startDelay");
+
+                delayProp.floatValue = Mathf.Max(0f, _initialTrackDelays[trackProp] + deltaTime);
+            }
+
+            _sequenceProperty.serializedObject.ApplyModifiedPropertiesWithoutUndo();
+            NotifyChange();
+
+            evt.StopPropagation();
+        }
+
+        private void OnListPointerUp(PointerUpEvent evt) {
+            if (evt.button != 0) return;
+            if (!_isTrackDragging) return;
+
+            _sequenceProperty.serializedObject.ApplyModifiedProperties();
+
+            _isTrackDragging = false;
+            evt.StopPropagation();
         }
 
         private void OnKeyDown(KeyDownEvent evt) {
@@ -299,7 +378,7 @@ namespace Onion.MotionKit.Editor {
                 var trackPropertyField = new PropertyField();
                 trackPropertyField.BindProperty(singleTrackProp);
                 trackPropertyField.RegisterCallback<SerializedPropertyChangeEvent>(evt => {
-                    NotifyGeometryChange();
+                    NotifyChange();
                 });
                 
                 _trackInspectorContainer.Add(trackPropertyField);
@@ -374,7 +453,7 @@ namespace Onion.MotionKit.Editor {
             }
         }
 
-        private void NotifyGeometryChange() {
+        private void NotifyChange() {
              if (_trackListView == null) return;
 
              _separator.style.left = _leftWidth;
