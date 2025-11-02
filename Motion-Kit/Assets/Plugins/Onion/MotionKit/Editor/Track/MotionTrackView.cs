@@ -66,6 +66,7 @@ namespace Onion.MotionKit.Editor {
             if (visible == false) return;
 
             schedule.Execute(() => {
+                // secure check for deleted objects after undo/redo
                 try {
                     Repaint(); 
                 } catch { /* do nothing */ }

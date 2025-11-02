@@ -33,6 +33,14 @@ namespace Onion.MotionKit.Editor {
         private float _separatorStartX;
         private float _separatorStartLeftWidth;
 
+
+        private bool _isTrackDraggingDirty = false;
+        private bool _isTrackDragging = false;
+        private Vector3 _trackDragStartPosition;
+        private readonly Dictionary<SerializedProperty, float> _initialTrackDelays = new();
+        private SerializedProperty _minDelayTrack = null;
+
+
         private readonly PropertyField _nameField;
         private readonly PropertyField _playOnAwakeField;
 
@@ -262,12 +270,6 @@ namespace Onion.MotionKit.Editor {
             return view;
         }
 
-        private bool _isTrackDraggingDirty = false;
-        private bool _isTrackDragging = false;
-        private Vector3 _trackDragStartPosition;
-        private readonly Dictionary<SerializedProperty, float> _initialTrackDelays = new();
-        private float _initialMinStartDelay = 0f;
-
         private void OnListPointerDown(PointerDownEvent evt) {
             if (evt.button != 0) return;
             if (evt.target is not VisualElement element) return;
@@ -286,13 +288,15 @@ namespace Onion.MotionKit.Editor {
             _trackDragStartPosition = evt.position;
 
             _initialTrackDelays.Clear();
-            _initialMinStartDelay = float.MaxValue;
+            _minDelayTrack = null;
 
             foreach (var trackProp in _selectedTrackProperties) {
                 var delayProp = trackProp.FindPropertyRelative("settings.startDelay");
 
                 _initialTrackDelays[trackProp] = delayProp.floatValue;
-                _initialMinStartDelay = Mathf.Min(_initialMinStartDelay, delayProp.floatValue);
+                if (_minDelayTrack == null || delayProp.floatValue < _minDelayTrack.FindPropertyRelative("settings.startDelay").floatValue) {
+                    _minDelayTrack = trackProp;
+                }
             }
 
             evt.StopPropagation();
@@ -303,7 +307,7 @@ namespace Onion.MotionKit.Editor {
             float deltaX = evt.position.x - _trackDragStartPosition.x;
 
             if (!_isTrackDraggingDirty) {
-                if (Mathf.Abs(deltaX) < 2f) {
+                if (Mathf.Abs(deltaX) < 3f) {
                     return;
                 }
 
@@ -312,7 +316,8 @@ namespace Onion.MotionKit.Editor {
             }
 
             float deltaTime = deltaX / pixelsPerSecond;
-            deltaTime = Mathf.Max(-_initialMinStartDelay, deltaTime);
+            deltaTime = Mathf.Max(-_initialTrackDelays[_minDelayTrack], deltaTime);
+            deltaTime = Mathf.Round((_initialTrackDelays[_minDelayTrack] + deltaTime) / 0.05f) * 0.05f - _initialTrackDelays[_minDelayTrack];
 
             foreach (var trackProp in _selectedTrackProperties) {
                 var delayProp = trackProp.FindPropertyRelative("settings.startDelay");
@@ -338,8 +343,7 @@ namespace Onion.MotionKit.Editor {
 
         private void OnKeyDown(KeyDownEvent evt) {
             bool isDeletePressed = evt.keyCode == KeyCode.Delete;
-            if (isDeletePressed) {
-                
+            if (isDeletePressed && !_isTrackDragging) {
                 OnRemoveButtonClicked();
                 evt.StopPropagation();
             }

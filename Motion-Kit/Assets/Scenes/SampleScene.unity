@@ -833,7 +833,7 @@ MonoBehaviour:
             m_RotationOrder: 4
           cycles: 1
           cycleMode: 0
-          startDelay: 1
+          startDelay: 0.99999994
           endDelay: 0
           useUnscaledTime: 0
           _useFixedUpdate: 0
