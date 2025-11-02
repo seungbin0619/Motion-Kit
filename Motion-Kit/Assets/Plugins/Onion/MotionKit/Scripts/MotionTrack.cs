@@ -13,7 +13,7 @@ namespace Onion.MotionKit {
     public class MotionTrack {
         public Component target;
         public MotionClip clip;
-        public TrackMode trackMode;
+        public TrackMode mode;
         public TweenSettings settings;
 
         public MotionTrack() {
@@ -33,7 +33,9 @@ namespace Onion.MotionKit {
         public TweenValues<T> value;
 
         public override Tween Create() {
-            if (clip is not MotionClipWithValue<T> valuedClip) return base.Create();
+            if (clip is not MotionClipWithValue<T> valuedClip) {
+                return base.Create();
+            }
 
             if (useValueOverride) 
                 return valuedClip.Create(target, settings, value);

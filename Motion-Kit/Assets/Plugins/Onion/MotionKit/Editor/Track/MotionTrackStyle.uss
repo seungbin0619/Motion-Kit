@@ -65,7 +65,7 @@
     opacity: 0.8;
     background-color: #4D4D4D;
     border-radius: 2px;
-    border-color: #FFFFFF;
+    border-color: rgba(255, 255, 255, 0.8);
     align-items: center;
     justify-content: center;
 

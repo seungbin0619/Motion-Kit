@@ -162,6 +162,8 @@ namespace Onion.MotionKit.Editor {
             if (_resizingStartDelayProp == null) {
                 var result = Mathf.Max(0f, _originalDuration + deltaTime);
                 if (result > 0f) result = Mathf.Round(result / 0.05f) * 0.05f;
+                if (result == 0f) result = 0.01f;
+
                 _resizingDurationProp.floatValue = result;
             } else {
                 deltaTime = Mathf.Clamp(deltaTime, -_originalStartDelay, _originalDuration);
@@ -170,7 +172,7 @@ namespace Onion.MotionKit.Editor {
                 if (result > 0f) result = Mathf.Round(result / 0.05f) * 0.05f;
 
                 _resizingStartDelayProp.floatValue = result;
-                _resizingDurationProp.floatValue = Mathf.Max(0f, _originalDuration - (result - _originalStartDelay));
+                _resizingDurationProp.floatValue = Mathf.Max(0.01f, _originalDuration - (result - _originalStartDelay));
             }
 
             _trackProperty.serializedObject.ApplyModifiedProperties();
