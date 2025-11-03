@@ -20,7 +20,7 @@ namespace Onion.MotionKit.Editor {
         };
 
         private static Texture2D _endDelayTex = null;
-        private static Texture2D endDelayTex {
+        public static Texture2D endDelayTex {
             get {
                 if (_endDelayTex == null) {
                     int size = 18;
@@ -56,8 +56,9 @@ namespace Onion.MotionKit.Editor {
         private VisualElement _trackTag;
         private PropertyField _trackTargetField;
         
-        private VisualElement _trackTimelineContainer;
+        private readonly VisualElement _trackTimelineContainer;
         private MotionTrackTimelineView _realTrackTimeline;
+        private VisualElement _cyclesContainer;
         private VisualElement _realTrackDurationContent;
         private Label _realTrackLabel;
         private VisualElement _realTrackTag;
@@ -72,6 +73,8 @@ namespace Onion.MotionKit.Editor {
         private float _originalDuration;
         private SerializedProperty _resizingDurationProp;
         private SerializedProperty _resizingStartDelayProp;
+
+        private readonly List<MotionTrackCycleView> _cyclePool = new();
 
         public MotionTrackView(VisualTreeAsset template, MotionSequenceView parent = null) {
             if (template == null) return;
@@ -131,7 +134,6 @@ namespace Onion.MotionKit.Editor {
             _realTrackDurationContent.Add(_realTrackLabel);
             _realTrackDurationContent.Add(_realTrackTag);
 
-
             var leftResizeHandle = new VisualElement { 
                 name = "left-resize-handle", 
                 style = { left = 0 }
@@ -150,6 +152,12 @@ namespace Onion.MotionKit.Editor {
             _realTrackTimeline.Add(rightResizeHandle);
 
             container.Add(_realTrackTimeline);
+
+            _cyclesContainer = new VisualElement();
+            _cyclesContainer.AddToClassList("track-timeline-cycles-container");
+            _cyclesContainer.pickingMode = PickingMode.Ignore;
+
+            container.Add(_cyclesContainer);
 
             return container; 
         }
@@ -276,8 +284,11 @@ namespace Onion.MotionKit.Editor {
             if (_trackProperty == null) return;
             if (_trackProperty.managedReferenceValue is not MotionTrack track) return;
 
-            _realTrackTimeline.style.width = _parent.pixelsPerSecond * (track.settings.duration + track.settings.endDelay);
-            _realTrackDurationContent.style.width = _parent.pixelsPerSecond * track.settings.duration;
+            float totalWidth = _parent.pixelsPerSecond * (track.settings.duration + track.settings.endDelay);
+            float durationWidth = _parent.pixelsPerSecond * track.settings.duration;
+
+            _realTrackTimeline.style.width = totalWidth;
+            _realTrackDurationContent.style.width = durationWidth;
 
             float left = _parent.minMarginLeft + _parent.pixelsPerSecond * (track.settings.startDelay + groupStartTime);
             left -= _parent.startTime * _parent.pixelsPerSecond;
@@ -291,8 +302,67 @@ namespace Onion.MotionKit.Editor {
                 _trackTimelineContainer.style.display = DisplayStyle.Flex;
                 _realTrackTimeline.style.left = left;
             }
+
+            var cycles = track.settings.cycles - 1;
+            cycles = Mathf.Max(cycles, 0);
+
+            _cyclesContainer.style.left = right;
+
+            while (_cyclePool.Count < cycles) {
+                var content = new MotionTrackCycleView("Cycle", _realTrackTag.style.backgroundColor.value);
+                _cyclePool.Add(content);
+            }
+
+            while (_cyclesContainer.childCount < cycles) {
+                _cyclesContainer.Add(_cyclePool[_cyclesContainer.childCount]);
+            }
+
+            while (_cyclesContainer.childCount > cycles) {
+                var lastIndex = _cyclesContainer.childCount - 1;
+
+                _cyclesContainer.Remove(_cyclesContainer[lastIndex]);
+            }
+
+            foreach (var cycleView in _cyclePool) {
+                cycleView.Repaint(totalWidth, durationWidth);
+            }
         }
     }
 
     public class MotionTrackTimelineView : VisualElement{ }
+
+    public class MotionTrackCycleView : VisualElement {
+        private readonly VisualElement _root;
+        private readonly VisualElement _content;
+
+        public MotionTrackCycleView(string text, StyleColor color) {
+            _root = new VisualElement();
+            _content = new VisualElement();
+
+            var tag = new VisualElement();
+            var label = new Label();
+
+            _root.AddToClassList("track-timeline-cycle-bg");
+            _root.style.backgroundImage = MotionTrackView.endDelayTex;
+
+            _content.AddToClassList("track-timeline-cycle-content");
+
+            tag.AddToClassList("track-timeline-tag");
+            tag.style.backgroundColor = color;
+
+            label.text = text;
+            label.AddToClassList("track-timeline-label");
+
+            _content.Add(tag);
+            _content.Add(label);
+            _root.Add(_content);
+
+            Add(_root);
+        }
+
+        public void Repaint(float totalWidth, float durationWidth) {
+            _root.style.width = totalWidth;
+            _content.style.width = durationWidth;
+        }
+    }
 }

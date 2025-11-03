@@ -112,3 +112,29 @@
     border-width: 1px;
     transition: border-width 0.1s;
 }
+
+.track-timeline-cycles-container {
+    opacity: 0.4;
+    position: absolute;
+    flex-direction: row;
+    left: 0;
+    height: 100%;
+}
+
+.track-timeline-cycle-bg {
+    /* margin: 0 0.5px; */
+    height: 100%;
+    border-radius: 3px;
+    overflow: hidden;
+    background-size: auto auto;
+    background-repeat: repeat;
+}
+
+.track-timeline-cycle-content {
+    height: 100%;
+    border-radius: 3px;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    background-color: #4D4D4D;
+}
