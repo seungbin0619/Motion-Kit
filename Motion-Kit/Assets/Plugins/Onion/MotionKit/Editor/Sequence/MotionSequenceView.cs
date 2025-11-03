@@ -356,9 +356,19 @@ namespace Onion.MotionKit.Editor {
 
             foreach (var index in _sortedSelections) {
                 var trackProp = _tracksProperty.GetArrayElementAtIndex(index);
-                var delayProp = trackProp.FindPropertyRelative("settings.startDelay");
+                var totalDuration = trackProp.managedReferenceValue is MotionTrack track 
+                    ? track.totalDuration 
+                    : 0f;
 
-                delayProp.floatValue = Mathf.Max(0f, _initialTrackDelays[index] + deltaTime);
+                var delayProp = trackProp.FindPropertyRelative("settings.startDelay");
+                
+                var groupDelta = _initialTrackStartTimes[index] - _groupStartTime[_groups[index]];
+                delayProp.floatValue = Mathf.Max(0f, _initialTrackDelays[index] + deltaTime + groupDelta);
+
+                if (_groups[index] >= _groups.Count - 1) continue;
+                if (_groupStartTime[_groups[index] + 1] < totalDuration - _initialTrackDelays[index] + delayProp.floatValue) {
+                    _groupStartTime[_groups[index] + 1] = totalDuration - _initialTrackDelays[index] + delayProp.floatValue;
+                }
             }
 
             _sequenceProperty.serializedObject.ApplyModifiedPropertiesWithoutUndo();
