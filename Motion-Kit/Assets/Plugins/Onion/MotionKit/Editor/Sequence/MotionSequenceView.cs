@@ -367,7 +367,7 @@ namespace Onion.MotionKit.Editor {
                 var groupDelta = _initialTrackStartTimes[index] - _groupStartTime[_groups[index]];
                 delayProp.floatValue = Mathf.Max(0f, _initialTrackDelays[index] + deltaTime + groupDelta);
 
-                if (_groups[index] >= _groups.Count - 1) continue;
+                if (_groups[index] >= _groupStartTime.Count - 1) continue;
                 if (_groupStartTime[_groups[index] + 1] < totalDuration - _initialTrackDelays[index] + delayProp.floatValue) {
                     _groupStartTime[_groups[index] + 1] = totalDuration - _initialTrackDelays[index] + delayProp.floatValue;
                 }
@@ -541,7 +541,7 @@ namespace Onion.MotionKit.Editor {
 
             _trackListView.Query<MotionTrackView>().Visible().ForEach(trackView => {
                 if (trackView.index >= _tracksProperty.arraySize) return;
-                
+
                 trackView.Repaint(_groupStartTime[_groups[trackView.index]]);
             });
         }
