@@ -244,8 +244,6 @@ namespace Onion.MotionKit.Editor {
 
             _trackTag.style.backgroundColor = color;
             _realTrackTag.style.backgroundColor = color;
-
-            Repaint();
         }
         
         public void Repaint(float groupStartTime = 0.0f) {

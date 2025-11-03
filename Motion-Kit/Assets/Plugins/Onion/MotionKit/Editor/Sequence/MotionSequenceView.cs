@@ -26,7 +26,6 @@ namespace Onion.MotionKit.Editor {
 
 
         private readonly HashSet<SerializedProperty> _selectedTrackProperties = new();
-        private readonly Dictionary<SerializedProperty, MotionTrackView> _trackViewMap = new();
         private readonly List<float> _trackStartTime = new();
         private readonly VisualElement _trackInspectorContainer;
 
@@ -35,7 +34,7 @@ namespace Onion.MotionKit.Editor {
         private float _separatorStartX;
         private float _separatorStartLeftWidth;
 
-
+        private bool _indicatorScheduled = false;
         private bool _isTrackDraggingDirty = false;
         private bool _isTrackDragging = false;
         private Vector3 _trackDragStartPosition;
@@ -258,15 +257,22 @@ namespace Onion.MotionKit.Editor {
             // view.RegisterCallback<FocusOutEvent>(evt => _trackListView.ClearSelection());
             view.RegisterCallback<KeyDownEvent>(OnKeyDown);
             
-            view.makeItem = () => new MotionTrackView(_trackTemplate, parent: this);
+            view.makeItem = () => {
+                schedule.Execute(() => {
+                    NotifyChange();
+                }).ExecuteLater(0);
+
+                return new MotionTrackView(_trackTemplate, parent: this);
+            };
+
             view.bindItem = (element, index) => {
                 var track = element as MotionTrackView;
                 var trackProperty = _tracksProperty.GetArrayElementAtIndex(index);
 
                 track.SetTrack(trackProperty, index);
-                _trackViewMap[trackProperty] = track;
             };
 
+            view.itemIndexChanged += OnTrackIndexChanged;
             view.selectionChanged += OnTrackSelectionChanged;
 
             // options
@@ -373,7 +379,17 @@ namespace Onion.MotionKit.Editor {
             _trackListView.AddToSelection(index);
         }
 
+        private void OnTrackIndexChanged(int oldIndex, int newIndex) {
+            if (_indicatorScheduled) return;
+
+            _indicatorScheduled = true;
+            schedule.Execute(() => {
+                OnTrackSelectionChanged(_trackListView.selectedItems);
+            }).ExecuteLater(0);
+        }
+
         private void OnTrackSelectionChanged(IEnumerable<object> selectedItems) {
+            _indicatorScheduled = false;
             _selectedTrackProperties.Clear();
 
             foreach (var item in selectedItems) {
