@@ -250,6 +250,8 @@ namespace Onion.MotionKit.Editor {
 
             _sequenceProperty.serializedObject.ApplyModifiedProperties();
             _trackListView.ClearSelection();
+
+            NotifyChange();
         }
 
         private ListView CreateTrackListView() {
@@ -538,6 +540,8 @@ namespace Onion.MotionKit.Editor {
             CalculateTrackStartTimes();
 
             _trackListView.Query<MotionTrackView>().Visible().ForEach(trackView => {
+                if (trackView.index >= _tracksProperty.arraySize) return;
+                
                 trackView.Repaint(_groupStartTime[_groups[trackView.index]]);
             });
         }
