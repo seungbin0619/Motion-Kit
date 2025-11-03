@@ -807,7 +807,7 @@ MonoBehaviour:
           cycles: 1
           cycleMode: 0
           startDelay: 0
-          endDelay: 0
+          endDelay: 0.5
           useUnscaledTime: 0
           _useFixedUpdate: 0
           _updateType: 0
