@@ -784,9 +784,9 @@ MonoBehaviour:
   - name: Sequence 0
     playOnAwake: 1
     tracks:
-    - rid: 5331092788815593472
     - rid: 5331092788815593536
     - rid: 4560873255745093711
+    - rid: 5331092788815593472
   references:
     version: 2
     RefIds:
