@@ -784,43 +784,16 @@ MonoBehaviour:
   - name: Sequence 0
     playOnAwake: 1
     tracks:
-    - rid: 5331092788815593536
-    - rid: 4560873255745093711
-    - rid: 5331092788815593472
+    - rid: 4560873257893363775
+    - rid: 4560873257893363776
+    - rid: 4560873257893363777
   references:
     version: 2
     RefIds:
-    - rid: 4560873255745093711
+    - rid: 4560873257893363775
       type: {class: 'MotionTrack`1[[System.Single, mscorlib]]', ns: Onion.MotionKit, asm: Assembly-CSharp-firstpass}
       data:
         target: {fileID: 0}
-        clip: {fileID: 11400000, guid: 6f8492e89b134cc4ab0fc59b2bb99af2, type: 2}
-        mode: 1
-        settings:
-          duration: 1
-          ease: 0
-          customEase:
-            serializedVersion: 2
-            m_Curve: []
-            m_PreInfinity: 2
-            m_PostInfinity: 2
-            m_RotationOrder: 4
-          cycles: 1
-          cycleMode: 0
-          startDelay: 0
-          endDelay: 0
-          useUnscaledTime: 0
-          _useFixedUpdate: 0
-          _updateType: 0
-        useValueOverride: 0
-        value:
-          startFromCurrent: 0
-          startValue: 0
-          endValue: 0
-    - rid: 5331092788815593472
-      type: {class: 'MotionTrack`1[[System.Single, mscorlib]]', ns: Onion.MotionKit, asm: Assembly-CSharp-firstpass}
-      data:
-        target: {fileID: 790710001}
         clip: {fileID: 11400000, guid: 6f8492e89b134cc4ab0fc59b2bb99af2, type: 2}
         mode: 0
         settings:
@@ -832,7 +805,7 @@ MonoBehaviour:
             m_PreInfinity: 2
             m_PostInfinity: 2
             m_RotationOrder: 4
-          cycles: 1
+          cycles: 0
           cycleMode: 0
           startDelay: 0
           endDelay: 0
@@ -844,10 +817,37 @@ MonoBehaviour:
           startFromCurrent: 0
           startValue: 0
           endValue: 0
-    - rid: 5331092788815593536
+    - rid: 4560873257893363776
       type: {class: 'MotionTrack`1[[System.Single, mscorlib]]', ns: Onion.MotionKit, asm: Assembly-CSharp-firstpass}
       data:
-        target: {fileID: 790710001}
+        target: {fileID: 0}
+        clip: {fileID: 11400000, guid: 1ec5e675d2708be4faee7f9950deea23, type: 2}
+        mode: 1
+        settings:
+          duration: 1
+          ease: 0
+          customEase:
+            serializedVersion: 2
+            m_Curve: []
+            m_PreInfinity: 2
+            m_PostInfinity: 2
+            m_RotationOrder: 4
+          cycles: 0
+          cycleMode: 0
+          startDelay: 0
+          endDelay: 0
+          useUnscaledTime: 0
+          _useFixedUpdate: 0
+          _updateType: 0
+        useValueOverride: 0
+        value:
+          startFromCurrent: 0
+          startValue: 0
+          endValue: 0
+    - rid: 4560873257893363777
+      type: {class: 'MotionTrack`1[[System.Single, mscorlib]]', ns: Onion.MotionKit, asm: Assembly-CSharp-firstpass}
+      data:
+        target: {fileID: 0}
         clip: {fileID: 11400000, guid: 1ec5e675d2708be4faee7f9950deea23, type: 2}
         mode: 1
         settings:

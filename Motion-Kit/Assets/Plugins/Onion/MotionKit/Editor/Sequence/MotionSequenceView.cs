@@ -24,10 +24,10 @@ namespace Onion.MotionKit.Editor {
         private readonly Button _addTrackButton;
         private readonly Button _removeTrackButton;
 
-
-        private readonly HashSet<SerializedProperty> _selectedTrackProperties = new();
-        private readonly List<float> _trackStartTime = new();
+        private readonly List<float> _groupStartTime = new();
+        private readonly List<int> _groups = new();
         private readonly VisualElement _trackInspectorContainer;
+
 
         private readonly VisualElement _separator;
         private bool _isDraggingSeparator = false;
@@ -38,8 +38,12 @@ namespace Onion.MotionKit.Editor {
         private bool _isTrackDraggingDirty = false;
         private bool _isTrackDragging = false;
         private Vector3 _trackDragStartPosition;
-        private readonly Dictionary<SerializedProperty, float> _initialTrackDelays = new();
-        private SerializedProperty _minDelayTrack = null;
+
+        
+        private readonly List<int> _sortedSelections = new();
+        private readonly Dictionary<int, float> _initialTrackDelays = new();
+        private readonly Dictionary<int, float> _initialTrackStartTimes = new();
+
 
 
         private readonly PropertyField _nameField;
@@ -232,16 +236,15 @@ namespace Onion.MotionKit.Editor {
 
         private void OnRemoveButtonClicked() {
             if (_sequenceProperty == null) return;
-            if (_selectedTrackProperties.Count == 0) return;
+            var sortedIndices = _trackListView.selectedIndices.ToList();
 
-            var selectedIndices = _trackListView.selectedIndices.ToList();
-
-            selectedIndices.Sort();
-            selectedIndices.Reverse();
+            if (sortedIndices.Count == 0) return;
+            sortedIndices.Sort();
+            sortedIndices.Reverse();
 
             Undo.RecordObject(_sequenceProperty.serializedObject.targetObject, "Remove Motion Tracks");
 
-            foreach (var index in selectedIndices) {
+            foreach (var index in sortedIndices) {
                 _tracksProperty.DeleteArrayElementAtIndex(index);
             }
 
@@ -273,7 +276,7 @@ namespace Onion.MotionKit.Editor {
             };
 
             view.itemIndexChanged += OnTrackIndexChanged;
-            view.selectionChanged += OnTrackSelectionChanged;
+            view.selectedIndicesChanged += OnTrackSelectionChanged;
 
             // options
             view.showBoundCollectionSize = false;
@@ -309,17 +312,24 @@ namespace Onion.MotionKit.Editor {
             _isTrackDraggingDirty = false;
             _trackDragStartPosition = evt.position;
 
-            _initialTrackDelays.Clear();
-            _minDelayTrack = null;
+            _sortedSelections.Clear();
 
-            foreach (var trackProp in _selectedTrackProperties) {
+            foreach (var index in _trackListView.selectedIndices) {
+                var trackProp = _tracksProperty.GetArrayElementAtIndex(index);
                 var delayProp = trackProp.FindPropertyRelative("settings.startDelay");
 
-                _initialTrackDelays[trackProp] = delayProp.floatValue;
-                if (_minDelayTrack == null || delayProp.floatValue < _minDelayTrack.FindPropertyRelative("settings.startDelay").floatValue) {
-                    _minDelayTrack = trackProp;
-                }
+                _initialTrackDelays[index] = delayProp.floatValue;
+                _initialTrackStartTimes[index] = _groupStartTime[_groups[index]];
+
+                _sortedSelections.Add(index);
             }
+
+            _sortedSelections.Sort((a, b) => {
+                var ca = _initialTrackStartTimes[a] + _initialTrackDelays[a];
+                var cb = _initialTrackStartTimes[b] + _initialTrackDelays[b];
+
+                return ca.CompareTo(cb);
+            });
 
             evt.StopPropagation();
         }
@@ -338,13 +348,17 @@ namespace Onion.MotionKit.Editor {
             }
 
             float deltaTime = deltaX / pixelsPerSecond;
-            deltaTime = Mathf.Max(-_initialTrackDelays[_minDelayTrack], deltaTime);
-            deltaTime = Mathf.Round((_initialTrackDelays[_minDelayTrack] + deltaTime) / 0.05f) * 0.05f - _initialTrackDelays[_minDelayTrack];
+            int _minStartDelayTrack = _sortedSelections[0];
 
-            foreach (var trackProp in _selectedTrackProperties) {
+            deltaTime = Mathf.Max(-_initialTrackDelays[_minStartDelayTrack], deltaTime);
+            deltaTime = Mathf.Round((_initialTrackDelays[_minStartDelayTrack] + deltaTime) / 0.05f) * 0.05f - 
+                _initialTrackDelays[_minStartDelayTrack];
+
+            foreach (var index in _sortedSelections) {
+                var trackProp = _tracksProperty.GetArrayElementAtIndex(index);
                 var delayProp = trackProp.FindPropertyRelative("settings.startDelay");
 
-                delayProp.floatValue = Mathf.Max(0f, _initialTrackDelays[trackProp] + deltaTime);
+                delayProp.floatValue = Mathf.Max(0f, _initialTrackDelays[index] + deltaTime);
             }
 
             _sequenceProperty.serializedObject.ApplyModifiedPropertiesWithoutUndo();
@@ -384,21 +398,14 @@ namespace Onion.MotionKit.Editor {
 
             _indicatorScheduled = true;
             schedule.Execute(() => {
-                OnTrackSelectionChanged(_trackListView.selectedItems);
+                OnTrackSelectionChanged(_trackListView.selectedIndices);
             }).ExecuteLater(0);
         }
 
-        private void OnTrackSelectionChanged(IEnumerable<object> selectedItems) {
+        private void OnTrackSelectionChanged(IEnumerable<int> selectedIndices) {
             _indicatorScheduled = false;
-            _selectedTrackProperties.Clear();
 
-            foreach (var item in selectedItems) {
-                if (item is SerializedProperty prop) {
-                    _selectedTrackProperties.Add(prop);
-                }
-            }
-
-            _removeTrackButton.SetEnabled(_selectedTrackProperties.Count > 0);
+            _removeTrackButton.SetEnabled(selectedIndices.Any());
             RepaintTrackInspector();
         }
 
@@ -406,9 +413,11 @@ namespace Onion.MotionKit.Editor {
             _trackInspectorContainer.Clear();
             _trackInspectorContainer.style.display = DisplayStyle.None;
 
-            if (_selectedTrackProperties.Count == 1) {
+            if (_trackListView.selectedIndices.Any()) {
                 _trackInspectorContainer.style.display = DisplayStyle.Flex;
-                var singleTrackProp = _selectedTrackProperties.First();
+
+                var index = _trackListView.selectedIndices.First();
+                var singleTrackProp = _tracksProperty.GetArrayElementAtIndex(index);
                             
                 var trackPropertyField = new PropertyField();
                 trackPropertyField.BindProperty(singleTrackProp);
@@ -487,35 +496,39 @@ namespace Onion.MotionKit.Editor {
             }
         }
 
-        public void NotifyChange() {
-            if (_trackListView == null) return;
-
-            _separator.style.left = _leftWidth;
-            _timeRulerContainer.Repaint();
-
-            while (_trackStartTime.Count < _tracksProperty.arraySize) {
-                _trackStartTime.Add(0f);
-            }
-
+        private void CalculateTrackStartTimes() {
             float cummulativeTime = 0f;
+            _groupStartTime.Clear();
+            _groups.Clear();
+
             for (int i = 0, j; i < _tracksProperty.arraySize; i++) {
                 var maxTotalDuration = 0f;
-                
+                _groupStartTime.Add(cummulativeTime);
+
                 for(j = i; j < _tracksProperty.arraySize; j++) {
                     var trackProp = _tracksProperty.GetArrayElementAtIndex(j);
                     if (trackProp.managedReferenceValue is not MotionTrack track) break;
                     if (i < j && track.mode == TrackMode.Chain) break;
 
                     maxTotalDuration = Mathf.Max(maxTotalDuration, track.totalDuration);
-                    _trackStartTime[j] = cummulativeTime;
+                    _groups.Add(_groupStartTime.Count - 1);
                 }
 
                 cummulativeTime += maxTotalDuration;
                 i = j - 1;
             }
+        }
+
+        public void NotifyChange() {
+            if (_trackListView == null) return;
+
+            _separator.style.left = _leftWidth;
+            _timeRulerContainer.Repaint();
+
+            CalculateTrackStartTimes();
 
             _trackListView.Query<MotionTrackView>().Visible().ForEach(trackView => {
-                trackView.Repaint(_trackStartTime[trackView.index]);
+                trackView.Repaint(_groupStartTime[_groups[trackView.index]]);
             });
         }
 
