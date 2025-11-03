@@ -60,17 +60,27 @@
     height: 100%;
 }
 
-.track-timeline-content {
+.track-timeline-duration-content {
+    left: 0;
     width: 0;
     height: 100%;
-    opacity: 0.8;
-    background-color: #4D4D4D;
-    border-radius: 2px;
-    border-color: rgba(255, 255, 255, 0.8);
+
     align-items: center;
     justify-content: center;
 
     overflow: hidden;
+    background-color: #4D4D4D;
+    border-radius: 2px;
+}
+
+.track-timeline-content {
+    width: 0;
+    height: 100%; 
+    overflow: hidden;
+    background-size: auto auto;
+    background-repeat: repeat;
+    border-radius: 2px;
+    border-color: rgba(255, 255, 255, 1);
 }
 
 .track-timeline-label {

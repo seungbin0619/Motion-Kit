@@ -19,6 +19,33 @@ namespace Onion.MotionKit.Editor {
             { MotionClipCategory.Custom, new(0.8f, 0.4f, 0.8f) },
         };
 
+        private static Texture2D _endDelayTex = null;
+        private static Texture2D endDelayTex {
+            get {
+                if (_endDelayTex == null) {
+                    int size = 18;
+                    _endDelayTex = new(size, size, TextureFormat.RGBA32, false) {
+                        hideFlags = HideFlags.HideAndDontSave
+                    };
+
+                    Color clear = new(1, 1, 1, 0);
+                    Color line = new(1, 1, 1, 0.2f);
+
+                    for (int y = 0; y < size; y++) {
+                        for (int x = 0; x < size; x++) {
+                            bool isLine = (x - y + size) % 6 < 2;
+
+                            _endDelayTex.SetPixel(x, y, isLine ? line : clear);
+                        }
+                    }
+                    
+                    _endDelayTex.Apply();
+                }
+
+                return _endDelayTex;
+            }
+        }
+
         private SerializedProperty _trackProperty;
         public SerializedProperty trackProperty => _trackProperty;
 
@@ -31,6 +58,7 @@ namespace Onion.MotionKit.Editor {
         
         private VisualElement _trackTimelineContainer;
         private MotionTrackTimelineView _realTrackTimeline;
+        private VisualElement _realTrackDurationContent;
         private Label _realTrackLabel;
         private VisualElement _realTrackTag;
 
@@ -59,19 +87,6 @@ namespace Onion.MotionKit.Editor {
             Repaint();
         }
 
-        // private void OnUndoRedo() {
-        //     if (_trackProperty == null) return;
-        //     if (_trackProperty.serializedObject == null) return;
-        //     if (visible == false) return;
-
-        //     schedule.Execute(() => {
-        //         // secure check for deleted objects after undo/redo
-        //         try {
-        //             Repaint(); 
-        //         } catch { /* do nothing */ }
-        //     }).ExecuteLater(0);
-        // }
-
         private VisualElement CreateTrackTargetContainer() {
             var container = new VisualElement();
             container.AddToClassList("track-target-container");
@@ -98,6 +113,9 @@ namespace Onion.MotionKit.Editor {
             _realTrackTimeline = new MotionTrackTimelineView();
             _realTrackTimeline.AddToClassList("track-timeline-content");
 
+            _realTrackDurationContent = new();
+            _realTrackDurationContent.AddToClassList("track-timeline-duration-content");
+
             _realTrackLabel = new Label();
             _realTrackLabel.pickingMode = PickingMode.Ignore;
             _realTrackLabel.AddToClassList("track-timeline-label");
@@ -106,8 +124,12 @@ namespace Onion.MotionKit.Editor {
             _realTrackTag.pickingMode = PickingMode.Ignore;
             _realTrackTag.AddToClassList("track-timeline-tag");
 
-            _realTrackTimeline.Add(_realTrackLabel);
-            _realTrackTimeline.Add(_realTrackTag);
+            _realTrackTimeline.Add(_realTrackDurationContent);
+            _realTrackTimeline.style.backgroundImage = endDelayTex;
+
+            _realTrackDurationContent.Add(_realTrackLabel);
+            _realTrackDurationContent.Add(_realTrackTag);
+
 
             var leftResizeHandle = new VisualElement { 
                 name = "left-resize-handle", 
@@ -253,7 +275,8 @@ namespace Onion.MotionKit.Editor {
             if (_trackProperty == null) return;
             if (_trackProperty.managedReferenceValue is not MotionTrack track) return;
 
-            _realTrackTimeline.style.width = _parent.pixelsPerSecond * track.settings.duration;
+            _realTrackTimeline.style.width = _parent.pixelsPerSecond * (track.settings.duration + track.settings.endDelay);
+            _realTrackDurationContent.style.width = _parent.pixelsPerSecond * track.settings.duration;
 
             float left = _parent.minMarginLeft + _parent.pixelsPerSecond * (track.settings.startDelay + groupStartTime);
             left -= _parent.startTime * _parent.pixelsPerSecond;
