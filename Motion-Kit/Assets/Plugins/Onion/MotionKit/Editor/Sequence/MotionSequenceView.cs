@@ -24,8 +24,10 @@ namespace Onion.MotionKit.Editor {
         private readonly Button _addTrackButton;
         private readonly Button _removeTrackButton;
 
+
         private readonly HashSet<SerializedProperty> _selectedTrackProperties = new();
         private readonly Dictionary<SerializedProperty, MotionTrackView> _trackViewMap = new();
+        private readonly List<float> _trackStartTime = new();
         private readonly VisualElement _trackInspectorContainer;
 
         private readonly VisualElement _separator;
@@ -142,6 +144,20 @@ namespace Onion.MotionKit.Editor {
             _rootContainer.Add(_trackInspectorContainer);
 
             SetSequence(null);
+
+            Undo.undoRedoPerformed += OnUndoRedo;
+        }
+
+        private void OnUndoRedo() {
+            if (this == null) return;
+
+            schedule.Execute(() => {
+                // secure check for deleted objects after undo/redo
+                try {
+                    _trackListView.RefreshItems();
+                    NotifyChange(); 
+                } catch { /* do nothing */ }
+            }).ExecuteLater(0);
         }
 
         private void Repaint() {
@@ -376,8 +392,7 @@ namespace Onion.MotionKit.Editor {
 
             if (_selectedTrackProperties.Count == 1) {
                 _trackInspectorContainer.style.display = DisplayStyle.Flex;
-                
-                var singleTrackProp = _selectedTrackProperties.First();    
+                var singleTrackProp = _selectedTrackProperties.First();
                             
                 var trackPropertyField = new PropertyField();
                 trackPropertyField.BindProperty(singleTrackProp);
@@ -386,7 +401,6 @@ namespace Onion.MotionKit.Editor {
                 });
                 
                 _trackInspectorContainer.Add(trackPropertyField);
-
                 return;
             }
         }
@@ -457,14 +471,35 @@ namespace Onion.MotionKit.Editor {
             }
         }
 
-        private void NotifyChange() {
-             if (_trackListView == null) return;
+        public void NotifyChange() {
+            if (_trackListView == null) return;
 
-             _separator.style.left = _leftWidth;
-             _timeRulerContainer.Repaint();
+            _separator.style.left = _leftWidth;
+            _timeRulerContainer.Repaint();
+
+            while (_trackStartTime.Count < _tracksProperty.arraySize) {
+                _trackStartTime.Add(0f);
+            }
+
+            float cummulativeTime = 0f;
+            for (int i = 0, j; i < _tracksProperty.arraySize; i++) {
+                var maxTotalDuration = 0f;
+                
+                for(j = i; j < _tracksProperty.arraySize; j++) {
+                    var trackProp = _tracksProperty.GetArrayElementAtIndex(j);
+                    if (trackProp.managedReferenceValue is not MotionTrack track) break;
+                    if (i < j && track.mode == TrackMode.Chain) break;
+
+                    maxTotalDuration = Mathf.Max(maxTotalDuration, track.totalDuration);
+                    _trackStartTime[j] = cummulativeTime;
+                }
+
+                cummulativeTime += maxTotalDuration;
+                i = j - 1;
+            }
 
             _trackListView.Query<MotionTrackView>().Visible().ForEach(trackView => {
-                 trackView.Repaint();
+                trackView.Repaint(_trackStartTime[trackView.index]);
             });
         }
 

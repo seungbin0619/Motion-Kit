@@ -38,6 +38,7 @@ namespace Onion.MotionKit.Editor {
         private int _index;
         public int index => _index;
         
+        private bool _isDraggingDirty = false;
         private Vector2 _dragStartPosition;
         private float _originalStartDelay;
         private float _originalDuration;
@@ -53,25 +54,23 @@ namespace Onion.MotionKit.Editor {
             _container.Add(_trackTargetContainer = CreateTrackTargetContainer());
             _container.Add(_trackTimelineContainer = CreateTrackTimelineContainer());
 
-            Undo.undoRedoPerformed += OnUndoRedo;
-
             _parent = parent;
 
             Repaint();
         }
 
-        private void OnUndoRedo() {
-            if (_trackProperty == null) return;
-            if (_trackProperty.serializedObject == null) return;
-            if (visible == false) return;
+        // private void OnUndoRedo() {
+        //     if (_trackProperty == null) return;
+        //     if (_trackProperty.serializedObject == null) return;
+        //     if (visible == false) return;
 
-            schedule.Execute(() => {
-                // secure check for deleted objects after undo/redo
-                try {
-                    Repaint(); 
-                } catch { /* do nothing */ }
-            }).ExecuteLater(0);
-        }
+        //     schedule.Execute(() => {
+        //         // secure check for deleted objects after undo/redo
+        //         try {
+        //             Repaint(); 
+        //         } catch { /* do nothing */ }
+        //     }).ExecuteLater(0);
+        // }
 
         private VisualElement CreateTrackTargetContainer() {
             var container = new VisualElement();
@@ -166,6 +165,13 @@ namespace Onion.MotionKit.Editor {
             if (!_isResizing || _resizingDurationProp == null) return;
 
             float delta = evt.position.x - _dragStartPosition.x;
+            if (!_isDraggingDirty) {
+                if (Mathf.Abs(delta) < 3f) return;
+
+                _isDraggingDirty = true;
+                Undo.RecordObject(_trackProperty.serializedObject.targetObject, "Resize Motion Track");
+            }
+
             float deltaTime = delta / _parent.pixelsPerSecond;
 
             if (_resizingStartDelayProp == null) {
@@ -184,8 +190,8 @@ namespace Onion.MotionKit.Editor {
                 _resizingDurationProp.floatValue = Mathf.Max(0.01f, _originalDuration - (result - _originalStartDelay));
             }
 
-            _trackProperty.serializedObject.ApplyModifiedProperties();
-            Repaint();
+            _trackProperty.serializedObject.ApplyModifiedPropertiesWithoutUndo();
+            _parent.NotifyChange();
 
             evt.StopPropagation();
         }
@@ -196,7 +202,8 @@ namespace Onion.MotionKit.Editor {
             _isResizing = false;
             _resizingDurationProp = null;
             _trackTimelineContainer.ReleasePointer(evt.pointerId);
-            
+
+            _trackProperty.serializedObject.ApplyModifiedProperties();
             evt.StopPropagation();
         }
 
@@ -241,23 +248,19 @@ namespace Onion.MotionKit.Editor {
             Repaint();
         }
         
-        public void Repaint() {
+        public void Repaint(float groupStartTime = 0.0f) {
             if (this == null) return;
             
             _trackTargetContainer.style.width = _parent.leftWidth;
             if (_trackProperty == null) return;
-            if (_trackProperty.managedReferenceValue is not MotionTrack) return;
+            if (_trackProperty.managedReferenceValue is not MotionTrack track) return;
 
-            var durationProp = _trackProperty.FindPropertyRelative("settings.duration");
-            var startDelayProp = _trackProperty.FindPropertyRelative("settings.startDelay");
-            var endDelayProp = _trackProperty.FindPropertyRelative("settings.endDelay");
+            _realTrackTimeline.style.width = _parent.pixelsPerSecond * track.settings.duration;
 
-            _realTrackTimeline.style.width = _parent.pixelsPerSecond * durationProp.floatValue;
-
-            float left = _parent.minMarginLeft + (_parent.pixelsPerSecond * startDelayProp.floatValue);
+            float left = _parent.minMarginLeft + _parent.pixelsPerSecond * (track.settings.startDelay + groupStartTime);
             left -= _parent.startTime * _parent.pixelsPerSecond;
 
-            float right = left + _parent.pixelsPerSecond * (durationProp.floatValue + endDelayProp.floatValue);
+            float right = left + _parent.pixelsPerSecond * (track.settings.duration + track.settings.endDelay);
 
             if (right < 0 || left > _parent.totalWidth) {
                 _trackTimelineContainer.style.display = DisplayStyle.None;
