@@ -309,7 +309,7 @@ namespace Onion.MotionKit.Editor {
             _cyclesContainer.style.left = right;
 
             while (_cyclePool.Count < cycles) {
-                var content = new MotionTrackCycleView("Cycle", _realTrackTag.style.backgroundColor.value);
+                var content = new MotionTrackCycleView(_realTrackLabel.text, _realTrackTag.style.backgroundColor.value);
                 _cyclePool.Add(content);
             }
 
