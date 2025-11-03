@@ -29,7 +29,7 @@ namespace Onion.MotionKit.Editor {
                     };
 
                     Color clear = new(1, 1, 1, 0);
-                    Color line = new(1, 1, 1, 0.2f);
+                    Color line = new(1, 1, 1, 0.1f);
 
                     for (int y = 0; y < size; y++) {
                         for (int x = 0; x < size; x++) {
@@ -115,6 +115,7 @@ namespace Onion.MotionKit.Editor {
 
             _realTrackDurationContent = new();
             _realTrackDurationContent.AddToClassList("track-timeline-duration-content");
+            _realTrackDurationContent.pickingMode = PickingMode.Ignore;
 
             _realTrackLabel = new Label();
             _realTrackLabel.pickingMode = PickingMode.Ignore;
