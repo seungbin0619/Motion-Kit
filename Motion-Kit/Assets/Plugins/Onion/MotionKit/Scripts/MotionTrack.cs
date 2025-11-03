@@ -3,12 +3,22 @@ using PrimeTween;
 using UnityEngine;
 
 namespace Onion.MotionKit {
+    #pragma warning disable IDE1006
+
     [Serializable]
     public class MotionTrack {
         public Component target;
         public MotionClip clip;
         public TrackMode mode;
         public TweenSettings settings;
+        
+        public float totalDuration {
+            get {
+                var cycles = Mathf.Max(settings.cycles, 1);
+                
+                return settings.startDelay + (settings.duration + settings.endDelay) * cycles;
+            }
+        }
 
         public MotionTrack() {
             settings.duration = 1f;

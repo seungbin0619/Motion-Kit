@@ -782,7 +782,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   sequences:
   - name: Sequence 0
-    playOnAwake: 0
+    playOnAwake: 1
     tracks:
     - rid: 5331092788815593472
     - rid: 5331092788815593536
