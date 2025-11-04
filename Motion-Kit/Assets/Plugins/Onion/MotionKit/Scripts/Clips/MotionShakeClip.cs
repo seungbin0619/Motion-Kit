@@ -2,6 +2,8 @@ using PrimeTween;
 using UnityEngine;
 
 namespace Onion.MotionKit {
+    [MotionClipMenu("Shake")]
+    [CreateAssetMenu(fileName = "MotionShakeClip", menuName = "Onion/Motion Kit/Clips/Motion Shake Clip")]
     public class MotionShakeClip : MotionClip {
         private enum ShakeMode {
             None,
