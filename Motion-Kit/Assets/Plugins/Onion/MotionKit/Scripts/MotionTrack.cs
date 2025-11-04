@@ -34,6 +34,10 @@ namespace Onion.MotionKit {
         public bool useValueOverride;
         public TweenValues<T> value;
 
+        public MotionTrack(MotionClipWithValue<T> clip) {
+            value = clip.value;
+        }
+
         public override Tween Create() {
             if (clip is not MotionClipWithValue<T> valuedClip) {
                 return base.Create();

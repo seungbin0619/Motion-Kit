@@ -9,24 +9,46 @@ namespace Onion.MotionKit.Editor {
         [SerializeField]
         private StyleSheet styleSheet;
 
+        private PropertyField _clipField;
+        private PropertyField _modefield;
+        private TweenSettingsDrawer _settingsDrawer;
+        private PropertyField _useValueOverrideField;
+        private PropertyField _valueField;
+
         public override VisualElement CreatePropertyGUI(SerializedProperty property) {
             var root = new VisualElement();
+            root.AddToClassList("motion-track-drawer");
             root.styleSheets.Add(styleSheet);
 
-            root.Add(new PropertyField(property.FindPropertyRelative(nameof(MotionTrack.clip))) { enabledSelf = false });
-            root.Add(new PropertyField(property.FindPropertyRelative(nameof(MotionTrack.mode))));
-            root.Add(new TweenSettingsDrawer(property.FindPropertyRelative(nameof(MotionTrack.settings))));
+            _clipField = new(property.FindPropertyRelative(nameof(MotionTrack.clip))) { enabledSelf = false };
+            _modefield = new(property.FindPropertyRelative(nameof(MotionTrack.mode)));
+            _settingsDrawer = new(property.FindPropertyRelative(nameof(MotionTrack.settings)));
+
+            root.Add(_clipField);
+            root.Add(_modefield);
+            root.Add(_settingsDrawer);
 
             var type = property.managedReferenceValue.GetType();
             if ((type.IsGenericType && type.GetGenericTypeDefinition() == typeof(MotionTrack<>)) || type == typeof(MotionShakeTrack)) {
-                root.Add(new PropertyField(property.FindPropertyRelative("useValueOverride")));
-                root.Add(new PropertyField(property.FindPropertyRelative("value")));
+                _useValueOverrideField = new PropertyField(property.FindPropertyRelative("useValueOverride"));
+                _valueField = new PropertyField(property.FindPropertyRelative("value"));
+
+                root.Add(_useValueOverrideField);
+                root.Add(_valueField);
+
+                _useValueOverrideField.RegisterCallback<ChangeEvent<bool>>(OnValueOverrideChanged);
             } else {
                 // for custom motion tracks
                 // implement after needed
             }
 
             return root;
+        }
+
+        private void OnValueOverrideChanged(ChangeEvent<bool> evt) {
+            _valueField.style.display = evt.newValue 
+                ? DisplayStyle.Flex 
+                : DisplayStyle.None;
         }
     }
 }

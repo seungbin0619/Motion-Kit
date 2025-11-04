@@ -746,7 +746,6 @@ GameObject:
   m_Component:
   - component: {fileID: 2052945230}
   - component: {fileID: 2052945231}
-  - component: {fileID: 2052945232}
   m_Layer: 0
   m_Name: Empty
   m_TagString: Untagged
@@ -785,14 +784,16 @@ MonoBehaviour:
   - name: Sequence 0
     playOnAwake: 1
     tracks:
-    - rid: 4560873257893363775
-    - rid: 4560873279444484175
-    - rid: 4560873257893363777
-    - rid: 4560873279444484176
+    - rid: 4560873281319338072
+    - rid: 4560873281319338073
+  - name: Sequence 1
+    playOnAwake: 0
+    tracks:
+    - rid: 4560873281319338074
   references:
     version: 2
     RefIds:
-    - rid: 4560873257893363775
+    - rid: 4560873281319338072
       type: {class: 'MotionTrack`1[[System.Single, mscorlib]]', ns: Onion.MotionKit, asm: Assembly-CSharp-firstpass}
       data:
         target: {fileID: 790710001}
@@ -807,7 +808,7 @@ MonoBehaviour:
             m_PreInfinity: 2
             m_PostInfinity: 2
             m_RotationOrder: 4
-          cycles: 1
+          cycles: 0
           cycleMode: 0
           startDelay: 0
           endDelay: 0.25
@@ -818,8 +819,8 @@ MonoBehaviour:
         value:
           startFromCurrent: 0
           startValue: 0
-          endValue: 0
-    - rid: 4560873257893363777
+          endValue: 1
+    - rid: 4560873281319338073
       type: {class: 'MotionTrack`1[[System.Single, mscorlib]]', ns: Onion.MotionKit, asm: Assembly-CSharp-firstpass}
       data:
         target: {fileID: 790710001}
@@ -834,7 +835,34 @@ MonoBehaviour:
             m_PreInfinity: 2
             m_PostInfinity: 2
             m_RotationOrder: 4
-          cycles: 1
+          cycles: 0
+          cycleMode: 0
+          startDelay: 0
+          endDelay: 0
+          useUnscaledTime: 0
+          _useFixedUpdate: 0
+          _updateType: 0
+        useValueOverride: 0
+        value:
+          startFromCurrent: 0
+          startValue: 1
+          endValue: 0
+    - rid: 4560873281319338074
+      type: {class: 'MotionTrack`1[[System.Single, mscorlib]]', ns: Onion.MotionKit, asm: Assembly-CSharp-firstpass}
+      data:
+        target: {fileID: 0}
+        clip: {fileID: 11400000, guid: 6f8492e89b134cc4ab0fc59b2bb99af2, type: 2}
+        mode: 0
+        settings:
+          duration: 1
+          ease: 0
+          customEase:
+            serializedVersion: 2
+            m_Curve: []
+            m_PreInfinity: 2
+            m_PostInfinity: 2
+            m_RotationOrder: 4
+          cycles: 0
           cycleMode: 0
           startDelay: 0
           endDelay: 0
@@ -845,109 +873,7 @@ MonoBehaviour:
         value:
           startFromCurrent: 0
           startValue: 0
-          endValue: 0
-    - rid: 4560873279444484175
-      type: {class: 'MotionTrack`1[[UnityEngine.Vector3, UnityEngine.CoreModule]]', ns: Onion.MotionKit, asm: Assembly-CSharp-firstpass}
-      data:
-        target: {fileID: 790710000}
-        clip: {fileID: 11400000, guid: 1dffbf6df7e63e944acbb06b76bbec1f, type: 2}
-        mode: 0
-        settings:
-          duration: 1
-          ease: 1
-          customEase:
-            serializedVersion: 2
-            m_Curve: []
-            m_PreInfinity: 2
-            m_PostInfinity: 2
-            m_RotationOrder: 4
-          cycles: 1
-          cycleMode: 0
-          startDelay: 0
-          endDelay: 0
-          useUnscaledTime: 0
-          _useFixedUpdate: 0
-          _updateType: 0
-        useValueOverride: 0
-        value:
-          startFromCurrent: 0
-          startValue: {x: 0, y: 0, z: 0}
-          endValue: {x: 0, y: 0, z: 0}
-    - rid: 4560873279444484176
-      type: {class: 'MotionTrack`1[[UnityEngine.Vector3, UnityEngine.CoreModule]]', ns: Onion.MotionKit, asm: Assembly-CSharp-firstpass}
-      data:
-        target: {fileID: 790710000}
-        clip: {fileID: 11400000, guid: 3269e845d7ae4224891b887a3a33f722, type: 2}
-        mode: 0
-        settings:
-          duration: 1
-          ease: 1
-          customEase:
-            serializedVersion: 2
-            m_Curve: []
-            m_PreInfinity: 2
-            m_PostInfinity: 2
-            m_RotationOrder: 4
-          cycles: 1
-          cycleMode: 0
-          startDelay: 0
-          endDelay: 0
-          useUnscaledTime: 0
-          _useFixedUpdate: 0
-          _updateType: 0
-        useValueOverride: 0
-        value:
-          startFromCurrent: 0
-          startValue: {x: 0, y: 0, z: 0}
-          endValue: {x: 0, y: 0, z: 0}
---- !u!114 &2052945232
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2052945229}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9645e84440e22e44ba66f9ca69a16c03, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  shakeSettings:
-    strength: {x: 0, y: 0, z: 0}
-    duration: 1
-    frequency: 10
-    enableFalloff: 0
-    falloffEase: 0
-    strengthOverTime:
-      serializedVersion: 2
-      m_Curve: []
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    asymmetry: 0
-    easeBetweenShakes: 0
-    cycles: 1
-    startDelay: 0
-    endDelay: 0
-    useUnscaledTime: 0
-    _useFixedUpdate: 0
-    _updateType: 0
-  tweenSettings:
-    duration: 1
-    ease: 0
-    customEase:
-      serializedVersion: 2
-      m_Curve: []
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    cycles: 1
-    cycleMode: 0
-    startDelay: 0
-    endDelay: 0
-    useUnscaledTime: 0
-    _useFixedUpdate: 0
-    _updateType: 0
+          endValue: 1
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

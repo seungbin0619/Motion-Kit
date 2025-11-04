@@ -1,0 +1,7 @@
+.tween-settings-drawer {
+    padding: 8px 0;
+}
+
+.tween-settings-drawer > PropertyField {
+    
+}

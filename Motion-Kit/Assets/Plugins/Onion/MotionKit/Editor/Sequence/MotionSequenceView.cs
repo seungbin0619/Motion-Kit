@@ -45,7 +45,6 @@ namespace Onion.MotionKit.Editor {
         private readonly Dictionary<int, float> _initialTrackStartTimes = new();
 
 
-
         private readonly PropertyField _nameField;
         private readonly PropertyField _playOnAwakeField;
 
@@ -228,8 +227,12 @@ namespace Onion.MotionKit.Editor {
                     
                     trackProp.managedReferenceValue = Activator
                         .CreateInstance(typeof(MotionTrack<>)
-                        .MakeGenericType(genericT));
+                        .MakeGenericType(genericT), new object[] { clip });
 
+                    break;
+                } else if (clipType == typeof(MotionShakeClip)) {
+                    trackProp.managedReferenceValue = Activator.CreateInstance(typeof(MotionShakeTrack));
+                    
                     break;
                 }
 

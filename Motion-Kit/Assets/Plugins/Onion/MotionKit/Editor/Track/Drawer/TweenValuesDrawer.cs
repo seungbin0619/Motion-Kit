@@ -5,19 +5,36 @@ using UnityEngine.UIElements;
 
 namespace Onion.MotionKit.Editor {
     public abstract class TweenValuesDrawer : PropertyDrawer {
+        private PropertyField _startFromCurrentField;
+        private PropertyField _startValueField;
+        private PropertyField _endValueField;
+
         public override VisualElement CreatePropertyGUI(SerializedProperty property) {
             var root = new VisualElement();
 
-            root.Add(new PropertyField(property.FindPropertyRelative("startFromCurrent")));
-            root.Add(new PropertyField(property.FindPropertyRelative("startValue")));
-            root.Add(new PropertyField(property.FindPropertyRelative("endValue")));
+            _startFromCurrentField = new PropertyField(property.FindPropertyRelative("startFromCurrent"));
+            _startValueField = new PropertyField(property.FindPropertyRelative("startValue"));
+            _endValueField = new PropertyField(property.FindPropertyRelative("endValue"));
+
+            root.Add(_startFromCurrentField);
+            _startFromCurrentField.RegisterCallback<SerializedPropertyChangeEvent>(evt => {
+                var prop = evt.changedProperty;
+                bool useCurrent = prop.boolValue;
+                
+                _startValueField.style.display = useCurrent 
+                    ? DisplayStyle.None 
+                    : DisplayStyle.Flex;
+            });
+
+            root.Add(_startValueField);
+            root.Add(_endValueField);
 
             return root;
         }
     }
 
     // available types - int, long, float, double, Vector2, Vector3, Vector4, Color, Quaternion, Rect
-    
+
     [CustomPropertyDrawer(typeof(TweenValues<float>))]
     public class TweenFloatValuesDrawer : TweenValuesDrawer {}
 

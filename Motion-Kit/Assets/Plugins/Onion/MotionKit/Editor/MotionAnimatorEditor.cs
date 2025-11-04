@@ -41,6 +41,7 @@ namespace Onion.MotionKit.Editor {
 
         private VisualElement CreateDropdown() {
             _popup = new() { label = "Sequence" };
+            _popup.AddToClassList("sequence-popup");
             _popup.RegisterCallback<FocusInEvent>(evt => RefreshDropdown());
             _popup.RegisterValueChangedCallback(OnSequenceChanged);
 

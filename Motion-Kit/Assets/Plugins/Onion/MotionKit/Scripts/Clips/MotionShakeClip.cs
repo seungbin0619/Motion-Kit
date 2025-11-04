@@ -3,8 +3,8 @@ using UnityEngine;
 
 namespace Onion.MotionKit {
     [MotionClipMenu("Shake")]
-    [CreateAssetMenu(fileName = "MotionShakeClip", menuName = "Onion/Motion Kit/Clips/Motion Shake Clip")]
-    public class MotionShakeClip : MotionClip {
+    [CreateAssetMenu(menuName = "Animation/Motion Kit/Shake Clip")]
+    public sealed class MotionShakeClip : MotionClip {
         private enum ShakeMode {
             None,
             Position,
@@ -28,7 +28,7 @@ namespace Onion.MotionKit {
             return Create(target, values.ToSettings(settings));
         }
 
-        protected Tween Create(Component target, ShakeSettings settings) {
+        private Tween Create(Component target, ShakeSettings settings) {
             if (target is not Transform transform) return default;
             if (isPunch) {
                 return mode switch {

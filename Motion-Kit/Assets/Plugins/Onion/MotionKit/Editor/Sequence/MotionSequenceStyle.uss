@@ -13,7 +13,7 @@
     border-width: 1px;
     border-radius: 4px;
 
-    min-height: 200px;
+    min-height: 120px;
     max-height: 200px;
     
     overflow: hidden;
@@ -81,7 +81,7 @@
 
 .track-inspector-container {
     display: none;
-    margin-top: 4px;
+    margin-top: 16px;
     background-color: #2D2D2D;
 
     border-color: #1E1E1E;

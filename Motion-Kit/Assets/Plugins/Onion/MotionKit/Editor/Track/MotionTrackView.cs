@@ -255,7 +255,7 @@ namespace Onion.MotionKit.Editor {
 
         public void SetTrack(SerializedProperty trackProperty, int index) {
             if (_trackProperty == trackProperty) return;
-
+            
             _trackTargetField.Unbind();
             _trackProperty = trackProperty;
             _index = index;
@@ -273,6 +273,7 @@ namespace Onion.MotionKit.Editor {
                 _realTrackLabel.text = clip.name;
             }
 
+            _realTrackTimeline.tooltip = _realTrackLabel.text;
             _trackTag.style.backgroundColor = color;
             _realTrackTag.style.backgroundColor = color;
         }

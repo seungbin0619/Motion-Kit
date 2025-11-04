@@ -90,6 +90,7 @@
     margin: 0 4px;
     margin-bottom: 3px;
     overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .track-timeline-tag {

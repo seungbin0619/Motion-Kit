@@ -3,7 +3,7 @@ using PrimeTween;
 
 namespace Onion.MotionKit {
     [Serializable]
-    public class MotionShakeTrack : MotionTrack {
+    public sealed class MotionShakeTrack : MotionTrack {
         public bool useValueOverride;
         public ShakeValues value;
 
