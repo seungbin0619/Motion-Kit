@@ -9,6 +9,8 @@ namespace Onion.MotionKit.Editor {
         [SerializeField]
         private StyleSheet styleSheet;
 
+        private SerializedProperty _property;
+
         private PropertyField _clipField;
         private PropertyField _modefield;
         private TweenSettingsDrawer _settingsDrawer;
@@ -16,6 +18,8 @@ namespace Onion.MotionKit.Editor {
         private PropertyField _valueField;
 
         public override VisualElement CreatePropertyGUI(SerializedProperty property) {
+            _property = property;
+
             var root = new VisualElement();
             root.AddToClassList("motion-track-drawer");
             root.styleSheets.Add(styleSheet);
@@ -46,9 +50,15 @@ namespace Onion.MotionKit.Editor {
         }
 
         private void OnValueOverrideChanged(ChangeEvent<bool> evt) {
-            _valueField.style.display = evt.newValue 
-                ? DisplayStyle.Flex 
-                : DisplayStyle.None;
+            var prop = evt.newValue
+                ? _property.FindPropertyRelative("value")
+                : new SerializedObject(_property.FindPropertyRelative("clip").objectReferenceValue).FindProperty("value");
+
+            _valueField.SetEnabled(evt.newValue);
+            if (prop == null) return;
+            
+            _valueField.Unbind();
+            _valueField.BindProperty(prop);
         }
     }
 }

@@ -38,8 +38,12 @@ namespace Onion.MotionKit.Editor {
 
         private void OnEnableFalloffChanged(SerializedPropertyChangeEvent evt) {
             var property = evt.changedProperty;
-            
+
             _falloffEaseField.style.display = property.boolValue
+                ? DisplayStyle.Flex
+                : DisplayStyle.None;
+
+            _strengthOverTimeField.style.display = property.boolValue
                 ? DisplayStyle.Flex
                 : DisplayStyle.None;
         }

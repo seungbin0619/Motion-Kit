@@ -785,6 +785,7 @@ MonoBehaviour:
     playOnAwake: 1
     tracks:
     - rid: 4560873281319338072
+    - rid: 4560873281319338077
     - rid: 4560873281319338073
   - name: Sequence 1
     playOnAwake: 0
@@ -842,10 +843,10 @@ MonoBehaviour:
           useUnscaledTime: 0
           _useFixedUpdate: 0
           _updateType: 0
-        useValueOverride: 0
+        useValueOverride: 1
         value:
           startFromCurrent: 0
-          startValue: 1
+          startValue: 2
           endValue: 0
     - rid: 4560873281319338074
       type: {class: 'MotionTrack`1[[System.Single, mscorlib]]', ns: Onion.MotionKit, asm: Assembly-CSharp-firstpass}
@@ -874,6 +875,41 @@ MonoBehaviour:
           startFromCurrent: 0
           startValue: 0
           endValue: 1
+    - rid: 4560873281319338077
+      type: {class: MotionShakeTrack, ns: Onion.MotionKit, asm: Assembly-CSharp-firstpass}
+      data:
+        target: {fileID: 790710000}
+        clip: {fileID: 11400000, guid: 3d4d03e5331442b479ca139086ffa7ad, type: 2}
+        mode: 0
+        settings:
+          duration: 1
+          ease: 0
+          customEase:
+            serializedVersion: 2
+            m_Curve: []
+            m_PreInfinity: 2
+            m_PostInfinity: 2
+            m_RotationOrder: 4
+          cycles: 0
+          cycleMode: 0
+          startDelay: 0
+          endDelay: 0
+          useUnscaledTime: 0
+          _useFixedUpdate: 0
+          _updateType: 0
+        useValueOverride: 0
+        value:
+          strength: {x: 10.66, y: 10.06, z: 5.83}
+          frequency: 19.47
+          enableFalloff: 0
+          falloffEase: 0
+          strengthOverTime:
+            serializedVersion: 2
+            m_Curve: []
+            m_PreInfinity: 2
+            m_PostInfinity: 2
+            m_RotationOrder: 4
+          asymmetry: 0
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
