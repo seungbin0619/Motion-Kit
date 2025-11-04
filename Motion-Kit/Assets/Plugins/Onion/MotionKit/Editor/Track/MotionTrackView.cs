@@ -261,6 +261,9 @@ namespace Onion.MotionKit.Editor {
             _index = index;
 
             if (_trackProperty == null) return;
+            if (_trackProperty.managedReferenceValue is not MotionTrack track) return;
+            if (!track.isValid) return;
+
             var trackTargetProp = _trackProperty.FindPropertyRelative("target");
             if (trackTargetProp != null) {
                 _trackTargetField.BindProperty(trackTargetProp);

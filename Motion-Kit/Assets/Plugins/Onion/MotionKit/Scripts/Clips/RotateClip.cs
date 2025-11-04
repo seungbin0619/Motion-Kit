@@ -7,18 +7,21 @@ namespace Onion.MotionKit {
     public sealed class RotateClip : MotionClipWithValue<Vector3> {
         [SerializeField]
         private bool isLocal = true;
-        
+
+        [SerializeField]
+        private bool useShortestPath = true;
+
         protected override Tween Create(Component target, TweenSettings<Vector3> _settings) {
-            if (isLocal) {
-                return target switch {
-                    Transform transform => Tween.LocalRotation(transform, _settings),
-                    _ => default
-                };
+            if (target is not Transform transform) return default;
+
+            if (useShortestPath) {
+                return isLocal
+                    ? Tween.Rotation(transform, _settings)
+                    : Tween.Rotation(transform, _settings);
             } else {
-                return target switch {
-                    Transform transform => Tween.Rotation(transform, _settings),
-                    _ => default
-                };
+                return isLocal
+                    ? Tween.EulerAngles(transform, _settings)
+                    : Tween.EulerAngles(transform, _settings);
             }
         }
     }
