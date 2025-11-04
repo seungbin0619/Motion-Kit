@@ -15,29 +15,20 @@ namespace Onion.MotionKit.Editor {
         private readonly PropertyField _useUnscaledTimeField;
         private readonly PropertyField _updateTypeField;
 
-        public TweenSettingsDrawer(SerializedProperty property) {
+        public TweenSettingsDrawer() {
             var root = new VisualElement();
             root.AddToClassList("tween-settings-drawer");
 
-            _durationField = new(property.FindPropertyRelative(nameof(TweenSettings.duration)));
-            _easeField = new(property.FindPropertyRelative(nameof(TweenSettings.ease)));
-            _customEaseField = new(property.FindPropertyRelative(nameof(TweenSettings.customEase)));
-            _cyclesField = new(property.FindPropertyRelative(nameof(TweenSettings.cycles)));
-            _startDelayField = new(property.FindPropertyRelative(nameof(TweenSettings.startDelay)));
-            _endDelayField = new(property.FindPropertyRelative(nameof(TweenSettings.endDelay)));
-            _useUnscaledTimeField = new(property.FindPropertyRelative(nameof(TweenSettings.useUnscaledTime)));
-            _updateTypeField = new(property.FindPropertyRelative("_updateType"));
-
-            root.Add(_durationField);
-            root.Add(_startDelayField);
-            root.Add(_endDelayField);
-            root.Add(_cyclesField);
+            root.Add(_durationField = new());
+            root.Add(_startDelayField = new());
+            root.Add(_endDelayField = new());
+            root.Add(_cyclesField = new());
             
-            root.Add(_easeField);
-            root.Add(_customEaseField);
+            root.Add(_easeField = new());
+            root.Add(_customEaseField = new());
             
-            root.Add(_useUnscaledTimeField);
-            root.Add(_updateTypeField);
+            root.Add(_useUnscaledTimeField = new());
+            root.Add(_updateTypeField = new());
 
             _easeField.RegisterCallback<SerializedPropertyChangeEvent>(OnEaseChanged);    
             _durationField.RegisterCallback<SerializedPropertyChangeEvent>(ClampNegativeFloatValues);
@@ -45,6 +36,17 @@ namespace Onion.MotionKit.Editor {
             _endDelayField.RegisterCallback<SerializedPropertyChangeEvent>(ClampNegativeFloatValues);
 
             Add(root);
+        }
+
+        public void BindProperty(SerializedProperty property) {
+            _durationField.BindProperty(property.FindPropertyRelative(nameof(TweenSettings.duration)));
+            _easeField.BindProperty(property.FindPropertyRelative(nameof(TweenSettings.ease)));
+            _customEaseField.BindProperty(property.FindPropertyRelative(nameof(TweenSettings.customEase)));
+            _cyclesField.BindProperty(property.FindPropertyRelative(nameof(TweenSettings.cycles)));
+            _startDelayField.BindProperty(property.FindPropertyRelative(nameof(TweenSettings.startDelay)));
+            _endDelayField.BindProperty(property.FindPropertyRelative(nameof(TweenSettings.endDelay)));
+            _useUnscaledTimeField.BindProperty(property.FindPropertyRelative(nameof(TweenSettings.useUnscaledTime)));
+            _updateTypeField.BindProperty(property.FindPropertyRelative("_updateType"));
         }
 
         private void OnEaseChanged(SerializedPropertyChangeEvent evt) {

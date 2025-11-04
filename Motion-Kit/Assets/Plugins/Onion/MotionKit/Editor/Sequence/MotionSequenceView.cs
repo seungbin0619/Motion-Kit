@@ -435,15 +435,16 @@ namespace Onion.MotionKit.Editor {
             _trackPropertyField.Unbind();
             _trackInspectorContainer.style.display = DisplayStyle.None;
 
-            if (_trackListView.selectedIndices.Any()) {
+            var list = _trackListView.selectedIndices.ToList();;
+            if (list.Count == 1) {
                 _trackInspectorContainer.style.display = DisplayStyle.Flex;
 
                 var index = _trackListView.selectedIndices.First();
                 var singleTrackProp = _tracksProperty.GetArrayElementAtIndex(index);
 
                 _trackPropertyField.BindProperty(singleTrackProp);
-
-                return;
+            } else if (list.Count > 1) {
+                
             }
         }
 

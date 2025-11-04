@@ -10,10 +10,6 @@ namespace Onion.MotionKit.Editor {
         private StyleSheet styleSheet;
 
         private SerializedProperty _property;
-
-        private PropertyField _clipField;
-        private PropertyField _modefield;
-        private TweenSettingsDrawer _settingsDrawer;
         private PropertyField _useValueOverrideField;
         private PropertyField _valueField;
 
@@ -24,13 +20,10 @@ namespace Onion.MotionKit.Editor {
             root.AddToClassList("motion-track-drawer");
             root.styleSheets.Add(styleSheet);
 
-            _clipField = new(property.FindPropertyRelative(nameof(MotionTrack.clip))) { enabledSelf = false };
-            _modefield = new(property.FindPropertyRelative(nameof(MotionTrack.mode)));
-            _settingsDrawer = new(property.FindPropertyRelative(nameof(MotionTrack.settings)));
-
-            root.Add(_clipField);
-            root.Add(_modefield);
-            root.Add(_settingsDrawer);
+            var baseElements = new MotionTrackBaseElements();
+            baseElements.BindProperty(property);
+            
+            root.Add(baseElements);
 
             var type = property.managedReferenceValue.GetType();
             if ((type.IsGenericType && type.GetGenericTypeDefinition() == typeof(MotionTrack<>)) || type == typeof(MotionShakeTrack)) {
