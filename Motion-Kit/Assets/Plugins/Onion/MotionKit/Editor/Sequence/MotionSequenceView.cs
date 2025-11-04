@@ -28,6 +28,7 @@ namespace Onion.MotionKit.Editor {
         private readonly List<int> _groups = new();
         private readonly VisualElement _trackInspectorContainer;
         private readonly PropertyField _trackPropertyField;
+        private readonly MotionTrackBaseElements _multiTrackPropertyField;
 
         private readonly VisualElement _separator;
         private bool _isDraggingSeparator = false;
@@ -148,8 +149,12 @@ namespace Onion.MotionKit.Editor {
             _trackPropertyField.RegisterCallback<SerializedPropertyChangeEvent>(evt => {
                 NotifyChange();
             });
+
+            _multiTrackPropertyField = new();
             
             _trackInspectorContainer.Add(_trackPropertyField);
+            _trackInspectorContainer.Add(_multiTrackPropertyField);
+            
             _rootContainer.Add(_trackInspectorContainer);
 
             SetSequence(null);
@@ -432,18 +437,31 @@ namespace Onion.MotionKit.Editor {
         }
 
         private void RepaintTrackInspector() {
+            var list = _trackListView.selectedIndices.ToList();
+            
             _trackPropertyField.Unbind();
-            _trackInspectorContainer.style.display = DisplayStyle.None;
+            _trackInspectorContainer.style.display = list.Count == 0
+                ? DisplayStyle.None
+                : DisplayStyle.Flex;
 
-            var list = _trackListView.selectedIndices.ToList();;
             if (list.Count == 1) {
-                _trackInspectorContainer.style.display = DisplayStyle.Flex;
-
-                var index = _trackListView.selectedIndices.First();
+                _trackPropertyField.style.display = DisplayStyle.Flex;
+                _multiTrackPropertyField.style.display = DisplayStyle.None;
+                
+                var index = list[0];
                 var singleTrackProp = _tracksProperty.GetArrayElementAtIndex(index);
 
                 _trackPropertyField.BindProperty(singleTrackProp);
             } else if (list.Count > 1) {
+                _trackPropertyField.style.display = DisplayStyle.None;
+                _multiTrackPropertyField.style.display = DisplayStyle.Flex;
+
+                var multiTrackProps = new List<SerializedProperty>();
+                foreach (var index in list) {
+                    var trackProp = _tracksProperty.GetArrayElementAtIndex(index);
+                    multiTrackProps.Add(trackProp);
+                }
+
                 
             }
         }
