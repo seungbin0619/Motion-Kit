@@ -22,6 +22,7 @@ namespace Onion.MotionKit.Editor {
         
         private MotionSequenceView _sequenceView;
         private SerializedProperty _serializedSequenceProperty;
+        private bool _hasClass = false;
 
         public override VisualElement CreateInspectorGUI() {
             VisualElement root = _template != null 
@@ -30,13 +31,25 @@ namespace Onion.MotionKit.Editor {
 
             _animator = (MotionAnimator)target;
             _serializedSequenceProperty = serializedObject.FindProperty("sequences");
+            
 
             root.Add(CreateDropdown());
             root.Add(_sequenceView = new(_sequenceTemplate, _trackTemplate));
+            root.RegisterCallback<GeometryChangedEvent>(OnInspectorResized);
 
             SelectSequence(0);
 
             return root;
+        }
+
+        private void OnInspectorResized(GeometryChangedEvent evt) {
+            if (evt.newRect.width >= 335) {
+                _hasClass = true;
+                (evt.target as VisualElement).AddToClassList("sequence__wide-inspector");
+            } else if (_hasClass) {
+                (evt.target as VisualElement).RemoveFromClassList("sequence__wide-inspector");
+                _hasClass = false;
+            }
         }
 
         private VisualElement CreateDropdown() {
