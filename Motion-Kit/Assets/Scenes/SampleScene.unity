@@ -801,7 +801,7 @@ MonoBehaviour:
       data:
         target: {fileID: 790710001}
         clip: {fileID: 11400000, guid: 6f8492e89b134cc4ab0fc59b2bb99af2, type: 2}
-        mode: 0
+        mode: 1
         settings:
           duration: 1
           ease: 0
