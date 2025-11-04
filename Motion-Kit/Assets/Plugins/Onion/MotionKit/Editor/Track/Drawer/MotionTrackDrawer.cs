@@ -18,7 +18,8 @@ namespace Onion.MotionKit.Editor {
 
             root.Add(new PropertyField(property.FindPropertyRelative(nameof(MotionTrack.clip))) { enabledSelf = false });
             root.Add(new PropertyField(property.FindPropertyRelative(nameof(MotionTrack.mode))));
-            root.Add(new PropertyField(property.FindPropertyRelative(nameof(MotionTrack.settings))));
+            // root.Add(new PropertyField(property.FindPropertyRelative(nameof(MotionTrack.settings))));
+            root.Add(new TweenSettingsDrawer(property.FindPropertyRelative(nameof(MotionTrack.settings))));
 
             var type = property.managedReferenceValue.GetType();
             if ((type.IsGenericType && type.GetGenericTypeDefinition() == typeof(MotionTrack<>)) || type == typeof(MotionShakeTrack)) {

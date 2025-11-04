@@ -1,3 +1,0 @@
-namespace Onion.MotionKit.Editor {
-    
-}

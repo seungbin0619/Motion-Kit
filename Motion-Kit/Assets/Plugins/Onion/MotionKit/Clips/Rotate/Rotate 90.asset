@@ -16,5 +16,5 @@ MonoBehaviour:
   value:
     startFromCurrent: 0
     startValue: {x: 0, y: 0, z: 0}
-    endValue: {x: 0, y: 0, z: 0}
+    endValue: {x: 0, y: 0, z: 90}
   isLocal: 1
