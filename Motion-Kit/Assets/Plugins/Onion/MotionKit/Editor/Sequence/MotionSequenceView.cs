@@ -27,7 +27,7 @@ namespace Onion.MotionKit.Editor {
         private readonly List<float> _groupStartTime = new();
         private readonly List<int> _groups = new();
         private readonly VisualElement _trackInspectorContainer;
-
+        private readonly PropertyField _trackPropertyField;
 
         private readonly VisualElement _separator;
         private bool _isDraggingSeparator = false;
@@ -144,6 +144,13 @@ namespace Onion.MotionKit.Editor {
 
             _trackInspectorContainer = new();
             _trackInspectorContainer.AddToClassList("track-inspector-container");
+            
+            _trackPropertyField = new();
+            _trackPropertyField.RegisterCallback<SerializedPropertyChangeEvent>(evt => {
+                NotifyChange();
+            });
+            
+            _trackInspectorContainer.Add(_trackPropertyField);
             _rootContainer.Add(_trackInspectorContainer);
 
             SetSequence(null);
@@ -422,7 +429,7 @@ namespace Onion.MotionKit.Editor {
         }
 
         private void RepaintTrackInspector() {
-            _trackInspectorContainer.Clear();
+            _trackPropertyField.Unbind();
             _trackInspectorContainer.style.display = DisplayStyle.None;
 
             if (_trackListView.selectedIndices.Any()) {
@@ -430,14 +437,9 @@ namespace Onion.MotionKit.Editor {
 
                 var index = _trackListView.selectedIndices.First();
                 var singleTrackProp = _tracksProperty.GetArrayElementAtIndex(index);
-                            
-                var trackPropertyField = new PropertyField();
-                trackPropertyField.BindProperty(singleTrackProp);
-                trackPropertyField.RegisterCallback<SerializedPropertyChangeEvent>(evt => {
-                    NotifyChange();
-                });
-                
-                _trackInspectorContainer.Add(trackPropertyField);
+
+                _trackPropertyField.BindProperty(singleTrackProp);
+
                 return;
             }
         }

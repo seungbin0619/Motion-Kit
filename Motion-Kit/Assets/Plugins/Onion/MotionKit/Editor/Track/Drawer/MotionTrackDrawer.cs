@@ -7,18 +7,14 @@ namespace Onion.MotionKit.Editor {
     [CustomPropertyDrawer(typeof(MotionTrack), useForChildren: true)]
     public class MotionTrackDrawer : PropertyDrawer {
         [SerializeField]
-        private VisualTreeAsset _template;
+        private StyleSheet styleSheet;
 
         public override VisualElement CreatePropertyGUI(SerializedProperty property) {
-            if (_template == null) {
-                return base.CreatePropertyGUI(property);
-            }
-
-            var root = _template.CloneTree();
+            var root = new VisualElement();
+            root.styleSheets.Add(styleSheet);
 
             root.Add(new PropertyField(property.FindPropertyRelative(nameof(MotionTrack.clip))) { enabledSelf = false });
             root.Add(new PropertyField(property.FindPropertyRelative(nameof(MotionTrack.mode))));
-            // root.Add(new PropertyField(property.FindPropertyRelative(nameof(MotionTrack.settings))));
             root.Add(new TweenSettingsDrawer(property.FindPropertyRelative(nameof(MotionTrack.settings))));
 
             var type = property.managedReferenceValue.GetType();
