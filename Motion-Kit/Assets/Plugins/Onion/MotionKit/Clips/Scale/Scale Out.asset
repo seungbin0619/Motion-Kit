@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bd9e13990a5352c46b5aefa1c4fc8186, type: 3}
   m_Name: Scale Out
   m_EditorClassIdentifier: 
-  <category>k__BackingField: 5
+  <category>k__BackingField: 2
   value:
     startFromCurrent: 0
     startValue: {x: 1, y: 1, z: 1}
