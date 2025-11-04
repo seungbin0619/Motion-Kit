@@ -169,6 +169,7 @@ namespace Onion.MotionKit.Editor {
                 // secure check for deleted objects after undo/redo
                 try {
                     _trackListView.RefreshItems();
+                    RepaintTrackInspector();
                     NotifyChange(); 
                 } catch { /* do nothing */ }
             }).ExecuteLater(0);
@@ -274,7 +275,6 @@ namespace Onion.MotionKit.Editor {
             view.AddToClassList("track-list-view");
 
             view.RegisterCallback<GeometryChangedEvent>(evt => NotifyChange());
-            // view.RegisterCallback<FocusOutEvent>(evt => _trackListView.ClearSelection());
             view.RegisterCallback<KeyDownEvent>(OnKeyDown);
             
             view.makeItem = () => {
@@ -440,6 +440,7 @@ namespace Onion.MotionKit.Editor {
             var list = _trackListView.selectedIndices.ToList();
             
             _trackPropertyField.Unbind();
+            _multiTrackPropertyField.Unbind();
             _trackInspectorContainer.style.display = list.Count == 0
                 ? DisplayStyle.None
                 : DisplayStyle.Flex;
@@ -456,13 +457,13 @@ namespace Onion.MotionKit.Editor {
                 _trackPropertyField.style.display = DisplayStyle.None;
                 _multiTrackPropertyField.style.display = DisplayStyle.Flex;
 
-                var multiTrackProps = new List<SerializedProperty>();
-                foreach (var index in list) {
-                    var trackProp = _tracksProperty.GetArrayElementAtIndex(index);
-                    multiTrackProps.Add(trackProp);
+                var multiTrackProps = new SerializedProperty[list.Count];
+                for (int i = 0; i < list.Count; i++) {
+                    var trackProp = _tracksProperty.GetArrayElementAtIndex(list[i]);
+                    multiTrackProps[i] = trackProp;
                 }
 
-                
+                _multiTrackPropertyField.BindProperties(multiTrackProps, NotifyChange);
             }
         }
 

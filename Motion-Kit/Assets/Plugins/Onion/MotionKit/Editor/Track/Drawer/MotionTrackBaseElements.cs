@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEditor.UIElements;
@@ -5,14 +6,18 @@ using UnityEngine.UIElements;
 
 namespace Onion.MotionKit.Editor {
     public class MotionTrackBaseElements : VisualElement {
-        private readonly PropertyField _clipField;
-        private readonly PropertyField _modefield;
+        private readonly ObjectField _clipField;
+        private readonly EnumField _modefield;
         private readonly TweenSettingsDrawer _settingsDrawer;
 
         public MotionTrackBaseElements() {
-            _clipField = new() { enabledSelf = false };
-            _modefield = new();
+            _clipField = new("Clip") { enabledSelf = false };
+            _modefield = new("Mode");
             _settingsDrawer = new();
+            _settingsDrawer.style.marginTop = 8;
+
+            _clipField.AddToClassList("sequence__field");
+            _modefield.AddToClassList("sequence__field");
 
             Add(_clipField);
             Add(_modefield);
@@ -31,9 +36,16 @@ namespace Onion.MotionKit.Editor {
                 return;
             }
 
-            _clipField.BindProperty(property.FindPropertyRelative(nameof(MotionTrack.clip)));
-            _modefield.BindProperty(property.FindPropertyRelative(nameof(MotionTrack.mode)));
-            _settingsDrawer.BindProperty(property.FindPropertyRelative(nameof(MotionTrack.settings)));
+            _clipField.BindProperty(property.FindPropertyRelative("clip"));
+            _modefield.BindProperty(property.FindPropertyRelative("mode"));
+            _settingsDrawer.BindProperty(property.FindPropertyRelative("settings"));
+        }
+
+        public void BindProperties(SerializedProperty[] properties, Action onChange = null) {
+            _clipField.BindObjectProperties(properties, "clip", onChange);
+            _modefield.BindEnumProperties(properties, "mode", typeof(TrackMode), 0, onChange);
+
+            _settingsDrawer.BindProperties(properties, onChange);
         }
     }
 }

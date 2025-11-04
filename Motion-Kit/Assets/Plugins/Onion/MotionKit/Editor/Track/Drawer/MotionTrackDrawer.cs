@@ -28,6 +28,8 @@ namespace Onion.MotionKit.Editor {
             var type = property.managedReferenceValue.GetType();
             if ((type.IsGenericType && type.GetGenericTypeDefinition() == typeof(MotionTrack<>)) || type == typeof(MotionShakeTrack)) {
                 _useValueOverrideField = new PropertyField(property.FindPropertyRelative("useValueOverride"));
+                _useValueOverrideField.style.marginTop = 8;
+                
                 _valueField = new PropertyField(property.FindPropertyRelative("value"));
 
                 root.Add(_useValueOverrideField);

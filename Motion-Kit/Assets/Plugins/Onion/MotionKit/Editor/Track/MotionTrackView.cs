@@ -255,7 +255,7 @@ namespace Onion.MotionKit.Editor {
 
         public void SetTrack(SerializedProperty trackProperty, int index) {
             if (_trackProperty == trackProperty) return;
-            
+
             _trackTargetField.Unbind();
             _trackProperty = trackProperty;
             _index = index;

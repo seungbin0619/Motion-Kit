@@ -82,6 +82,7 @@
 .track-inspector-container {
     display: none;
     margin-top: 16px;
+    padding-bottom: 4px;
     background-color: #2D2D2D;
 
     border-color: #1E1E1E;
@@ -121,4 +122,14 @@
 
 .unity-list-view__empty-label {
     display: none !important;
+}
+
+.sequence__field > Label {
+    max-width: 119px;
+}
+
+.sequence__wide-inspector .sequence__field > Label {
+    max-width: none;
+    margin-right: -28px;
+    width: 45%;
 }

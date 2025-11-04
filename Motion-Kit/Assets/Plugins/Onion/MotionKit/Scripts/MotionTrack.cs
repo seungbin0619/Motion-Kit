@@ -11,7 +11,7 @@ namespace Onion.MotionKit {
         public MotionClip clip;
         public TrackMode mode;
         public TweenSettings settings;
-        public bool isValid => target != null && clip != null;
+        public bool isValid => clip != null;
         
         public float totalDuration {
             get {
