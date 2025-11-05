@@ -312,20 +312,27 @@ namespace Onion.MotionKit.Editor {
 
             if (right < 0 || left > _parent.totalWidth) {
                 _trackTimelineContainer.style.display = DisplayStyle.None;
+                return;
             }
+
+            _trackTimelineContainer.style.display = DisplayStyle.Flex;
 
             int skipTracks = Mathf.Max(0, Mathf.CeilToInt(-left / timelineWidth - 1));
             float position = left + skipTracks * timelineWidth;
-            if (skipTracks == 0) {
-                _trackTimelineContainer.style.display = DisplayStyle.Flex;
 
+            if (skipTracks == 0) {
+                _realTrackTimeline.style.display = DisplayStyle.Flex;
                 _realTrackTimeline.style.left = position;
+                
                 position += timelineWidth;
+                skipTracks = 1;
+            } else {
+                _realTrackTimeline.style.display = DisplayStyle.None;
             }
 
             int visibleCycles = Mathf.CeilToInt((_parent.totalWidth - position) / timelineWidth);
             if (!isInfinite) {
-                visibleCycles = Mathf.Min(visibleCycles, cycles - skipTracks - 1);
+                visibleCycles = Mathf.Min(visibleCycles, cycles - skipTracks);
             }
 
             visibleCycles = Mathf.Max(visibleCycles, 0);
