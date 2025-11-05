@@ -746,7 +746,6 @@ GameObject:
   m_Component:
   - component: {fileID: 2052945230}
   - component: {fileID: 2052945231}
-  - component: {fileID: 2052945232}
   m_Layer: 0
   m_Name: Empty
   m_TagString: Untagged
@@ -1023,19 +1022,6 @@ MonoBehaviour:
           startFromCurrent: 1
           startValue: {x: 0, y: 0, z: 0}
           endValue: {x: 0, y: 0, z: 90}
---- !u!114 &2052945232
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2052945229}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 32fc4f6c451bfe146a7ebb228719f1b6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  animator: {fileID: 2052945231}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
