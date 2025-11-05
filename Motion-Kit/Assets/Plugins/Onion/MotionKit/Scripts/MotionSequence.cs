@@ -18,17 +18,39 @@ namespace Onion.MotionKit {
                 _sequence.Complete();    
             }
 
+            bool hasBufferedChain = false;
+            float accumulatedTime = 0f;
+            float maxGroupTime = 0f;
+            
             _sequence = Sequence.Create();
+
             foreach (var track in tracks) {
                 if (!track.isValid) continue;
+
                 var tween = track.Create();
-                
-                if (track.mode == TrackMode.Group) {
+                if (track.runIndependently) {
+                    if (track.mode == TrackMode.Chain) {
+                        hasBufferedChain = true;
+                        accumulatedTime += maxGroupTime;
+                        maxGroupTime = 0f;
+                    }
+
+                    if (accumulatedTime == 0f) continue;
+                    Tween.Delay(accumulatedTime).Chain(tween);
+                    continue;
+                }
+
+                if (!hasBufferedChain && track.mode == TrackMode.Group) {
                     _sequence.Group(tween);
                 }
-                else if (track.mode == TrackMode.Chain) {
-                     _sequence.Chain(tween);
+                else {
+                    accumulatedTime += maxGroupTime;
+                    maxGroupTime = 0f;
+
+                    _sequence.Chain(tween);
                 }
+
+                maxGroupTime = Mathf.Max(maxGroupTime, tween.durationTotal);
             }
         }
     }
