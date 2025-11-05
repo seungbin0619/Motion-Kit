@@ -262,7 +262,7 @@ namespace Onion.MotionKit.Editor {
 
             if (_trackProperty == null) return;
             if (_trackProperty.managedReferenceValue is not MotionTrack track) return;
-            if (!track.isValid) return;
+            if (track.clip == null) return;
 
             var trackTargetProp = _trackProperty.FindPropertyRelative("target");
             if (trackTargetProp != null) {
@@ -283,52 +283,73 @@ namespace Onion.MotionKit.Editor {
         
         public void Repaint(float groupStartTime = 0.0f) {
             if (this == null) return;
-            
+            if (groupStartTime == float.PositiveInfinity) {
+                _trackTimelineContainer.style.display = DisplayStyle.None;
+                _container.style.opacity = 0.5f;
+
+                return;
+            }
+
+            _container.style.opacity = 1.0f;
             _trackTargetContainer.style.width = _parent.leftWidth;
+            
             if (_trackProperty == null) return;
             if (_trackProperty.managedReferenceValue is not MotionTrack track) return;
 
-            float totalWidth = _parent.pixelsPerSecond * (track.settings.duration + track.settings.endDelay);
             float durationWidth = _parent.pixelsPerSecond * track.settings.duration;
+            float timelineWidth = durationWidth + _parent.pixelsPerSecond * track.settings.endDelay;
 
-            _realTrackTimeline.style.width = totalWidth;
+            bool isInfinite = track.settings.cycles == -1;
+
+            int cycles = Mathf.Max(track.settings.cycles, 1);
+            float totalWidth = isInfinite ? float.PositiveInfinity : timelineWidth * cycles;
+
+            _realTrackTimeline.style.width = timelineWidth;
             _realTrackDurationContent.style.width = durationWidth;
 
-            float left = _parent.minMarginLeft + _parent.pixelsPerSecond * (track.settings.startDelay + groupStartTime);
-            left -= _parent.startTime * _parent.pixelsPerSecond;
-
-            float right = left + _parent.pixelsPerSecond * (track.settings.duration + track.settings.endDelay);
+            float left = _parent.minMarginLeft + _parent.pixelsPerSecond * (track.settings.startDelay + groupStartTime - _parent.startTime);
+            float right = left + totalWidth;
 
             if (right < 0 || left > _parent.totalWidth) {
                 _trackTimelineContainer.style.display = DisplayStyle.None;
             }
-            else {
+
+            int skipTracks = Mathf.Max(0, Mathf.CeilToInt(-left / timelineWidth - 1));
+            float position = left + skipTracks * timelineWidth;
+            if (skipTracks == 0) {
                 _trackTimelineContainer.style.display = DisplayStyle.Flex;
-                _realTrackTimeline.style.left = left;
+
+                _realTrackTimeline.style.left = position;
+                position += timelineWidth;
             }
 
-            var cycles = track.settings.cycles - 1;
-            cycles = Mathf.Max(cycles, 0);
+            int visibleCycles = Mathf.CeilToInt((_parent.totalWidth - position) / timelineWidth);
+            if (!isInfinite) {
+                visibleCycles = Mathf.Min(visibleCycles, cycles - skipTracks - 1);
+            }
 
-            _cyclesContainer.style.left = right;
+            visibleCycles = Mathf.Max(visibleCycles, 0);
 
-            while (_cyclePool.Count < cycles) {
+            _cyclesContainer.style.display = visibleCycles > 0 ? DisplayStyle.Flex : DisplayStyle.None;
+            _cyclesContainer.style.left = position;
+
+            while (_cyclePool.Count < visibleCycles) {
                 var content = new MotionTrackCycleView(_realTrackLabel.text, _realTrackTag.style.backgroundColor.value);
                 _cyclePool.Add(content);
             }
 
-            while (_cyclesContainer.childCount < cycles) {
+            while (_cyclesContainer.childCount < visibleCycles) {
                 _cyclesContainer.Add(_cyclePool[_cyclesContainer.childCount]);
             }
 
-            while (_cyclesContainer.childCount > cycles) {
+            while (_cyclesContainer.childCount > visibleCycles) {
                 var lastIndex = _cyclesContainer.childCount - 1;
 
                 _cyclesContainer.Remove(_cyclesContainer[lastIndex]);
             }
 
             foreach (var cycleView in _cyclePool) {
-                cycleView.Repaint(totalWidth, durationWidth);
+                cycleView.Repaint(timelineWidth, durationWidth);
             }
         }
     }

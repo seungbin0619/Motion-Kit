@@ -11,6 +11,7 @@ namespace Onion.MotionKit.Editor {
         private readonly EnumField _easeField;
         private readonly PropertyField _customEaseField;
         private readonly IntegerField _cyclesField;
+        private readonly EnumField _cycleModeField;
         private readonly FloatField _startDelayField;
         private readonly FloatField _endDelayField;
         private readonly Toggle _useUnscaledTimeField;
@@ -23,7 +24,9 @@ namespace Onion.MotionKit.Editor {
             root.Add(_durationField = new("Duration"));
             root.Add(_startDelayField = new("Start Delay"));
             root.Add(_endDelayField = new("End Delay"));
+
             root.Add(_cyclesField = new("Cycles"));
+            root.Add(_cycleModeField = new("Cycle Mode"));
             
             root.Add(_easeField = new("Ease"));
             root.Add(_customEaseField = new());
@@ -35,12 +38,14 @@ namespace Onion.MotionKit.Editor {
             _startDelayField.AddToClassList("sequence__field");
             _endDelayField.AddToClassList("sequence__field");
             _cyclesField.AddToClassList("sequence__field");
+            _cycleModeField.AddToClassList("sequence__field");
             _easeField.AddToClassList("sequence__field");
             // _customEaseField.AddToClassList("sequence__field");
             _useUnscaledTimeField.AddToClassList("sequence__field");
             _updateTypeField.AddToClassList("sequence__field");
 
-            _easeField.RegisterCallback<ChangeEvent<Enum>>(OnEaseChanged);    
+            _easeField.RegisterCallback<ChangeEvent<Enum>>(OnEaseChanged); 
+            _cyclesField.RegisterCallback<ChangeEvent<int>>(OnCyclesChanged);
             _durationField.RegisterCallback<ChangeEvent<float>>(ClampNegativeFloatValues);
             _startDelayField.RegisterCallback<ChangeEvent<float>>(ClampNegativeFloatValues);
             _endDelayField.RegisterCallback<ChangeEvent<float>>(ClampNegativeFloatValues);
@@ -70,6 +75,7 @@ namespace Onion.MotionKit.Editor {
             _customEaseField.SetEnabled(true);
             _customEaseField.BindProperty(property.FindPropertyRelative("customEase"));
             _cyclesField.BindProperty(property.FindPropertyRelative("cycles"));
+            _cycleModeField.BindProperty(property.FindPropertyRelative("cycleMode"));
             _startDelayField.BindProperty(property.FindPropertyRelative("startDelay"));
             _endDelayField.BindProperty(property.FindPropertyRelative("endDelay"));
             _useUnscaledTimeField.BindProperty(property.FindPropertyRelative("useUnscaledTime"));
@@ -81,6 +87,7 @@ namespace Onion.MotionKit.Editor {
             _easeField.BindEnumProperties(properties, "settings.ease", typeof(Ease), -1, onChange);
             _customEaseField.SetEnabled(false);
             _cyclesField.BindIntegerProperties(properties, "settings.cycles", onChange);
+            _cycleModeField.BindEnumProperties(properties, "settings.cycleMode", typeof(CycleMode), 0, onChange);
             _startDelayField.BindFloatProperties(properties, "settings.startDelay", onChange);
             _endDelayField.BindFloatProperties(properties, "settings.endDelay", onChange);
             _useUnscaledTimeField.BindBoolProperties(properties, "settings.useUnscaledTime", onChange);
@@ -91,6 +98,22 @@ namespace Onion.MotionKit.Editor {
             var easeEnumValue = (Ease)evt.newValue;
 
             _customEaseField.style.display = easeEnumValue == Ease.Custom 
+                ? DisplayStyle.Flex 
+                : DisplayStyle.None;
+        }
+
+        private void OnCyclesChanged(ChangeEvent<int> evt) {
+            var field = evt.target as IntegerField;
+
+            if (evt.newValue < -1) {
+                field.value = -1;
+                evt.StopPropagation();
+            } else if (evt.newValue == 0) {
+                field.value = 1;
+                evt.StopPropagation();
+            }
+
+            _cycleModeField.style.display = evt.newValue != 1 
                 ? DisplayStyle.Flex 
                 : DisplayStyle.None;
         }

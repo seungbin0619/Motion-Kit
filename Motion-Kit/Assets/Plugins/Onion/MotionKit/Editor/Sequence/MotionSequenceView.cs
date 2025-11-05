@@ -547,7 +547,9 @@ namespace Onion.MotionKit.Editor {
                     if (trackProp.managedReferenceValue is not MotionTrack track) break;
                     if (i < j && track.mode == TrackMode.Chain) break;
 
-                    maxTotalDuration = Mathf.Max(maxTotalDuration, track.totalDuration);
+                    if (!track.runIndependently) {
+                        maxTotalDuration = Mathf.Max(maxTotalDuration, track.totalDuration);
+                    }
                     _groups.Add(_groupStartTime.Count - 1);
                 }
 
