@@ -20,6 +20,7 @@ namespace Onion.MotionKit {
 
             _sequence = Sequence.Create();
             foreach (var track in tracks) {
+                if (!track.isValid) continue;
                 var tween = track.Create();
                 
                 if (track.mode == TrackMode.Group) {

@@ -10,13 +10,17 @@ namespace Onion.MotionKit {
         public Component target;
         public MotionClip clip;
         public TrackMode mode;
+        public bool runIndependently;
+        
         public TweenSettings settings;
-        public bool isValid => clip != null;
+        public bool isValid => target != null && clip != null;
         
         public float totalDuration {
             get {
-                var cycles = Mathf.Max(settings.cycles, 1);
-                
+                var cycles = settings.cycles;
+                if (cycles < 0) return float.PositiveInfinity;
+
+                cycles = Mathf.Max(1, cycles);
                 return settings.startDelay + (settings.duration + settings.endDelay) * cycles;
             }
         }
