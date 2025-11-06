@@ -9,12 +9,14 @@ namespace Onion.MotionKit.Editor {
         private readonly ObjectField _clipField;
         private readonly EnumField _modefield;
         private readonly Toggle _independentToggle;
+        private readonly FloatField _delayField;
         private readonly TweenSettingsDrawer _settingsDrawer;
 
         public MotionTrackBaseElements() {
             _clipField = new("Clip") { enabledSelf = false };
             _modefield = new("Mode");
             _independentToggle = new("Run Independently");
+            _delayField = new("Delay");
 
             _settingsDrawer = new();
             _settingsDrawer.style.marginTop = 8;
@@ -22,18 +24,23 @@ namespace Onion.MotionKit.Editor {
             _clipField.AddToClassList("sequence__field");
             _modefield.AddToClassList("sequence__field");
             _independentToggle.AddToClassList("sequence__field");
+            _delayField.AddToClassList("sequence__field");
 
             Add(_clipField);
             Add(_modefield);
             Add(_independentToggle);
+            Add(_delayField);
 
             Add(_settingsDrawer);
+
+            _delayField.RegisterValueChangedCallback(ClampNegativeFloatValues);
         }
 
         private void Unbind() {
             _clipField.Unbind();
             _modefield.Unbind();
             _independentToggle.Unbind();
+            _delayField.Unbind();
             _settingsDrawer.Unbind();
         }
 
@@ -46,6 +53,7 @@ namespace Onion.MotionKit.Editor {
             _clipField.BindProperty(property.FindPropertyRelative("clip"));
             _modefield.BindProperty(property.FindPropertyRelative("mode"));
             _independentToggle.BindProperty(property.FindPropertyRelative("runIndependently"));
+            _delayField.BindProperty(property.FindPropertyRelative("delay"));
             _settingsDrawer.BindProperty(property.FindPropertyRelative("settings"));
         }
 
@@ -53,8 +61,18 @@ namespace Onion.MotionKit.Editor {
             _clipField.BindObjectProperties(properties, "clip", onChange);
             _modefield.BindEnumProperties(properties, "mode", typeof(TrackMode), 0, onChange);
             _independentToggle.BindBoolProperties(properties, "runIndependently", onChange);
+            _delayField.BindFloatProperties(properties, "delay", onChange);
 
             _settingsDrawer.BindProperties(properties, onChange);
+        }
+
+        private void ClampNegativeFloatValues(ChangeEvent<float> evt) {
+            var field = evt.target as FloatField;
+
+            if (evt.newValue < 0f) {
+                field.value = 0f;
+                evt.StopPropagation();
+            }
         }
     }
 }

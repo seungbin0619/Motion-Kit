@@ -44,6 +44,7 @@ namespace Onion.MotionKit.Editor {
         private readonly List<int> _sortedSelections = new();
         private readonly Dictionary<int, float> _initialTrackDelays = new();
         private readonly Dictionary<int, float> _initialTrackStartTimes = new();
+        private readonly Dictionary<int, float> _initialTrackTotalDurations = new();
 
 
         private readonly PropertyField _nameField;
@@ -349,10 +350,13 @@ namespace Onion.MotionKit.Editor {
 
             foreach (var index in _trackListView.selectedIndices) {
                 var trackProp = _tracksProperty.GetArrayElementAtIndex(index);
-                var delayProp = trackProp.FindPropertyRelative("settings.startDelay");
+                var delayProp = trackProp.FindPropertyRelative("delay");
 
                 _initialTrackDelays[index] = delayProp.floatValue;
                 _initialTrackStartTimes[index] = _groupStartTime[_groups[index]];
+                _initialTrackTotalDurations[index] = trackProp.managedReferenceValue is MotionTrack track
+                    ? track.totalDuration
+                    : 0f;
 
                 _sortedSelections.Add(index);
             }
@@ -389,18 +393,18 @@ namespace Onion.MotionKit.Editor {
 
             foreach (var index in _sortedSelections) {
                 var trackProp = _tracksProperty.GetArrayElementAtIndex(index);
-                var totalDuration = trackProp.managedReferenceValue is MotionTrack track 
-                    ? track.totalDuration 
-                    : 0f;
+                var track = trackProp.managedReferenceValue as MotionTrack;
+                var totalDuration = track != null ? track.totalDuration : 0f;
 
-                var delayProp = trackProp.FindPropertyRelative("settings.startDelay");
+                var delayProp = trackProp.FindPropertyRelative("delay");
                 
                 var groupDelta = _initialTrackStartTimes[index] - _groupStartTime[_groups[index]];
                 delayProp.floatValue = Mathf.Max(0f, _initialTrackDelays[index] + deltaTime + groupDelta);
 
+                if (track.runIndependently) continue;
                 if (_groups[index] >= _groupStartTime.Count - 1) continue;
-                if (_groupStartTime[_groups[index] + 1] < totalDuration - _initialTrackDelays[index] + delayProp.floatValue) {
-                    _groupStartTime[_groups[index] + 1] = totalDuration - _initialTrackDelays[index] + delayProp.floatValue;
+                if (_groupStartTime[_groups[index] + 1] < _initialTrackTotalDurations[index] + delayProp.floatValue - _initialTrackDelays[index]) {
+                    _groupStartTime[_groups[index] + 1] = _initialTrackTotalDurations[index] + delayProp.floatValue - _initialTrackDelays[index];
                 }
             }
 

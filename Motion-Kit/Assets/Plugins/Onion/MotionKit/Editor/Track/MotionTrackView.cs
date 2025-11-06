@@ -166,7 +166,7 @@ namespace Onion.MotionKit.Editor {
             if (evt.target is not VisualElement element) return;
             if (_trackProperty == null) return;
 
-            _resizingStartDelayProp = _trackProperty.FindPropertyRelative("settings.startDelay");
+            _resizingStartDelayProp = _trackProperty.FindPropertyRelative("delay");
             _resizingDurationProp = _trackProperty.FindPropertyRelative("settings.duration");
 
             if (_resizingDurationProp == null) return;
@@ -297,7 +297,8 @@ namespace Onion.MotionKit.Editor {
             if (_trackProperty.managedReferenceValue is not MotionTrack track) return;
 
             float durationWidth = _parent.pixelsPerSecond * track.settings.duration;
-            float timelineWidth = durationWidth + _parent.pixelsPerSecond * track.settings.endDelay;
+            float startDelayWidth = _parent.pixelsPerSecond * track.settings.startDelay;
+            float timelineWidth = durationWidth + startDelayWidth + _parent.pixelsPerSecond * track.settings.endDelay;
 
             bool isInfinite = track.settings.cycles == -1;
 
@@ -307,7 +308,7 @@ namespace Onion.MotionKit.Editor {
             _realTrackTimeline.style.width = timelineWidth;
             _realTrackDurationContent.style.width = durationWidth;
 
-            float left = _parent.minMarginLeft + _parent.pixelsPerSecond * (track.settings.startDelay + groupStartTime - _parent.startTime);
+            float left = _parent.minMarginLeft + _parent.pixelsPerSecond * (track.delay + groupStartTime - _parent.startTime);
             float right = left + totalWidth;
 
             if (right < 0 || left > _parent.totalWidth) {
@@ -323,6 +324,7 @@ namespace Onion.MotionKit.Editor {
             if (skipTracks == 0) {
                 _realTrackTimeline.style.display = DisplayStyle.Flex;
                 _realTrackTimeline.style.left = position;
+                _realTrackDurationContent.style.left = startDelayWidth;
                 
                 position += timelineWidth;
                 skipTracks = 1;
@@ -356,7 +358,7 @@ namespace Onion.MotionKit.Editor {
             }
 
             foreach (var cycleView in _cyclePool) {
-                cycleView.Repaint(timelineWidth, durationWidth);
+                cycleView.Repaint(timelineWidth, durationWidth, startDelayWidth);
             }
         }
     }
@@ -392,9 +394,10 @@ namespace Onion.MotionKit.Editor {
             Add(_root);
         }
 
-        public void Repaint(float totalWidth, float durationWidth) {
+        public void Repaint(float totalWidth, float durationWidth, float startDelay) {
             _root.style.width = totalWidth;
             _content.style.width = durationWidth;
+            _content.style.left = startDelay;
         }
     }
 }
