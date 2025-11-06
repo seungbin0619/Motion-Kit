@@ -41,8 +41,14 @@ namespace Onion.MotionKit {
 
         public void Play(int index) => this[index]?.Play();
         public void Play(string name) => this[name]?.Play();
+        public void Pause(int index) => this[index]?.Pause();
+        public void Pause(string name) => this[name]?.Pause();
         public void Stop(int index) => this[index]?.Stop();
         public void Stop(string name) => this[name]?.Stop();
+        public void Stop(int index, bool complete) => this[index]?.Stop(complete);
+        public void Stop(string name, bool complete) => this[name]?.Stop(complete);
+        public void Complete(int index) => this[index]?.Complete();
+        public void Complete(string name) => this[name]?.Complete();
 
         private void InitializeSequenceMap() {
             if (_sequenceMap != null && _sequenceMap.Count == sequences.Count) {
