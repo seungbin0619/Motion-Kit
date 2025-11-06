@@ -17,5 +17,5 @@ MonoBehaviour:
     startFromCurrent: 0
     startValue: 0
     endValue: 1
-  _isLocal: 0
-  _axis: 0
+  isLocal: 0
+  axis: 0

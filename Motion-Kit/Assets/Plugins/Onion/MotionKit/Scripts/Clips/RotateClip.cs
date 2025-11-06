@@ -14,15 +14,12 @@ namespace Onion.MotionKit {
         protected override Tween Create(Component target, TweenSettings<Vector3> _settings) {
             if (target is not Transform transform) return default;
 
-            if (useShortestPath) {
-                return isLocal
-                    ? Tween.Rotation(transform, _settings)
-                    : Tween.Rotation(transform, _settings);
-            } else {
-                return isLocal
-                    ? Tween.EulerAngles(transform, _settings)
-                    : Tween.EulerAngles(transform, _settings);
-            }
+            return (isLocal, useShortestPath) switch {
+                (true, true) => Tween.Rotation(transform, _settings),
+                (true, false) => Tween.EulerAngles(transform, _settings),
+                (false, true) => Tween.Rotation(transform, _settings),
+                (false, false) => Tween.EulerAngles(transform, _settings),
+            };
         }
     }
 }
