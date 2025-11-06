@@ -23,9 +23,21 @@ namespace Onion.MotionKit {
             || _independentTweens.Exists(tween => tween.isAlive)
             || _independentSequences.Exists(seq => seq.isAlive);
 
-        private bool isPaused => isAlive && (_sequence.isPaused 
-            || _independentTweens.Exists(tween => tween.isPaused)
-            || _independentSequences.Exists(seq => seq.isPaused));
+        private bool isPaused {
+            get {
+                if (_sequence.isAlive && _sequence.isPaused) return true;
+
+                foreach (var tween in _independentTweens) {
+                    if (tween.isAlive && tween.isPaused) return true;
+                }
+
+                foreach (var seq in _independentSequences) {
+                    if (seq.isAlive && seq.isPaused) return true;
+                }
+
+                return false;
+            }
+        }
 
         public void Play() {
             if (isPaused) {
