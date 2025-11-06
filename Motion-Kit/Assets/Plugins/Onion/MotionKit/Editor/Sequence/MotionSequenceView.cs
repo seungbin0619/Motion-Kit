@@ -193,6 +193,8 @@ namespace Onion.MotionKit.Editor {
             var menu = new GenericMenu();
             string[] guids = AssetDatabase.FindAssets($"t:{typeof(MotionClip).Name}");
 
+            var menuItems = new List<(string menuPath, MotionClip clip, bool isGroup)>();
+
             foreach (var guid in guids) {
                 string path = AssetDatabase.GUIDToAssetPath(guid);
                 var clip = AssetDatabase.LoadAssetAtPath<MotionClip>(path);
@@ -201,16 +203,30 @@ namespace Onion.MotionKit.Editor {
                 var clipType = clip.GetType();
                 var menuAttribute = clipType.GetCustomAttribute<MotionClipMenu>();
                 
-                string menuPath = menuAttribute != null 
-                    ? $"{menuAttribute.path}/{clip.name}" 
-                    : $"Other/{clip.name}";
+                string menuPath;
+                if (menuAttribute != null) {
+                    menuPath = string.IsNullOrEmpty(menuAttribute.path)
+                        ? clip.name
+                        : $"{menuAttribute.path}/{clip.name}";
+                } else {
+                    menuPath = $"Other/{clip.name}";
+                }
 
-                menu.AddItem(new(menuPath), false, OnClipSelected, clip);
+                bool isGroup = menuPath.Contains("/"); 
+
+                menuItems.Add((menuPath, clip, isGroup));
+            }
+
+            var sortedItems = menuItems
+                .OrderByDescending(item => item.isGroup)
+                .ThenBy(item => item.menuPath);
+
+            foreach (var (menuPath, clip, isGroup) in sortedItems) {
+                menu.AddItem(new GUIContent(menuPath), false, OnClipSelected, clip);
             }
 
             var buttonRect = _addTrackButton.worldBound;
             var menuPosition = new Vector2(buttonRect.xMin, buttonRect.yMax);
-
             menu.DropDown(new Rect(menuPosition, Vector2.zero));
         }
 

@@ -9,12 +9,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e0a21ba99ef4886479d0e1e92f684363, type: 3}
-  m_Name: Position
+  m_Script: {fileID: 11500000, guid: 78f24de354760ab4ba8f96091cb4e30a, type: 3}
+  m_Name: LocalMoveZ
   m_EditorClassIdentifier: 
   <category>k__BackingField: 3
   value:
     startFromCurrent: 0
-    startValue: {x: 0, y: 0, z: 0}
-    endValue: {x: 1, y: 1, z: 1}
-  _isLocal: 0
+    startValue: 0
+    endValue: 1
+  _isLocal: 1
+  _axis: 0

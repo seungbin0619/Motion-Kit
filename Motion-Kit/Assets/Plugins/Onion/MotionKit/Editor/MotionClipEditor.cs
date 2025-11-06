@@ -13,10 +13,20 @@ namespace Onion.MotionKit.Editor {
                 return root;
             }
 
+            PropertyField valueField = null;
             while (iter.NextVisible(false)) {
                 var propertyField = new PropertyField(iter);
+                if (iter.name == "value") {
+                    valueField = propertyField;
+                    continue;
+                }
                 
                 root.Add(propertyField);
+            }
+
+            if (valueField != null) {
+                valueField.style.marginTop = 8;
+                root.Add(valueField);
             }
 
             return root;
