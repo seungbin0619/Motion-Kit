@@ -1,26 +1,37 @@
+using System.Collections;
 using System.Collections.Generic;
 using PrimeTween;
 using UnityEngine;
 
 namespace Onion.MotionKit {
     [AddComponentMenu("Onion/MotionKit/Motion Animator")]
-    public sealed class MotionAnimator : MonoBehaviour {
+    public sealed class MotionAnimator : MonoBehaviour, IEnumerable<MotionSequence> {
         private IDictionary<string, MotionSequence> _sequenceMap;
-        public List<MotionSequence> sequences = new();
 
-        public MotionSequence this[int index] => index >= 0 && index < sequences.Count 
-            ? sequences[index] 
-            : null;
+        [SerializeField]
+        private List<MotionSequence> sequences = new();
+        public int Count => sequences.Count;
+
+        public MotionSequence this[int index] {
+            get {
+                Debug.Assert(index >= 0 && index < sequences.Count, $"[MotionAnimator] Index out of range: {index}");
+                
+                return sequences[index];
+            }
+        }
             
         public MotionSequence this[string name] {
             get {
                 InitializeSequenceMap();
+                Debug.Assert(_sequenceMap.ContainsKey(name), $"[MotionAnimator] No sequence found with name: {name}");
                 
-                return _sequenceMap.TryGetValue(name, out var sequence) ? sequence : null;
+                return _sequenceMap[name];
             }
         }
 
         void Awake() {
+            InitializeSequenceMap();
+
             foreach (var sequence in sequences) {
                 if (sequence.playOnAwake) {
                     sequence.Play();
@@ -28,12 +39,19 @@ namespace Onion.MotionKit {
             }
         }
 
+        public void Play(int index) => this[index]?.Play();
+        public void Play(string name) => this[name]?.Play();
+        public void Stop(int index) => this[index]?.Stop();
+        public void Stop(string name) => this[name]?.Stop();
+
         private void InitializeSequenceMap() {
-            if (_sequenceMap != null) {
+            if (_sequenceMap != null && _sequenceMap.Count == sequences.Count) {
                 return;
             }
 
-            _sequenceMap = new Dictionary<string, MotionSequence>();
+            _sequenceMap ??= new Dictionary<string, MotionSequence>();
+            _sequenceMap.Clear();
+
             foreach (var sequence in sequences) {
                 if (_sequenceMap.ContainsKey(sequence.name)) {
                     Debug.LogWarning($"[MotionAnimator] Duplicate sequence name detected: {sequence.name}");
@@ -43,5 +61,22 @@ namespace Onion.MotionKit {
                 _sequenceMap[sequence.name] = sequence;
             }
         }
+
+        public IEnumerator<MotionSequence> GetEnumerator() {
+            foreach (var sequence in sequences) {
+                yield return sequence;
+            }
+        }
+
+        IEnumerator IEnumerable.GetEnumerator() {
+            return GetEnumerator();
+        }
+
+#if UNITY_EDITOR
+        public void Add(MotionSequence sequence) {
+            sequences.Add(sequence);
+            _sequenceMap.Clear();
+        }
+#endif
     }
 }

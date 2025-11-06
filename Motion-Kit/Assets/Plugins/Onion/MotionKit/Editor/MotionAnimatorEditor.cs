@@ -72,9 +72,9 @@ namespace Onion.MotionKit.Editor {
             if (name.Equals(NewSequence)) {
                 Undo.RecordObject(_animator, "Add Motion Sequence");
 
-                name = $"Sequence {_animator.sequences.Count}";
+                name = $"Sequence {_animator.Count}";
                 var sequence = new MotionSequence() { name = name };
-                _animator.sequences.Add(sequence);
+                _animator.Add(sequence);
 
                 serializedObject.Update();
 
@@ -89,14 +89,14 @@ namespace Onion.MotionKit.Editor {
         private void RefreshDropdown() {
             _popup.choices.Clear();
 
-            foreach (var sequence in _animator.sequences) {
+            foreach (var sequence in _animator) {
                 _popup.choices.Add(sequence.name);
             }
             _popup.choices.Add(NewSequence);
         }
 
         private void SelectSequence(int index) {
-            if (index < 0 || index >= _animator.sequences.Count) {
+            if (index < 0 || index >= _animator.Count) {
                 _sequenceView.style.display = DisplayStyle.None;
                 return;
             }

@@ -13,6 +13,7 @@ namespace Onion.MotionKit {
         public List<MotionTrack> tracks = new();
         
         private Sequence _sequence;
+        private readonly List<Tween> _independentTweens = new();
 
         public void Play() {
             if (_sequence.isAlive) {
@@ -24,12 +25,15 @@ namespace Onion.MotionKit {
             float maxGroupTime = 0f;
             
             _sequence = Sequence.Create();
+            _independentTweens.Clear();
 
             foreach (var track in tracks) {
                 if (!track.isValid) continue;
 
                 var tween = track.Create();
                 if (track.runIndependently) {
+                    _independentTweens.Add(tween);
+
                     if (track.mode == TrackMode.Chain) {
                         hasBufferedChain = true;
                         accumulatedTime += maxGroupTime;
@@ -38,6 +42,7 @@ namespace Onion.MotionKit {
 
                     if (accumulatedTime == 0f) continue;
                     Tween.Delay(accumulatedTime).Chain(tween);
+
                     continue;
                 }
 
@@ -53,6 +58,10 @@ namespace Onion.MotionKit {
 
                 maxGroupTime = Mathf.Max(maxGroupTime, tween.durationTotal);
             }
+        }
+
+        public void Stop() {
+            
         }
     }
 }
