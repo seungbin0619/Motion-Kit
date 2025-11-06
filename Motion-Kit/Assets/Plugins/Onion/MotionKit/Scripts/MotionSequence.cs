@@ -11,6 +11,7 @@ namespace Onion.MotionKit {
 
         [SerializeReference]
         public List<MotionTrack> tracks = new();
+        
         private Sequence _sequence;
 
         public void Play() {
