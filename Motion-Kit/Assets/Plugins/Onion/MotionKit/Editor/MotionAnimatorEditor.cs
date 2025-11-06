@@ -1,3 +1,4 @@
+using System.Linq;
 using UnityEditor;
 using UnityEditor.UIElements;
 using UnityEngine;
@@ -22,7 +23,10 @@ namespace Onion.MotionKit.Editor {
         
         private MotionSequenceView _sequenceView;
         private SerializedProperty _serializedSequenceProperty;
-        private bool _hasClass = false;
+
+        private VisualElement _parentScroller;
+        private bool _isWide = false;
+        private bool _hasScroller = false;
 
         public override VisualElement CreateInspectorGUI() {
             VisualElement root = _template != null 
@@ -43,12 +47,26 @@ namespace Onion.MotionKit.Editor {
         }
 
         private void OnInspectorResized(GeometryChangedEvent evt) {
+            if (evt.target is not VisualElement ve) return;
+
+            _parentScroller ??= ve.GetFirstAncestorOfType<ScrollView>()?
+                .Q("unity-content-and-vertical-scroll-container")
+                .Children().Last();
+
+            if (_parentScroller is Scroller && _parentScroller.contentRect.width > 0) {
+                ve.AddToClassList("sequence__with-scroller");
+                _hasScroller = true;
+            } else if (_hasScroller) {
+                ve.RemoveFromClassList("sequence__with-scroller");
+                _hasScroller = false;
+            }
+
             if (evt.newRect.width >= 335) {
-                _hasClass = true;
-                (evt.target as VisualElement).AddToClassList("sequence__wide-inspector");
-            } else if (_hasClass) {
-                (evt.target as VisualElement).RemoveFromClassList("sequence__wide-inspector");
-                _hasClass = false;
+                _isWide = true;
+                ve.AddToClassList("sequence__wide-inspector");
+            } else if (_isWide) {
+                ve.RemoveFromClassList("sequence__wide-inspector");
+                _isWide = false;
             }
         }
 

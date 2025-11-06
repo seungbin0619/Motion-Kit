@@ -133,3 +133,9 @@
     margin-right: -28px;
     width: 45%;
 }
+
+.sequence__wide-inspector.sequence__with-scroller .sequence__field > Label {
+    max-width: none;
+    margin-right: -22px;
+    width: 45%;
+}

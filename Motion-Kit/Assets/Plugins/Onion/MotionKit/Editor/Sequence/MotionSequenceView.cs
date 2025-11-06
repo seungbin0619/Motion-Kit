@@ -209,7 +209,7 @@ namespace Onion.MotionKit.Editor {
                         ? clip.name
                         : $"{menuAttribute.path}/{clip.name}";
                 } else {
-                    menuPath = $"Other/{clip.name}";
+                    menuPath = $"Custom/{clip.name}";
                 }
 
                 bool isGroup = menuPath.Contains("/"); 

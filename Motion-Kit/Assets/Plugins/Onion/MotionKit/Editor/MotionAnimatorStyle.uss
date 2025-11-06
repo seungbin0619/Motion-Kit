@@ -8,6 +8,8 @@
     width: 45%;
 }
 
-.sequence-popup > VisualElement {
-    
+.sequence__wide-inspector.sequence__with-scroller .sequence-popup > Label {
+    max-width: none;
+    margin-right: -22px;
+    width: 45%;
 }
