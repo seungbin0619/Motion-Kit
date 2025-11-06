@@ -304,6 +304,7 @@ namespace Onion.MotionKit.Editor {
 
             view.bindItem = (element, index) => {
                 var track = element as MotionTrackView;
+                if (_tracksProperty.arraySize <= index) return;
                 var trackProperty = _tracksProperty.GetArrayElementAtIndex(index);
 
                 track.SetTrack(trackProperty, index);
