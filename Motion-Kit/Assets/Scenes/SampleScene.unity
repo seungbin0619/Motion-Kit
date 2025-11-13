@@ -489,9 +489,35 @@ MonoBehaviour:
   - name: Sequence 0
     playOnAwake: 0
     tracks: []
+    signals:
+    - time: 0
+      onSignal:
+        m_PersistentCalls:
+          m_Calls: []
+    - time: 1
+      onSignal:
+        m_PersistentCalls:
+          m_Calls: []
+    - time: 2.5
+      onSignal:
+        m_PersistentCalls:
+          m_Calls: []
   - name: Sequence 1
     playOnAwake: 0
     tracks: []
+    signals:
+    - time: 0
+      onSignal:
+        m_PersistentCalls:
+          m_Calls: []
+    - time: 1
+      onSignal:
+        m_PersistentCalls:
+          m_Calls: []
+    - time: 2.5
+      onSignal:
+        m_PersistentCalls:
+          m_Calls: []
   references:
     version: 2
     RefIds: []
@@ -784,12 +810,41 @@ MonoBehaviour:
   - name: Sequence 0
     playOnAwake: 0
     tracks:
-    - rid: 4560873350726680576
-    - rid: 4560873350726680577
+    - rid: 4560873486997520460
+    - rid: 4560873486997520461
+    signals:
+    - time: 0
+      onSignal:
+        m_PersistentCalls:
+          m_Calls: []
+    - time: 1
+      onSignal:
+        m_PersistentCalls:
+          m_Calls: []
+    - time: 2.5
+      onSignal:
+        m_PersistentCalls:
+          m_Calls: []
+  - name: Sequence 1
+    playOnAwake: 0
+    tracks: []
+    signals:
+    - time: 0
+      onSignal:
+        m_PersistentCalls:
+          m_Calls: []
+    - time: 1
+      onSignal:
+        m_PersistentCalls:
+          m_Calls: []
+    - time: 2.5
+      onSignal:
+        m_PersistentCalls:
+          m_Calls: []
   references:
     version: 2
     RefIds:
-    - rid: 4560873350726680576
+    - rid: 4560873486997520460
       type: {class: 'MotionTrack`1[[System.Single, mscorlib]]', ns: Onion.MotionKit, asm: Assembly-CSharp-firstpass}
       data:
         target: {fileID: 790710001}
@@ -818,7 +873,7 @@ MonoBehaviour:
           startFromCurrent: 0
           startValue: 0
           endValue: 1
-    - rid: 4560873350726680577
+    - rid: 4560873486997520461
       type: {class: 'MotionTrack`1[[System.Single, mscorlib]]', ns: Onion.MotionKit, asm: Assembly-CSharp-firstpass}
       data:
         target: {fileID: 790710001}

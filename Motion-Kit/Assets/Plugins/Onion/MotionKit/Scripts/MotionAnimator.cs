@@ -81,7 +81,8 @@ namespace Onion.MotionKit {
 #if UNITY_EDITOR
         public void Add(MotionSequence sequence) {
             sequences.Add(sequence);
-            _sequenceMap.Clear();
+            
+            _sequenceMap?.Clear();
         }
 #endif
     }

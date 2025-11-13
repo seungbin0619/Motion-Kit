@@ -15,6 +15,7 @@ namespace Onion.MotionKit.Editor {
         private readonly VisualTreeAsset _trackTemplate;
         private SerializedProperty _sequenceProperty;
         private SerializedProperty _tracksProperty;
+        private SerializedProperty _signalsProperty;
 
         private readonly VisualElement _rootContainer;
         private readonly MotionSequenceTimeRuler _timeRulerContainer;
@@ -106,7 +107,7 @@ namespace Onion.MotionKit.Editor {
             _trackListContainer.RegisterCallback<ClickEvent>(evt => {
                 if (evt.target is not VisualElement ve) return;
                 if (ve.GetFirstAncestorOfType<MotionTrackView>() != null) return;
-
+                
                 _trackListView.ClearSelection();
             });
 
@@ -583,7 +584,7 @@ namespace Onion.MotionKit.Editor {
             if (_trackListView == null) return;
 
             _separator.style.left = _leftWidth;
-            _timeRulerContainer.Repaint();
+            _timeRulerContainer.Repaint(_signalsProperty);
 
             CalculateTrackStartTimes();
 
@@ -607,6 +608,8 @@ namespace Onion.MotionKit.Editor {
                 _playOnAwakeField.BindProperty(_sequenceProperty.FindPropertyRelative("playOnAwake"));
 
                 _tracksProperty = _sequenceProperty.FindPropertyRelative("tracks");
+                _signalsProperty = _sequenceProperty.FindPropertyRelative("signals");
+
                 _trackListView.BindProperty(_tracksProperty);
             }
             

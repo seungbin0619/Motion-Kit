@@ -48,12 +48,44 @@
 }
 
 .time-ruler-container {
-    height: 16px;
+    flex-direction: column;
     width: 100%;
+}
+
+.time-ruler-main-container {
+    height: 16px;
     background-color: #3C3C3C;
-    margin-bottom: 4px;
 
     overflow: hidden;
+}
+
+.time-ruler-signal-container {
+    background-color: #2D2D2D;
+    margin-bottom: 6px;
+}
+
+.motion-signal {
+    width: 7px;
+    height: 7px;
+    left: 0;
+
+    background-color: #FFFFFF;
+    border-width: 1px;
+    border-color: #2D2D2D;
+    position: absolute;
+
+    translate: -50%;
+    rotate: 45deg;
+
+    transition: background-color 0.1s;
+}
+
+.motion-signal:hover {
+    background-color: #cae4f9;
+}
+
+.motion-signal:focus {
+    background-color: #448aff;
 }
 
 .time-ruler-tick {

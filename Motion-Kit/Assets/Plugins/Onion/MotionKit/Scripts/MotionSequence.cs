@@ -93,6 +93,10 @@ namespace Onion.MotionKit {
 
                 maxGroupTime = Mathf.Max(maxGroupTime, tween.durationTotal);
             }
+
+            foreach (var signal in signals) {
+                _sequence.InsertCallback(signal.time, signal.onSignal, e => e.Invoke());
+            }
         }
 
         private void Resume() {
