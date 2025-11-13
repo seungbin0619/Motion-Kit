@@ -8,12 +8,16 @@ namespace Onion.MotionKit {
     #pragma warning disable IDE1006
 
     [Serializable]
-    public class MotionSequence {
+    public sealed class MotionSequence {
         public string name;
         public bool playOnAwake = false;
 
+        [SerializeField]
         [SerializeReference]
-        public List<MotionTrack> tracks = new();
+        private List<MotionTrack> tracks = new();
+
+        [SerializeField]
+        private List<MotionSignal> signals = new();
 
         private Sequence _sequence;
         private readonly List<Tween> _independentTweens = new();
