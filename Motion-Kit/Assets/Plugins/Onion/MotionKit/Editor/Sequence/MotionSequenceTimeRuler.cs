@@ -6,12 +6,19 @@ using UnityEngine.UIElements;
 namespace Onion.MotionKit.Editor {
     #pragma warning disable IDE1006
     public class MotionSequenceTimeRuler : VisualElement {
+        private SerializedProperty _property;
         private readonly MotionSequenceView _parent;
         private readonly VisualElement _mainContainer;
         private readonly VisualElement _signalContainer;
+
         private readonly List<int> _selectedIndices = new();
         public List<int> selectedIndices => _selectedIndices;
         private readonly Dictionary<int, MotionSignalView> _signalViews = new();
+
+        private readonly List<float> _initialSignalTimes = new();
+        private int _minTimeIndex = -1;
+        private float _startDragX = 0f;
+        private bool _isDragging = false;
 
         public MotionSequenceTimeRuler(MotionSequenceView parent = null) {
             _parent = parent;
@@ -24,22 +31,9 @@ namespace Onion.MotionKit.Editor {
 
             AddToClassList("time-ruler-container");
             
-            RegisterCallback<ClickEvent>(OnClick);
-
             RegisterCallback<PointerDownEvent>(OnSignalPointerDown);
             RegisterCallback<PointerMoveEvent>(OnSignalPointerMove);
             RegisterCallback<PointerUpEvent>(OnSignalPointerUp);
-        }
-
-        public void OnClick(ClickEvent evt) {
-            evt.StopPropagation();
-            _parent.ClearTrackSelection();
-            
-            if (evt.target is MotionSignalView) {
-                return;
-            }
-
-            ClearSelection();
         }
 
         private void OnSignalPointerDown(PointerDownEvent evt) {
@@ -50,22 +44,87 @@ namespace Onion.MotionKit.Editor {
                 return;
             }
 
-            if (evt.target is not MotionSignalView) return;
+            if (evt.target is not MotionSignalView) {
+                if (!evt.ctrlKey) ClearSelection();
+                return;
+            }
+
+            evt.StopPropagation();
+            _parent.ClearTrackSelection();
+
             if (evt.button != 0) return;
+            if (_property == null) return;
             if (evt.ctrlKey || evt.commandKey) return;
 
-            // this.CapturePointer(evt.pointerId);
+            _initialSignalTimes.Clear();
+            _minTimeIndex = -1;
+
+            for (int i = 0; i < _selectedIndices.Count; i++) {
+                int index = _selectedIndices[i];
+                var signalProp = _property.GetArrayElementAtIndex(index);
+                float signalTime = signalProp.FindPropertyRelative("time").floatValue;
+
+                _initialSignalTimes.Add(signalTime);
+
+                if (_minTimeIndex == -1 || signalTime < _initialSignalTimes[_minTimeIndex]) {
+                    _minTimeIndex = i;
+                }
+            }
+            
+            this.CapturePointer(evt.pointerId);
+
             evt.StopPropagation();
+            _isDragging = false;
+            _startDragX = evt.position.x;
         }
 
         private void OnSignalPointerMove(PointerMoveEvent evt) {
+            if (this.HasPointerCapture(evt.pointerId) == false) return;
+            if (_property == null) return;
+            if (_minTimeIndex == -1) return;
+
+            float deltaX = evt.position.x - _startDragX;
             
+            if (!_isDragging) {
+                if (Mathf.Abs(deltaX) < 2f) {
+                    evt.StopPropagation();
+                    return;
+                }
+
+                _isDragging = true;
+            }
+
+            float deltaTime = deltaX / _parent.pixelsPerSecond;
+            deltaTime = Mathf.Max(-_initialSignalTimes[_minTimeIndex], deltaTime);
+            deltaTime = Mathf.Round((_initialSignalTimes[_minTimeIndex] + deltaTime) / 0.05f) * 0.05f - 
+                _initialSignalTimes[_minTimeIndex];
+
+            for (int i = 0; i < _selectedIndices.Count; i++) {
+                int index = _selectedIndices[i];
+                var signalProp = _property.GetArrayElementAtIndex(index);
+                float initialTime = _initialSignalTimes[i];
+
+                float newTime = Mathf.Max(0f, initialTime + deltaTime);
+                signalProp.FindPropertyRelative("time").floatValue = newTime;
+            }
+
+            _property.serializedObject.ApplyModifiedPropertiesWithoutUndo();
+            Repaint(_property);
+
+            evt.StopPropagation();
         }
 
         private void OnSignalPointerUp(PointerUpEvent evt) {
-            if (!this.HasPointerCapture(evt.pointerId)) return;
-
+            _minTimeIndex = -1;
             this.ReleasePointer(evt.pointerId);
+            
+            if (!_isDragging) return;
+
+            _isDragging = false;
+
+            _property.serializedObject.ApplyModifiedProperties();
+            Repaint(_property);
+
             evt.StopPropagation();
         }
 
@@ -104,6 +163,7 @@ namespace Onion.MotionKit.Editor {
             float from = _parent.startTime - _parent.minMarginLeft / _parent.pixelsPerSecond;
             float to = from + _parent.totalWidth / _parent.pixelsPerSecond;
 
+            _property = property;
             if (property == null) return;
 
             // _signalContainer.Clear();

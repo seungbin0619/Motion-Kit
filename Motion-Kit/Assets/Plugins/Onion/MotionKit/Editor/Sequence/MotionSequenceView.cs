@@ -401,7 +401,6 @@ namespace Onion.MotionKit.Editor {
             foreach (var index in _sortedSelections) {
                 var trackProp = _tracksProperty.GetArrayElementAtIndex(index);
                 var track = trackProp.managedReferenceValue as MotionTrack;
-                var totalDuration = track != null ? track.totalDuration : 0f;
 
                 var delayProp = trackProp.FindPropertyRelative("delay");
                 
