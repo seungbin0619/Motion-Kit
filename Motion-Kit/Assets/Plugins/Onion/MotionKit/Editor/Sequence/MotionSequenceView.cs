@@ -105,10 +105,12 @@ namespace Onion.MotionKit.Editor {
             _trackListContainer = new();
             _trackListContainer.AddToClassList("track-list-container");
             _trackListContainer.RegisterCallback<ClickEvent>(evt => {
+                _timeRulerContainer.ClearSelection();
+                
                 if (evt.target is not VisualElement ve) return;
                 if (ve.GetFirstAncestorOfType<MotionTrackView>() != null) return;
                 
-                _trackListView.ClearSelection();
+                ClearTrackSelection();
             });
 
             _trackListContainer.RegisterCallback<PointerDownEvent>(OnListPointerDown, TrickleDown.TrickleDown);
@@ -449,6 +451,10 @@ namespace Onion.MotionKit.Editor {
             schedule.Execute(() => {
                 OnTrackSelectionChanged(_trackListView.selectedIndices);
             }).ExecuteLater(0);
+        }
+
+        public void ClearTrackSelection() {
+            _trackListView.ClearSelection();
         }
 
         private void OnTrackSelectionChanged(IEnumerable<int> selectedIndices) {

@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -7,6 +8,8 @@ namespace Onion.MotionKit.Editor {
         private readonly MotionSequenceView _parent;
         private readonly VisualElement _mainContainer;
         private readonly VisualElement _signalContainer;
+        private readonly List<MotionSignalView> _selectedSignals = new();
+        private readonly Dictionary<int, MotionSignalView> _signalViews = new();
 
         public MotionSequenceTimeRuler(MotionSequenceView parent = null) {
             _parent = parent;
@@ -18,6 +21,18 @@ namespace Onion.MotionKit.Editor {
             _signalContainer.AddToClassList("time-ruler-signal-container");
 
             AddToClassList("time-ruler-container");
+            RegisterCallback<ClickEvent>(OnClick);
+        }
+
+        public void OnClick(ClickEvent evt) {
+            evt.StopPropagation();
+            _parent.ClearTrackSelection();
+            
+            if (evt.target is MotionSignalView) {
+                return;
+            }
+
+            ClearSelection();
         }
 
         public void Repaint(SerializedProperty property = null) {
@@ -57,7 +72,7 @@ namespace Onion.MotionKit.Editor {
 
             if (property == null) return;
 
-            _signalContainer.Clear();
+            // _signalContainer.Clear();
 
             for (int i = 0; i < property.arraySize; i++) {
                 var signalProperty = property.GetArrayElementAtIndex(i);
@@ -67,12 +82,47 @@ namespace Onion.MotionKit.Editor {
 
                 float signalPosition = _parent.minMarginLeft + (signalTime - _parent.startTime) * _parent.pixelsPerSecond;
 
-                var signalMarker = new VisualElement() { focusable = true };
-                signalMarker.AddToClassList("motion-signal");
+                if (_signalViews.ContainsKey(i)) {
+                    var existingSignal = _signalViews[i];
 
-                signalMarker.style.left = signalPosition;
+                    existingSignal.Initialize(i);
+                    existingSignal.Repaint(signalPosition);
+
+                    continue;
+                }
+
+                var signalMarker = new MotionSignalView(this);
+
+                signalMarker.Initialize(i);
+                signalMarker.Repaint(signalPosition);
+
+                _signalViews[i] = signalMarker;
                 _signalContainer.Add(signalMarker);
             }
+        }
+
+        public void AddToSelection(MotionSignalView signal, bool additive) {
+            if (!additive) {
+                ClearSelection();
+            }
+
+            if (!_selectedSignals.Contains(signal)) {
+                _selectedSignals.Add(signal);
+            }
+        }
+
+        public void RemoveFromSelection(MotionSignalView signal) {
+            if (_selectedSignals.Contains(signal)) {
+                _selectedSignals.Remove(signal);
+            }
+        }
+
+        public void ClearSelection() {
+            foreach (var signal in _selectedSignals) {
+                signal.Deselect();
+            }
+
+            _selectedSignals.Clear();
         }
     }
 }

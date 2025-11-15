@@ -84,7 +84,7 @@
     background-color: #cae4f9;
 }
 
-.motion-signal:focus {
+.motion-signal.selected {
     background-color: #448aff;
 }
 
