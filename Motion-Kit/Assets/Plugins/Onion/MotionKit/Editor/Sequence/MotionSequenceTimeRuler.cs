@@ -25,6 +25,10 @@ namespace Onion.MotionKit.Editor {
             AddToClassList("time-ruler-container");
             
             RegisterCallback<ClickEvent>(OnClick);
+
+            RegisterCallback<PointerDownEvent>(OnSignalPointerDown);
+            RegisterCallback<PointerMoveEvent>(OnSignalPointerMove);
+            RegisterCallback<PointerUpEvent>(OnSignalPointerUp);
         }
 
         public void OnClick(ClickEvent evt) {
@@ -36,6 +40,33 @@ namespace Onion.MotionKit.Editor {
             }
 
             ClearSelection();
+        }
+
+        private void OnSignalPointerDown(PointerDownEvent evt) {
+            if (evt.button == 1) {
+                // Right-click context menu logic can be added here
+
+                evt.StopPropagation();
+                return;
+            }
+
+            if (evt.target is not MotionSignalView) return;
+            if (evt.button != 0) return;
+            if (evt.ctrlKey || evt.commandKey) return;
+
+            // this.CapturePointer(evt.pointerId);
+            evt.StopPropagation();
+        }
+
+        private void OnSignalPointerMove(PointerMoveEvent evt) {
+            
+        }
+
+        private void OnSignalPointerUp(PointerUpEvent evt) {
+            if (!this.HasPointerCapture(evt.pointerId)) return;
+
+            this.ReleasePointer(evt.pointerId);
+            evt.StopPropagation();
         }
 
         public void Repaint(SerializedProperty property = null) {

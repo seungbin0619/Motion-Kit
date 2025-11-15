@@ -172,10 +172,10 @@
 
 .motion-signal-event-field {
     margin-top: 8px;
-    margin-bottom: 4px;
+    /* margin-bottom: 4px; */
 }
 
-.motion-signal-event-field ScrollView {
+/* .motion-signal-event-field ScrollView {
     min-height: 60px;
     background-color: #2D2D2D;
     border-color: #1E1E1E;
@@ -199,4 +199,4 @@
 
 .motion-signal-event-field Button:hover {
     background-color: rgba(60, 60, 60, 1);
-}
+} */

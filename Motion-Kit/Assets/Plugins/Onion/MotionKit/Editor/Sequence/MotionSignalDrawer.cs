@@ -11,9 +11,17 @@ namespace Onion.MotionKit.Editor {
 
             var timeProp = property.FindPropertyRelative("time");
             var eventProp = property.FindPropertyRelative("onSignal");
+            // Debug.Log(eventProp.propertyPath);
 
             var timeField = new PropertyField(timeProp, "Time");
-            var eventField = new PropertyField(eventProp, "OnSignal");
+            // var eventField = new PropertyField(eventProp, "OnSignal");
+            var eventField = new IMGUIContainer(() => {
+                EditorGUI.BeginChangeCheck();
+                EditorGUILayout.PropertyField(eventProp);
+                if (EditorGUI.EndChangeCheck()) {
+                    eventProp.serializedObject.ApplyModifiedProperties();
+                }
+            });
             eventField.AddToClassList("motion-signal-event-field");
 
             root.Add(timeField);

@@ -139,7 +139,10 @@ namespace Onion.MotionKit.Editor {
             buttonContainer.Add(_removeTrackButton);
 
             _trackListContainer.Add(buttonContainer);
+            
             _trackListContainer.Add(_timeRulerContainer = new(this));
+            
+
             _trackListContainer.Add(_trackListView = CreateTrackListView());
             _trackListContainer.Add(_separator = CreateSeparator());
             _trackListContainer.RegisterCallback<WheelEvent>(OnWheelZoom, TrickleDown.TrickleDown);
@@ -506,6 +509,9 @@ namespace Onion.MotionKit.Editor {
                 }
 
                 _multiTrackPropertyField.BindProperties(multiTrackProps, NotifyChange);
+            } 
+            else {
+                _trackInspectorContainer.style.display = DisplayStyle.None;
             }
         }
 
