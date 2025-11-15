@@ -95,7 +95,7 @@ namespace Onion.MotionKit {
             }
 
             foreach (var signal in signals) {
-                _sequence.InsertCallback(signal.time, signal.onSignal, e => e.Invoke());
+                // _sequence.InsertCallback(signal.time, signal.onSignal, e => e.Invoke());
             }
         }
 

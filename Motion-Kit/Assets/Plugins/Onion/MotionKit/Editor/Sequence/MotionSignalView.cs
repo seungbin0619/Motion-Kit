@@ -12,13 +12,18 @@ namespace Onion.MotionKit.Editor {
 
         public MotionSignalView(MotionSequenceTimeRuler parent) {
             _parent = parent;
-            RegisterCallback<ClickEvent>(OnClick);
+            // RegisterCallback<ClickEvent>(OnClick);
+            RegisterCallback<PointerDownEvent>(OnPointerDown);
 
             focusable = true;
             AddToClassList("motion-signal");
         }
 
-        private void OnClick(ClickEvent evt) {
+        // private void OnClick(ClickEvent evt) {
+        //     Select(evt.ctrlKey);
+        // }
+
+        private void OnPointerDown(PointerDownEvent evt) {
             Select(evt.ctrlKey);
         }
 

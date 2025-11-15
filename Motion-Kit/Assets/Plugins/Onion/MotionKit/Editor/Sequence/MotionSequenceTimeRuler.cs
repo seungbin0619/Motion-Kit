@@ -4,11 +4,13 @@ using UnityEngine;
 using UnityEngine.UIElements;
 
 namespace Onion.MotionKit.Editor {
+    #pragma warning disable IDE1006
     public class MotionSequenceTimeRuler : VisualElement {
         private readonly MotionSequenceView _parent;
         private readonly VisualElement _mainContainer;
         private readonly VisualElement _signalContainer;
-        private readonly List<MotionSignalView> _selectedSignals = new();
+        private readonly List<int> _selectedIndices = new();
+        public List<int> selectedIndices => _selectedIndices;
         private readonly Dictionary<int, MotionSignalView> _signalViews = new();
 
         public MotionSequenceTimeRuler(MotionSequenceView parent = null) {
@@ -21,6 +23,7 @@ namespace Onion.MotionKit.Editor {
             _signalContainer.AddToClassList("time-ruler-signal-container");
 
             AddToClassList("time-ruler-container");
+            
             RegisterCallback<ClickEvent>(OnClick);
         }
 
@@ -78,7 +81,15 @@ namespace Onion.MotionKit.Editor {
                 var signalProperty = property.GetArrayElementAtIndex(i);
                 float signalTime = signalProperty.FindPropertyRelative("time").floatValue;
 
-                if (signalTime < from || signalTime > to) continue;
+                if (signalTime < from || signalTime > to) {
+                    if (_signalViews.ContainsKey(i)) {
+                        var existingSignal = _signalViews[i];
+
+                        existingSignal.style.display = DisplayStyle.None;
+                    }
+
+                    continue;
+                }
 
                 float signalPosition = _parent.minMarginLeft + (signalTime - _parent.startTime) * _parent.pixelsPerSecond;
 
@@ -87,7 +98,8 @@ namespace Onion.MotionKit.Editor {
 
                     existingSignal.Initialize(i);
                     existingSignal.Repaint(signalPosition);
-
+                    existingSignal.style.display = DisplayStyle.Flex;
+                    
                     continue;
                 }
 
@@ -95,6 +107,7 @@ namespace Onion.MotionKit.Editor {
 
                 signalMarker.Initialize(i);
                 signalMarker.Repaint(signalPosition);
+                signalMarker.style.display = DisplayStyle.Flex;
 
                 _signalViews[i] = signalMarker;
                 _signalContainer.Add(signalMarker);
@@ -106,23 +119,30 @@ namespace Onion.MotionKit.Editor {
                 ClearSelection();
             }
 
-            if (!_selectedSignals.Contains(signal)) {
-                _selectedSignals.Add(signal);
+            if (!_selectedIndices.Contains(signal.index)) {
+                _selectedIndices.Add(signal.index);
             }
+
+            _parent.RepaintTrackInspector();
         }
 
         public void RemoveFromSelection(MotionSignalView signal) {
-            if (_selectedSignals.Contains(signal)) {
-                _selectedSignals.Remove(signal);
+            if (_selectedIndices.Contains(signal.index)) {
+                _selectedIndices.Remove(signal.index);
             }
+
+            _parent.RepaintTrackInspector();
         }
 
         public void ClearSelection() {
-            foreach (var signal in _selectedSignals) {
-                signal.Deselect();
+            foreach (var index in _selectedIndices) {
+                if (_signalViews.ContainsKey(index)) {
+                    _signalViews[index].Deselect();
+                }
             }
 
-            _selectedSignals.Clear();
+            _selectedIndices.Clear();
+            _parent.RepaintTrackInspector();
         }
     }
 }

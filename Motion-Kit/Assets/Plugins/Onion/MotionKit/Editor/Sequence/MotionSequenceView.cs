@@ -464,11 +464,21 @@ namespace Onion.MotionKit.Editor {
             RepaintTrackInspector();
         }
 
-        private void RepaintTrackInspector() {
-            var list = _trackListView.selectedIndices.ToList();
+        public void RepaintTrackInspector() {
+            bool drawSignalMode = false;
+            List<int> list;
+
+            if (!_trackListView.selectedIndices.Any()) {
+                list = _timeRulerContainer.selectedIndices;
+                drawSignalMode = true;
+            } 
+            else {
+                list = _trackListView.selectedIndices.ToList();    
+            }
             
             _trackPropertyField.Unbind();
             _multiTrackPropertyField.Unbind();
+
             _trackInspectorContainer.style.display = list.Count == 0
                 ? DisplayStyle.None
                 : DisplayStyle.Flex;
@@ -478,10 +488,14 @@ namespace Onion.MotionKit.Editor {
                 _multiTrackPropertyField.style.display = DisplayStyle.None;
                 
                 var index = list[0];
-                var singleTrackProp = _tracksProperty.GetArrayElementAtIndex(index);
+                SerializedProperty prop;
 
-                _trackPropertyField.BindProperty(singleTrackProp);
-            } else if (list.Count > 1) {
+                prop = drawSignalMode 
+                    ? _signalsProperty.GetArrayElementAtIndex(index) 
+                    : _tracksProperty.GetArrayElementAtIndex(index);
+
+                _trackPropertyField.BindProperty(prop);
+            } else if (list.Count > 1 && !drawSignalMode) {
                 _trackPropertyField.style.display = DisplayStyle.None;
                 _multiTrackPropertyField.style.display = DisplayStyle.Flex;
 

@@ -821,7 +821,7 @@ MonoBehaviour:
       onSignal:
         m_PersistentCalls:
           m_Calls: []
-    - time: 2.5
+    - time: 2
       onSignal:
         m_PersistentCalls:
           m_Calls: []

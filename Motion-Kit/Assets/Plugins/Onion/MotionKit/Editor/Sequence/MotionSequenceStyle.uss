@@ -114,14 +114,12 @@
 .track-inspector-container {
     display: none;
     margin-top: 16px;
-    padding-bottom: 4px;
+    padding: 4px;
     background-color: #2D2D2D;
 
     border-color: #1E1E1E;
     border-width: 1px;
     border-radius: 4px;
-
-    min-height: 100px;
 
     overflow: hidden;
 }
@@ -170,4 +168,35 @@
     max-width: none;
     margin-right: -22px;
     width: 45%;
+}
+
+.motion-signal-event-field {
+    margin-top: 8px;
+    margin-bottom: 4px;
+}
+
+.motion-signal-event-field ScrollView {
+    min-height: 60px;
+    background-color: #2D2D2D;
+    border-color: #1E1E1E;
+}
+
+.motion-signal-event-field .unity-list-view__footer {
+    background-color: #2D2D2D;
+    border-color: #1E1E1E;
+    margin-top: -1px;
+}
+
+.motion-signal-event-field .unity-list-view__reorderable-item {
+    transition: background-color 0.1s;
+}
+
+.motion-signal-event-field Button {
+    transition: background-color 0.1s;
+    background-color: rgba(60, 60, 60, 0);
+    border-radius: 0px;
+}
+
+.motion-signal-event-field Button:hover {
+    background-color: rgba(60, 60, 60, 1);
 }
