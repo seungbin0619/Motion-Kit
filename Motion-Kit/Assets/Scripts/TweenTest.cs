@@ -29,4 +29,8 @@ public class TweenTest : MonoBehaviour {
     private void Complete() {
         animator.Complete(0);
     }
+
+    public void TestDebug(int value) {
+        Debug.Log($"TestDebug called with value: {value}");
+    }
 }
