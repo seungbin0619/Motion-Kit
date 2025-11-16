@@ -31,6 +31,7 @@ namespace Onion.MotionKit.Editor {
 
             AddToClassList("time-ruler-container");
             
+            RegisterCallback<ClickEvent>(evt => evt.StopPropagation());
             RegisterCallback<PointerDownEvent>(OnSignalPointerDown);
             RegisterCallback<PointerMoveEvent>(OnSignalPointerMove);
             RegisterCallback<PointerUpEvent>(OnSignalPointerUp);
