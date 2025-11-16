@@ -6,6 +6,6 @@ namespace Onion.MotionKit {
     [Serializable]
     public sealed class MotionSignal {
         public float time;
-        public UnityEvent onSignal;
+        public UnityEvent onSignal = new();
     }
 }

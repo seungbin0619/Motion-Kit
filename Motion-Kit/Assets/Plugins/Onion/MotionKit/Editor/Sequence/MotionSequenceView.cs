@@ -485,6 +485,8 @@ namespace Onion.MotionKit.Editor {
                 ? DisplayStyle.None
                 : DisplayStyle.Flex;
 
+            if (list.Count == 0) return;
+
             if (list.Count == 1) {
                 _trackPropertyField.style.display = DisplayStyle.Flex;
                 _multiTrackPropertyField.style.display = DisplayStyle.None;
@@ -622,10 +624,16 @@ namespace Onion.MotionKit.Editor {
 
         public void SetSequence(SerializedProperty sequenceProperty) {
             if (_sequenceProperty == sequenceProperty) return;
+            
+            _trackListView.ClearSelection();
+            _timeRulerContainer.ClearSelection();
 
             _nameField.Unbind();
             _playOnAwakeField.Unbind();
+
             _trackListView.Unbind();
+            _timeRulerContainer.Unbind();
+            
             _sequenceProperty = sequenceProperty;
             
             if (_sequenceProperty != null) {
@@ -636,6 +644,7 @@ namespace Onion.MotionKit.Editor {
                 _signalsProperty = _sequenceProperty.FindPropertyRelative("signals");
 
                 _trackListView.BindProperty(_tracksProperty);
+                _timeRulerContainer.Repaint(_signalsProperty);
             }
             
             Repaint();

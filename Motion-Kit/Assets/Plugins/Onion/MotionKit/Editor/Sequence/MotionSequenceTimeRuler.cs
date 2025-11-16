@@ -32,15 +32,79 @@ namespace Onion.MotionKit.Editor {
             AddToClassList("time-ruler-container");
             
             RegisterCallback<ClickEvent>(evt => evt.StopPropagation());
+            RegisterCallback<KeyDownEvent>(OnKeyDown);
             RegisterCallback<PointerDownEvent>(OnSignalPointerDown);
             RegisterCallback<PointerMoveEvent>(OnSignalPointerMove);
             RegisterCallback<PointerUpEvent>(OnSignalPointerUp);
         }
 
+        private void OnKeyDown(KeyDownEvent evt) {
+            if (evt.keyCode != KeyCode.Delete && evt.keyCode != KeyCode.Backspace) return;
+            if (_property == null) return;
+            if (_selectedIndices.Count == 0) return;
+
+            evt.StopPropagation();
+            
+            var list = new List<int>(_selectedIndices);
+            list.Sort();
+
+            for (int i = list.Count - 1; i >= 0; i--) {
+                int index = list[i];
+
+                _property.DeleteArrayElementAtIndex(index);
+                
+                if (_signalViews.ContainsKey(index)) {
+                    _signalContainer.Remove(_signalViews[index]);
+                    _signalViews.Remove(index);
+                }
+            }
+
+            ClearSelection();
+            _property.serializedObject.ApplyModifiedProperties();
+            
+            Repaint(_property);
+        }
+
         private void OnSignalPointerDown(PointerDownEvent evt) {
             if (evt.button == 1) {
                 // Right-click context menu logic can be added here
+                if (evt.target is MotionSignalView) {
+                    return;
+                }
 
+                var menu = new GenericMenu();
+
+                float position = evt.localPosition.x - 2;
+                position -= _parent.minMarginLeft;
+                
+                float clickTime = _parent.startTime + position / _parent.pixelsPerSecond;
+
+                clickTime = Mathf.Max(0f, clickTime);
+                clickTime = Mathf.Round(clickTime / 0.05f) * 0.05f;
+
+                menu.AddItem(new GUIContent("Add Signal"), false, () => {
+                    // Context menu action
+                    int newIndex = _property.arraySize;
+                    _property.InsertArrayElementAtIndex(newIndex);
+
+                    var signalProp = _property.GetArrayElementAtIndex(newIndex);
+                    signalProp.FindPropertyRelative("time").floatValue = clickTime;
+                    SerializedProperty persistentCallsProp = signalProp.FindPropertyRelative("onSignal.m_PersistentCalls.m_Calls");
+
+                    persistentCallsProp?.ClearArray();
+
+                    _property.serializedObject.ApplyModifiedProperties();
+
+                    Repaint(_property);
+                });
+
+                // if (evt.target is MotionSignalView) {
+                //     menu.AddItem(new GUIContent("Delete Signal"), false, () => {
+                        
+                //     });
+                // }
+
+                menu.ShowAsContext();
                 evt.StopPropagation();
                 return;
             }
@@ -235,6 +299,13 @@ namespace Onion.MotionKit.Editor {
 
             _selectedIndices.Clear();
             _parent.RepaintTrackInspector();
+        }
+
+        public void Unbind() {
+            _property = null;
+
+            _signalContainer.Clear();
+            _signalViews.Clear();
         }
     }
 }

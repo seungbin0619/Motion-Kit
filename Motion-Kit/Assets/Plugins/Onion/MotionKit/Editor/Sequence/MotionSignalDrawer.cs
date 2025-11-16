@@ -1,3 +1,4 @@
+using System;
 using UnityEditor;
 using UnityEditor.UIElements;
 using UnityEngine;
@@ -7,6 +8,8 @@ namespace Onion.MotionKit.Editor {
     [CustomPropertyDrawer(typeof(MotionSignal))]
     public class MotionSignalDrawer : PropertyDrawer {
         public override VisualElement CreatePropertyGUI(SerializedProperty property) {
+            if (property == null) return null;
+
             var root = new VisualElement();
 
             var timeProp = property.FindPropertyRelative("time");
@@ -16,12 +19,19 @@ namespace Onion.MotionKit.Editor {
             var timeField = new PropertyField(timeProp, "Time");
             // var eventField = new PropertyField(eventProp, "OnSignal");
             var eventField = new IMGUIContainer(() => {
-                EditorGUI.BeginChangeCheck();
-                EditorGUILayout.PropertyField(eventProp);
-                if (EditorGUI.EndChangeCheck()) {
-                    eventProp.serializedObject.ApplyModifiedProperties();
+                try {
+                    EditorGUI.BeginChangeCheck();
+                    EditorGUILayout.PropertyField(eventProp);
+                    if (EditorGUI.EndChangeCheck()) {
+                        eventProp.serializedObject.ApplyModifiedProperties();
+                    }
+                }
+                catch {
+                    EditorGUI.EndChangeCheck();
+                    return;
                 }
             });
+
             eventField.AddToClassList("motion-signal-event-field");
 
             root.Add(timeField);
