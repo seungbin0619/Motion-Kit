@@ -40,10 +40,14 @@ namespace Onion.MotionKit.Editor {
 
         private void OnKeyDown(KeyDownEvent evt) {
             if (evt.keyCode != KeyCode.Delete && evt.keyCode != KeyCode.Backspace) return;
+            evt.StopPropagation();
+
+            DeleteSelection();
+        }
+
+        private void DeleteSelection() {
             if (_property == null) return;
             if (_selectedIndices.Count == 0) return;
-
-            evt.StopPropagation();
             
             var list = new List<int>(_selectedIndices);
             list.Sort();
@@ -68,46 +72,49 @@ namespace Onion.MotionKit.Editor {
         }
 
         private void OnSignalPointerDown(PointerDownEvent evt) {
-            if (evt.button == 1) {
-                // Right-click context menu logic can be added here
-                if (evt.target is MotionSignalView) {
-                    return;
-                }
+            if (evt.button == 1 && !evt.ctrlKey) {
+                evt.StopPropagation();
 
                 var menu = new GenericMenu();
+                // Right-click context menu logic can be added here
+                if (evt.target is MotionSignalView view) {
+                    if (_selectedIndices.Contains(view.index)) {
+                        // Already selected
+                    } 
+                    else {
+                        ClearSelection();
+                        view.Select(true);
+                    }
+                    
+                    menu.AddItem(new GUIContent("Delete"), false, DeleteSelection);
+                } 
+                else {
+                    float position = evt.localPosition.x - 2;
+                    position -= _parent.minMarginLeft;
+                    
+                    float clickTime = _parent.startTime + position / _parent.pixelsPerSecond;
 
-                float position = evt.localPosition.x - 2;
-                position -= _parent.minMarginLeft;
-                
-                float clickTime = _parent.startTime + position / _parent.pixelsPerSecond;
+                    clickTime = Mathf.Max(0f, clickTime);
+                    clickTime = Mathf.Round(clickTime / 0.01f) * 0.01f;
 
-                clickTime = Mathf.Max(0f, clickTime);
-                clickTime = Mathf.Round(clickTime / 0.05f) * 0.05f;
+                    menu.AddItem(new GUIContent("Add Signal"), false, () => {
+                        // Context menu action
+                        int newIndex = _property.arraySize;
+                        _property.InsertArrayElementAtIndex(newIndex);
 
-                menu.AddItem(new GUIContent("Add Signal"), false, () => {
-                    // Context menu action
-                    int newIndex = _property.arraySize;
-                    _property.InsertArrayElementAtIndex(newIndex);
+                        var signalProp = _property.GetArrayElementAtIndex(newIndex);
+                        signalProp.FindPropertyRelative("time").floatValue = clickTime;
+                        SerializedProperty persistentCallsProp = signalProp.FindPropertyRelative("onSignal.m_PersistentCalls.m_Calls");
 
-                    var signalProp = _property.GetArrayElementAtIndex(newIndex);
-                    signalProp.FindPropertyRelative("time").floatValue = clickTime;
-                    SerializedProperty persistentCallsProp = signalProp.FindPropertyRelative("onSignal.m_PersistentCalls.m_Calls");
+                        persistentCallsProp?.ClearArray();
 
-                    persistentCallsProp?.ClearArray();
+                        _property.serializedObject.ApplyModifiedProperties();
 
-                    _property.serializedObject.ApplyModifiedProperties();
-
-                    Repaint(_property);
-                });
-
-                // if (evt.target is MotionSignalView) {
-                //     menu.AddItem(new GUIContent("Delete Signal"), false, () => {
-                        
-                //     });
-                // }
+                        Repaint(_property);
+                    });
+                }
 
                 menu.ShowAsContext();
-                evt.StopPropagation();
                 return;
             }
 
