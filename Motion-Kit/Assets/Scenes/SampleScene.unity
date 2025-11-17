@@ -849,19 +849,11 @@ MonoBehaviour:
   - name: Sequence 1
     playOnAwake: 0
     tracks: []
-    signals:
-    - time: 0
-      onSignal:
-        m_PersistentCalls:
-          m_Calls: []
-    - time: 0
-      onSignal:
-        m_PersistentCalls:
-          m_Calls: []
-    - time: 0
-      onSignal:
-        m_PersistentCalls:
-          m_Calls: []
+    signals: []
+  - name: Sequence 2
+    playOnAwake: 0
+    tracks: []
+    signals: []
   references:
     version: 2
     RefIds:

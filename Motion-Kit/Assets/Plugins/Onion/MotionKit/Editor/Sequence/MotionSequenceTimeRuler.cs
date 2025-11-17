@@ -13,7 +13,7 @@ namespace Onion.MotionKit.Editor {
 
         private readonly List<int> _selectedIndices = new();
         public List<int> selectedIndices => _selectedIndices;
-        private readonly Dictionary<int, MotionSignalView> _signalViews = new();
+        private readonly List<MotionSignalView> _signalViews = new();
 
         private readonly List<float> _initialSignalTimes = new();
         private int _minTimeIndex = -1;
@@ -52,11 +52,13 @@ namespace Onion.MotionKit.Editor {
                 int index = list[i];
 
                 _property.DeleteArrayElementAtIndex(index);
-                
-                if (_signalViews.ContainsKey(index)) {
-                    _signalContainer.Remove(_signalViews[index]);
-                    _signalViews.Remove(index);
-                }
+
+                _signalContainer.Remove(_signalViews[index]);
+                _signalViews.RemoveAt(index);
+            }
+
+            for (int i = list[0]; i < _signalViews.Count; i++) {
+                _signalViews[i].Initialize(i);
             }
 
             ClearSelection();
@@ -231,14 +233,12 @@ namespace Onion.MotionKit.Editor {
             _property = property;
             if (property == null) return;
 
-            // _signalContainer.Clear();
-
             for (int i = 0; i < property.arraySize; i++) {
                 var signalProperty = property.GetArrayElementAtIndex(i);
                 float signalTime = signalProperty.FindPropertyRelative("time").floatValue;
 
                 if (signalTime < from || signalTime > to) {
-                    if (_signalViews.ContainsKey(i)) {
+                    if (i < _signalViews.Count) {
                         var existingSignal = _signalViews[i];
 
                         existingSignal.style.display = DisplayStyle.None;
@@ -249,7 +249,7 @@ namespace Onion.MotionKit.Editor {
 
                 float signalPosition = _parent.minMarginLeft + (signalTime - _parent.startTime) * _parent.pixelsPerSecond;
 
-                if (_signalViews.ContainsKey(i)) {
+                if (i < _signalViews.Count) {
                     var existingSignal = _signalViews[i];
 
                     existingSignal.Initialize(i);
@@ -264,8 +264,8 @@ namespace Onion.MotionKit.Editor {
                 signalMarker.Initialize(i);
                 signalMarker.Repaint(signalPosition);
                 signalMarker.style.display = DisplayStyle.Flex;
-
-                _signalViews[i] = signalMarker;
+                
+                _signalViews.Add(signalMarker);
                 _signalContainer.Add(signalMarker);
             }
         }
@@ -292,9 +292,9 @@ namespace Onion.MotionKit.Editor {
 
         public void ClearSelection() {
             foreach (var index in _selectedIndices) {
-                if (_signalViews.ContainsKey(index)) {
-                    _signalViews[index].Deselect();
-                }
+                if (index < 0 || index >= _signalViews.Count) continue;
+
+                _signalViews[index].Deselect();
             }
 
             _selectedIndices.Clear();

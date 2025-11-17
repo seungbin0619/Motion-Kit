@@ -1,4 +1,5 @@
 using UnityEditor;
+using UnityEngine;
 using UnityEngine.UIElements;
 
 namespace Onion.MotionKit.Editor {
@@ -24,6 +25,8 @@ namespace Onion.MotionKit.Editor {
         // }
 
         private void OnPointerDown(PointerDownEvent evt) {
+            // Debug.Log(index);
+
             Select(evt.ctrlKey);
         }
 
