@@ -64,6 +64,7 @@ namespace Onion.MotionKit {
                 if (!track.isValid) continue;
 
                 var tween = track.Create();
+
                 if (track.runIndependently) {
                     if (track.mode == TrackMode.Chain) {
                         hasBufferedChain = true;
@@ -71,27 +72,38 @@ namespace Onion.MotionKit {
                         maxGroupTime = 0f;
                     }
 
-                    if (accumulatedTime == 0f) {
+                    if (accumulatedTime + track.delay == 0f) {
                         _independentTweens.Add(tween);
                     } 
                     else {
-                        _independentSequences.Add(Tween.Delay(accumulatedTime).Chain(tween));
+                        _independentSequences.Add(Tween.Delay(accumulatedTime + track.delay).Chain(tween));
                     }
 
                     continue;
                 }
 
                 if (!hasBufferedChain && track.mode == TrackMode.Group) {
-                    _sequence.Group(tween);
+                    if (track.delay == 0f) {
+                        _sequence.Group(tween);
+                    }
+                    else {
+                        _sequence.Group(Tween.Delay(track.delay).Chain(tween));
+                    }
+                    
                 }
                 else {
                     accumulatedTime += maxGroupTime;
                     maxGroupTime = 0f;
 
-                    _sequence.Chain(tween);
+                    if (track.delay == 0f) {
+                        _sequence.Chain(tween);
+                    }
+                    else {
+                        _sequence.Chain(Tween.Delay(track.delay).Chain(tween));
+                    }
                 }
 
-                maxGroupTime = Mathf.Max(maxGroupTime, tween.durationTotal);
+                maxGroupTime = Mathf.Max(maxGroupTime, track.delay + tween.durationTotal);
             }
 
             foreach (var signal in signals) {
