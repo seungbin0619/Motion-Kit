@@ -5,6 +5,9 @@ namespace Onion.MotionKit {
     [MotionClipMenu("Shake")]
     [CreateAssetMenu(menuName = "Animation/Motion Kit/Shake Clip")]
     public sealed class MotionShakeClip : MotionClip {
+#if UNITY_EDITOR
+        public override string propertyKey => string.Empty;
+#endif
         private enum ShakeMode {
             None,
             Position,

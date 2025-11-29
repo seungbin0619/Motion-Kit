@@ -5,6 +5,10 @@ namespace Onion.MotionKit {
     [MotionClipMenu("Move")]
     [CreateAssetMenu(menuName = "Animation/Motion Kit/Move Clip")]
     public sealed class MoveClip : MotionClipWithValue<Vector3> {
+#if UNITY_EDITOR
+        public override string propertyKey => "position";
+#endif
+
         [SerializeField]
         private bool _isLocal;
 

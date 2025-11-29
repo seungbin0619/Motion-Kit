@@ -4,7 +4,11 @@ using UnityEngine;
 namespace Onion.MotionKit {
     [MotionClipMenu("Move/Axis")]
     [CreateAssetMenu(menuName = "Animation/Motion Kit/Move Axis Clip")]
-    public sealed class MoveAxisClip : MotionClipWithValue<float> {
+    public sealed class MoveAxisClip : MotionClipWithValue<float> {        
+#if UNITY_EDITOR
+        public override string propertyKey => "position." + (axis == Axis.X ? "x" : axis == Axis.Y ? "y" : "z");
+#endif
+
         [SerializeField]
         private bool isLocal;
 

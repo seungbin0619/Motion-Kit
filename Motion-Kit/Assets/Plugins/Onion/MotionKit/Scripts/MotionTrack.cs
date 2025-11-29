@@ -10,9 +10,14 @@ namespace Onion.MotionKit {
         public Component target;
         public MotionClip clip;
         public TrackMode mode;
-        public bool runIndependently;
         public float delay;
+
+        public bool runIndependently;
         
+        // if true, the property will be reset to its original value when the track is played
+        // calcuate only editor time
+        public bool resetPropertyOnPlay;
+
         public TweenSettings settings;
         public bool isValid => target != null && clip != null;
         

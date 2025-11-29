@@ -5,6 +5,10 @@ namespace Onion.MotionKit {
     [MotionClipMenu("Fade")]
     [CreateAssetMenu(menuName = "Animation/Motion Kit/Fade Clip")]
     public sealed class FadeClip : MotionClipWithValue<float> {
+#if UNITY_EDITOR
+        public override string propertyKey => "alpha";
+#endif
+
         protected override Tween Create(Component target, TweenSettings<float> _settings) {
             return target switch {
                 CanvasGroup canvasGroup => Tween.Alpha(canvasGroup, _settings),

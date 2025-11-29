@@ -5,6 +5,10 @@ namespace Onion.MotionKit {
     [MotionClipMenu("Rotate")]
     [CreateAssetMenu(menuName = "Animation/Motion Kit/Rotate Clip")]
     public sealed class RotateClip : MotionClipWithValue<Vector3> {
+#if UNITY_EDITOR
+        public override string propertyKey => "rotation";
+#endif
+
         [SerializeField]
         private bool isLocal = true;
 
