@@ -3,13 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using PrimeTween;
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 namespace Onion.MotionKit {
     #pragma warning disable IDE1006
 
     [Serializable]
-    public sealed class MotionSequence {
+    public sealed partial class MotionSequence {
         public string name;
         public bool playOnAwake = false;
 
@@ -155,44 +154,5 @@ namespace Onion.MotionKit {
             foreach (var tween in _independentTweens) tween.Complete();
             foreach (var seq in _independentSequences) seq.Complete();
         }
-
-#if UNITY_EDITOR
-        private readonly Dictionary<int, List<string>> _usedProperties = new();
-
-        public void Validate() {
-            _usedProperties.Clear();
-
-            foreach (var track in tracks) {
-                if (track.clip == null || track.target == null) {
-                    track.resetPropertyOnPlay = false;
-                    continue;    
-                }
-
-                int hash = track.target.GetInstanceID();
-                
-                track.resetPropertyOnPlay = 
-                    !_usedProperties.TryGetValue(hash, out var keys) ||
-                    !keys.Any(k => IsConflicKey(k, track.clip.propertyKey));
-
-                if (track.resetPropertyOnPlay) {
-                    if (!_usedProperties.ContainsKey(hash)) {
-                        _usedProperties[hash] = new();
-                    }
-
-                    _usedProperties[hash].Add(track.clip.propertyKey);
-                }
-            }
-        }
-
-        private bool IsConflicKey(string a, string b) {
-            if (string.IsNullOrEmpty(a) || string.IsNullOrEmpty(b)) return false;
-            
-            if (a == b) return true;
-            if (a.StartsWith(b + ".")) return true;
-            if (b.StartsWith(a + ".")) return true;
-
-            return false;
-        }
-#endif
     }
 }
