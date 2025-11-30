@@ -25,5 +25,20 @@ namespace Onion.MotionKit {
 
             return default;
         }
+
+        public override void Ready(Component target, TweenValues<float> values) {
+            if (values.startFromCurrent) return;
+
+            if (target is RectTransform rectTransform) {
+                Vector2 position = rectTransform.anchoredPosition;
+
+                switch (axis) {
+                    case Axis.X: position.x = values.startValue; break;
+                    case Axis.Y: position.y = values.startValue; break;
+                }
+
+                rectTransform.anchoredPosition = position;
+            }
+        }
     }
 }

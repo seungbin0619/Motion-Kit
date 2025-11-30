@@ -32,5 +32,25 @@ namespace Onion.MotionKit {
 
             return default;
         }
+
+        public override void Ready(Component target, TweenValues<float> values) {
+            if (values.startFromCurrent) return;
+
+            if (target is Transform transform) {
+                Vector3 position = isLocal ? transform.localPosition : transform.position;
+
+                switch (axis) {
+                    case Axis.X: position.x = values.startValue; break;
+                    case Axis.Y: position.y = values.startValue; break;
+                    case Axis.Z: position.z = values.startValue; break;
+                }
+
+                if (isLocal) {
+                    transform.localPosition = position;
+                } else {
+                    transform.position = position;
+                }
+            }
+        }
     }
 }

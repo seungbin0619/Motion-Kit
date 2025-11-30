@@ -14,5 +14,13 @@ namespace Onion.MotionKit {
                 _ => default
             };
         }
+
+        public override void Ready(Component target, TweenValues<Vector3> values) {
+            if (values.startFromCurrent) return;
+
+            if (target is Transform transform) {
+                transform.localScale = values.startValue;
+            }
+        }
     }
 }

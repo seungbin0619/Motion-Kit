@@ -2,7 +2,6 @@
 
 using System.Collections.Generic;
 using System.Linq;
-using UnityEngine;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine.SceneManagement;
@@ -52,24 +51,22 @@ namespace Onion.MotionKit {
 
         private void Bake() {
             if (!_isDirty) return;
-            Debug.Log("[MotionSequence] Baking sequence: " + name);
-
             _isDirty = false;
 
             _usedProperties.Clear();
             foreach (var track in tracks) {
                 if (track.clip == null || track.target == null) {
-                    track.resetPropertyOnPlay = false;
+                    track.readyOnPlay = false;
                     continue;    
                 }
 
                 int hash = track.target.GetInstanceID();
                 
-                track.resetPropertyOnPlay = 
+                track.readyOnPlay = 
                     !_usedProperties.TryGetValue(hash, out var keys) ||
                     !keys.Any(k => IsConflicKey(k, track.clip.propertyKey));
 
-                if (track.resetPropertyOnPlay) {
+                if (track.readyOnPlay) {
                     if (!_usedProperties.ContainsKey(hash)) {
                         _usedProperties[hash] = new();
                     }

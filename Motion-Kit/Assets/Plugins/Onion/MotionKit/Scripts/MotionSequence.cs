@@ -64,6 +64,7 @@ namespace Onion.MotionKit {
                 if (!track.isValid) continue;
 
                 var tween = track.Create();
+                track.Ready();
 
                 if (track.runIndependently) {
                     if (track.mode == TrackMode.Chain) {

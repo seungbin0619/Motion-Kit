@@ -14,5 +14,8 @@ namespace Onion.MotionKit {
         }
 
         protected abstract Tween Create(Component target, TweenSettings<T> settings);
+
+        public override void Ready(Component target) => Ready(target, value);
+        public abstract void Ready(Component target, TweenValues<T> values);
     }
 }

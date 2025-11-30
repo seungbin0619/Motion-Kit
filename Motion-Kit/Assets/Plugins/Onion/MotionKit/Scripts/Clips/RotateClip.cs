@@ -25,5 +25,17 @@ namespace Onion.MotionKit {
                 (false, false) => Tween.EulerAngles(transform, _settings),
             };
         }
+
+        public override void Ready(Component target, TweenValues<Vector3> values) {
+            if (values.startFromCurrent) return;
+
+            if (target is Transform transform) {
+                if (isLocal) {
+                    transform.localRotation = Quaternion.Euler(values.startValue);
+                } else {
+                    transform.rotation = Quaternion.Euler(values.startValue);
+                }
+            }
+        }
     }
 }

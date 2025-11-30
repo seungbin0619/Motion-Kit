@@ -14,5 +14,13 @@ namespace Onion.MotionKit {
 
             return Tween.UIAnchoredPosition(rectTransform, _settings);
         }
+        
+        public override void Ready(Component target, TweenValues<Vector2> values) {
+            if (values.startFromCurrent) return;
+
+            if (target is RectTransform rectTransform) {
+                rectTransform.anchoredPosition = values.startValue;
+            }
+        }
     }
 }

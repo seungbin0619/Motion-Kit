@@ -19,5 +19,31 @@ namespace Onion.MotionKit {
                 _ => default
             };
         }
+
+        public override void Ready(Component target, TweenValues<float> values) {
+            if (values.startFromCurrent) return;
+
+            Color color;
+            switch (target) {
+                case CanvasGroup canvasGroup:
+                    canvasGroup.alpha = values.startValue;
+                    break;
+                case SpriteRenderer spriteRenderer:
+                    color = spriteRenderer.color;
+                    color.a = values.startValue;
+                    spriteRenderer.color = color;
+                    break;
+                case UnityEngine.UI.Graphic uiGraphic:
+                    color = uiGraphic.color;
+                    color.a = values.startValue;
+                    uiGraphic.color = color;
+                    break;
+                case UnityEngine.UI.Shadow uiShadow:
+                    color = uiShadow.effectColor;
+                    color.a = values.startValue;
+                    uiShadow.effectColor = color;
+                    break;
+            }
+        }
     }
 }

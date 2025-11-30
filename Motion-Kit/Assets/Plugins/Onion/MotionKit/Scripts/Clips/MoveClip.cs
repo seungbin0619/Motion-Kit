@@ -19,5 +19,17 @@ namespace Onion.MotionKit {
                 ? Tween.LocalPosition(transform, _settings)
                 : Tween.Position(transform, _settings);
         }
+
+        public override void Ready(Component target, TweenValues<Vector3> values) {
+            if (values.startFromCurrent) return;
+
+            if (target is Transform transform) {
+                if (_isLocal) {
+                    transform.localPosition = values.startValue;
+                } else {
+                    transform.position = values.startValue;
+                }
+            }
+        }
     }
 }

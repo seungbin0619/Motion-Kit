@@ -19,6 +19,9 @@ namespace Onion.MotionKit {
         [field: SerializeField]
         public MotionClipCategory category { get; private set; }
         public abstract Tween Create(Component target, TweenSettings settings);
+        public virtual void Ready(Component target) {
+            // do nothing by default
+        }
 
 #if UNITY_EDITOR
         public abstract string propertyKey { get; }

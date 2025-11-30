@@ -13,10 +13,7 @@ namespace Onion.MotionKit {
         public float delay;
 
         public bool runIndependently;
-        
-        // if true, the property will be reset to its original value when the track is played
-        // calcuate only editor time
-        public bool resetPropertyOnPlay;
+        public bool readyOnPlay;
 
         public TweenSettings settings;
         public bool isValid => target != null && clip != null;
@@ -38,6 +35,12 @@ namespace Onion.MotionKit {
         public virtual Tween Create() {
             return clip.Create(target, settings);
         }
+
+        public virtual void Ready() {
+            if (!readyOnPlay) return;
+
+            clip.Ready(target);
+        }
     }
 
     [Serializable]
@@ -57,6 +60,22 @@ namespace Onion.MotionKit {
             if (useValueOverride) 
                 return valuedClip.Create(target, settings, value);
             else return valuedClip.Create(target, settings);
+        }
+
+        public override void Ready() {
+            if (!readyOnPlay) return;
+            if (clip is not MotionClipWithValue<T> valuedClip) {
+                base.Ready();
+
+                return;
+            }
+
+            if (useValueOverride) {
+                valuedClip.Ready(target, value);
+            }
+            else {
+                valuedClip.Ready(target);
+            }
         }
     }
 }

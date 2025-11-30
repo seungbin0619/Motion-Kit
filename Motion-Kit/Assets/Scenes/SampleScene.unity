@@ -809,7 +809,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   sequences:
   - name: Sequence 0
-    playOnAwake: 0
+    playOnAwake: 1
     tracks:
     - rid: 4560873486997520460
     - rid: 4560873486997520461
@@ -831,9 +831,9 @@ MonoBehaviour:
         target: {fileID: 790710001}
         clip: {fileID: 11400000, guid: 6f8492e89b134cc4ab0fc59b2bb99af2, type: 2}
         mode: 0
-        delay: 3
+        delay: 2
         runIndependently: 0
-        resetPropertyOnPlay: 1
+        readyOnPlay: 1
         settings:
           duration: 1
           ease: 0
@@ -863,7 +863,7 @@ MonoBehaviour:
         mode: 1
         delay: 0
         runIndependently: 0
-        resetPropertyOnPlay: 0
+        readyOnPlay: 0
         settings:
           duration: 1
           ease: 0
