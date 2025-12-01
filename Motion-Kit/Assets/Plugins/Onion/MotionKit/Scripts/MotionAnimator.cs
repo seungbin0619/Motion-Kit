@@ -85,6 +85,12 @@ namespace Onion.MotionKit {
             _sequenceMap?.Clear();
         }
 
+        public void RemoveAt(MotionSequence sequence) {
+            sequences.Remove(sequence);
+            
+            _sequenceMap?.Clear();
+        }
+
         void OnValidate() {
             foreach (var sequence in sequences) {
                 sequence.Validate();

@@ -818,10 +818,6 @@ MonoBehaviour:
     playOnAwake: 0
     tracks: []
     signals: []
-  - name: Sequence 2
-    playOnAwake: 0
-    tracks: []
-    signals: []
   references:
     version: 2
     RefIds:
