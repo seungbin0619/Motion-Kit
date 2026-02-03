@@ -118,6 +118,11 @@ namespace Onion.MotionKit {
             }
         }
 
+        public Task PlayAsync() {
+            Play();
+            return ToTask();
+        }
+
         private void Resume() {
             _sequence.isPaused = false;
 

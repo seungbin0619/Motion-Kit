@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using PrimeTween;
 using UnityEngine;
 
@@ -41,6 +42,8 @@ namespace Onion.MotionKit {
 
         public void Play(int index) => this[index]?.Play();
         public void Play(string name) => this[name]?.Play();
+        public Task PlayAsync(int index) => this[index]?.PlayAsync();
+        public Task PlayAsync(string name) => this[name]?.PlayAsync();
         public void Pause(int index) => this[index]?.Pause();
         public void Pause(string name) => this[name]?.Pause();
         public void Stop(int index) => this[index]?.Stop();
