@@ -99,7 +99,7 @@ namespace Onion.MotionKit.Editor {
 
             _trackTargetField = new PropertyField(null, label: "");
             _trackTargetField.AddToClassList("track-target-field");
-            _trackTargetField.RegisterValueChangeCallback(OnTargetChanged);
+            // _trackTargetField.RegisterValueChangeCallback(OnTargetChanged);
 
             container.Add(_trackTag);
             container.Add(_trackTargetField);
@@ -255,7 +255,8 @@ namespace Onion.MotionKit.Editor {
 
         public void SetTrack(SerializedProperty trackProperty, int index) {
             if (_trackProperty == trackProperty) return;
-
+            
+            _trackTargetField.UnregisterCallback<SerializedPropertyChangeEvent>(OnTargetChanged);
             _trackTargetField.Unbind();
             _trackProperty = trackProperty;
             _index = index;
@@ -267,6 +268,8 @@ namespace Onion.MotionKit.Editor {
             var trackTargetProp = _trackProperty.FindPropertyRelative("target");
             if (trackTargetProp != null) {
                 _trackTargetField.BindProperty(trackTargetProp);
+
+                _trackTargetField.RegisterCallback<SerializedPropertyChangeEvent>(OnTargetChanged);
             }
             
             var color = _colorMap[MotionClipCategory.None];
