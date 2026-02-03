@@ -166,6 +166,7 @@ namespace Onion.MotionKit.Editor {
                 }
 
                 _isDragging = true;
+                Undo.RecordObject(_property.serializedObject.targetObject, "Move Signals");
             }
 
             float deltaTime = deltaX / _parent.pixelsPerSecond;
