@@ -314,6 +314,13 @@ namespace Onion.MotionKit.Editor {
                 var trackProperty = _tracksProperty.GetArrayElementAtIndex(index);
 
                 track.SetTrack(trackProperty, index);
+                if (index < _groups.Count) {
+                    int groupIndex = _groups[index];
+                    
+                    if (groupIndex >= 0 && groupIndex < _groupStartTime.Count) {
+                        track.Repaint(_groupStartTime[groupIndex]);
+                    }
+                }
             };
 
             view.itemIndexChanged += OnTrackIndexChanged;
