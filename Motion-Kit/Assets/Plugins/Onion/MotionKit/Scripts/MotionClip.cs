@@ -26,14 +26,6 @@ namespace Onion.MotionKit {
 #if UNITY_EDITOR
         public abstract string propertyKey { get; }
 
-        // public bool __IsConflic(MotionClip other) {
-        //     if (__propertyKey == other.__propertyKey) return true;
-        //     if (__propertyKey.StartsWith(other.__propertyKey + ".")) return true;
-        //     if (other.__propertyKey.StartsWith(__propertyKey + ".")) return true;
-
-        //     return false;
-        // }
-
         public bool IsValidFor(Component target) {
             SetEnabled(false);
             var tween = Create(target, default);
@@ -44,7 +36,6 @@ namespace Onion.MotionKit {
             return valid;
         }
 
-        // ignore PrimeTween warnings in editor validation
         private static void SetEnabled(bool enabled) {
             PrimeTweenConfig.warnZeroDuration = enabled;
             PrimeTweenConfig.warnEndValueEqualsCurrent = enabled;

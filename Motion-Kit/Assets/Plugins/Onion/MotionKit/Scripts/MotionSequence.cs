@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 using PrimeTween;
 using UnityEngine;
 
@@ -23,11 +24,11 @@ namespace Onion.MotionKit {
         private readonly List<Tween> _independentTweens = new();
         private readonly List<Sequence> _independentSequences = new();
 
-        private bool isAlive => _sequence.isAlive 
+        public bool isAlive => _sequence.isAlive 
             || _independentTweens.Exists(tween => tween.isAlive)
             || _independentSequences.Exists(seq => seq.isAlive);
 
-        private bool isPaused {
+        public bool isPaused {
             get {
                 if (_sequence.isAlive && _sequence.isPaused) return true;
 
@@ -108,7 +109,12 @@ namespace Onion.MotionKit {
             }
 
             foreach (var signal in signals) {
-                _sequence.InsertCallback(signal.time, signal.onSignal, e => e.Invoke());
+                if (signal.time == 0f) {
+                    signal.onSignal?.Invoke();
+                } 
+                else {
+                    _sequence.InsertCallback(signal.time, signal.onSignal, e => e.Invoke());
+                }
             }
         }
 
@@ -154,6 +160,36 @@ namespace Onion.MotionKit {
 
             foreach (var tween in _independentTweens) tween.Complete();
             foreach (var seq in _independentSequences) seq.Complete();
+        }
+
+        public async Task ToTask() {
+            if (!isAlive) {
+                Play();
+            }
+
+            if (_sequence.isAlive) {
+                await _sequence; 
+            }
+
+            foreach (var tween in _independentTweens) {
+                if (tween.isAlive) {
+                    await tween;
+                }
+            }
+
+            foreach (var seq in _independentSequences) {
+                if (seq.isAlive) {
+                    await seq;
+                }
+            }
+        }
+
+        public TaskAwaiter GetAwaiter() {
+            return ToTask().GetAwaiter();
+        }
+
+        public static implicit operator Task(MotionSequence sequence) {
+            return sequence.ToTask();
         }
     }
 }
